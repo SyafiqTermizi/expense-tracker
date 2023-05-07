@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  expense_db:
+    container_name: expense_db
+    image: postgres:14-alpine
+    env_file:
+      - ./postgres/.env
+
+  expense_be:
+    container_name: expense_be
+    build:
+      context: ../
+      dockerfile: ./docker/expense/local.Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ../:/app
+    env_file:
+      - ./expense/.env
+    depends_on:
+      - expense_db
+    ports:
+      - 8000:8000
