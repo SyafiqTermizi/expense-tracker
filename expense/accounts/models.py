@@ -1,11 +1,12 @@
 from django.db import models
 from django.utils import timezone
+
 from expense.users.models import User
 
 
-class SavingAction(models.Model):
+class AccountAction(models.Model):
     """
-    Records the credit and debit actions that are done to the actual saving account.
+    Records the credit and debit actions that are done to the actual account.
     """
 
     class Action(models.TextChoices):
@@ -21,7 +22,8 @@ class SavingAction(models.Model):
     )
     date = models.DateField(
         default=timezone.now
-    )  # Since this is a tracking app, we want the user to specify when was the action done to their actual saving account
+    )  # Since this is a tracking app, we want the user to specify when was the action done to their actual account
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )  # Indicate when was this action created
@@ -29,23 +31,23 @@ class SavingAction(models.Model):
     belongs_to = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="saving_actions",
+        related_name="account_actions",
     )
 
     class Meta:
         get_latest_by = "date"
 
 
-class Saving(models.Model):
+class Account(models.Model):
     """
-    Record the current amount of a user's saving account
+    Record the current amount of a user's account
     """
 
     amount = models.FloatField()
     action = models.OneToOneField(
-        SavingAction,
+        AccountAction,
         on_delete=models.CASCADE,
-    )  # The action that created the saving instance
+    )  # The action that created this account instance
     created_at = models.DateTimeField(auto_now_add=True)
     belongs_to = models.ForeignKey(User, on_delete=models.CASCADE)
 
