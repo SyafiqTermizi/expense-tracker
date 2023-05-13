@@ -4,6 +4,33 @@ from django.utils import timezone
 from expense.users.models import User
 
 
+class AccountType(models.Model):
+    """
+    Record the type of account that a user has
+    """
+
+    class Type(models.TextChoices):
+        INCOME = "INCOME", "Income"
+        SAVING = "SAVING", "Saving"
+        LOAN = "LOAN", "Loan"
+        OTHER = "OTHER", "Other"
+
+    type = models.TextField(
+        choices=Type.choices,
+        default=Type.OTHER,
+        max_length=255,
+    )
+    description = models.CharField(max_length=255)
+    belongs_to = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="account_types",
+    )
+
+    def __str__(self):
+        return self.description
+
+
 class AccountAction(models.Model):
     """
     Records the credit and debit actions that are done to the actual account.
@@ -19,6 +46,11 @@ class AccountAction(models.Model):
         choices=Action.choices,
         default=Action.CREDIT,
         max_length=255,
+    )
+    account_type = models.ForeignKey(
+        AccountType,
+        on_delete=models.CASCADE,
+        related_name="actions",
     )
     date = models.DateField(
         default=timezone.now
