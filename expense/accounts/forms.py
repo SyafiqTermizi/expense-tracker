@@ -1,12 +1,23 @@
-from django import forms
+from typing import Any, Dict
 
-from .models import AccountAction, Account
+from django import forms
+from django.utils import timezone
+from expense.users.models import User
+
+from .models import AccountAction, Account, AccountType
 
 
 class AccountActionAdminForm(forms.ModelForm):
     class Meta:
         model = AccountAction
-        fields = ["description", "amount", "date", "belongs_to"]
+        fields = [
+            "description",
+            "action",
+            "amount",
+            "account_type",
+            "date",
+            "belongs_to",
+        ]
 
     def save(self, commit: bool):
         """
@@ -27,6 +38,7 @@ class AccountActionAdminForm(forms.ModelForm):
             last_amount = (
                 Account.objects.filter(
                     belongs_to=account_action.belongs_to,
+                    action__account_type=account_action.account_type,
                 )
                 .latest("created_at")
                 .amount
@@ -45,3 +57,59 @@ class AccountActionAdminForm(forms.ModelForm):
             )
 
         return account_action
+
+
+class AccountTransferForm(forms.Form):
+    from_account = forms.ModelChoiceField(
+        queryset=AccountType.objects.all(),
+        label="From Account",
+    )
+    to_account = forms.ModelChoiceField(
+        queryset=AccountType.objects.all(),
+        label="To Account",
+    )
+    amount = forms.DecimalField(max_digits=10, decimal_places=2)
+    description = forms.CharField(max_length=255, required=False)
+
+    def __init__(self, user: User, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.user = user
+        self.fields["from_account"].queryset = user.account_types.all()
+        self.fields["to_account"].queryset = user.account_types.all()
+
+    def clean(self) -> Dict[str, Any]:
+        fields = super().clean()
+        if fields.get("from_account") == fields.get("to_account"):
+            raise forms.ValidationError("Transfer to same account is not allowed")
+        return fields
+
+    def save(self):
+        from_account = self.cleaned_data["from_account"]
+        to_account = self.cleaned_data["to_account"]
+        description = self.cleaned_data["description"]
+        if not description:
+            description = f"Transfer from {from_account.type} to {to_account.type}"
+
+        amount = self.cleaned_data["amount"]
+
+        AccountActionAdminForm(
+            data={
+                "description": description,
+                "action": AccountAction.Action.DEBIT,
+                "amount": amount,
+                "account_type": from_account,
+                "date": timezone.now().date(),
+                "belongs_to": self.user,
+            }
+        ).save(commit=True)
+
+        AccountActionAdminForm(
+            data={
+                "description": description,
+                "action": AccountAction.Action.CREDIT,
+                "amount": amount,
+                "account_type": to_account,
+                "date": timezone.now().date(),
+                "belongs_to": self.user,
+            }
+        ).save(commit=True)
