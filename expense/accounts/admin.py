@@ -19,4 +19,4 @@ class AccountAction(admin.ModelAdmin):
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ["amount", "belongs_to"]
+    list_display = ["amount", "belongs_to", "type"]

@@ -85,3 +85,7 @@ class Account(models.Model):
 
     class Meta:
         get_latest_by = "created_at"
+
+    @property
+    def type(self):
+        return self.action.account_type.type
