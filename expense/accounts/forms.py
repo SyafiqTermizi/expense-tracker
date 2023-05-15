@@ -7,7 +7,11 @@ from expense.users.models import User
 from .models import AccountAction, Account, AccountType
 
 
-class AccountActionAdminForm(forms.ModelForm):
+class AccountActionForm(forms.ModelForm):
+    """
+    This form will automatically create related Account instance on save
+    """
+
     class Meta:
         model = AccountAction
         fields = [
@@ -91,7 +95,7 @@ class AccountTransferForm(forms.Form):
 
         amount = self.cleaned_data["amount"]
 
-        AccountActionAdminForm(
+        AccountActionForm(
             data={
                 "description": description,
                 "action": AccountAction.Action.DEBIT,
@@ -101,7 +105,7 @@ class AccountTransferForm(forms.Form):
             }
         ).save(commit=True)
 
-        AccountActionAdminForm(
+        AccountActionForm(
             data={
                 "description": description,
                 "action": AccountAction.Action.CREDIT,

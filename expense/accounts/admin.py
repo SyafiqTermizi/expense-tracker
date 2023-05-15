@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .forms import AccountActionAdminForm
+from .forms import AccountActionForm
 from .models import Account, AccountAction
 
 
@@ -14,7 +14,7 @@ class AccountAction(admin.ModelAdmin):
         "created_at",
         "belongs_to",
     ]
-    form = AccountActionAdminForm
+    form = AccountActionForm
 
 
 @admin.register(Account)
