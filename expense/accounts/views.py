@@ -47,14 +47,24 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def transfer_view(request: HttpRequest) -> HttpResponse:
+    user_accounts = request.user.account_types.all()
+
     if request.method == "POST":
         form = AccountTransferForm(user=request.user, data=request.POST)
 
         if form.is_valid():
             form.save()
             return redirect("accounts:dashboard_view")
+        else:
+            return render(
+                request,
+                "accounts/transfer.html",
+                context={
+                    "form": form,
+                    "accounts": user_accounts,
+                },
+            )
 
-    user_accounts = request.user.account_types.all()
     return render(
         request,
         "accounts/transfer.html",
