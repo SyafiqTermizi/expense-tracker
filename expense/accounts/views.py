@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
-from .forms import AccountTransferForm
+from .forms import AccountActionForm, AccountTransferForm
 from .models import AccountType, Account, AccountAction
 
 
@@ -70,6 +70,42 @@ def transfer_view(request: HttpRequest) -> HttpResponse:
         "accounts/transfer.html",
         context={
             "form": AccountTransferForm(user=request.user),
+            "accounts": user_accounts,
+        },
+    )
+
+
+@login_required
+def add_view(request: HttpRequest) -> HttpResponse:
+    user_accounts = request.user.account_types.all()
+
+    if request.method == "POST":
+        form = AccountActionForm(
+            data={
+                **request.POST.dict(),
+                "belongs_to": request.user,
+                "action": AccountAction.Action.CREDIT,
+            }
+        )
+
+        if form.is_valid():
+            form.save(commit=True)
+            return redirect("accounts:dashboard_view")
+        else:
+            return render(
+                request,
+                "accounts/add.html",
+                context={
+                    "form": form,
+                    "accounts": user_accounts,
+                },
+            )
+
+    return render(
+        request,
+        "accounts/add.html",
+        context={
+            "form": AccountActionForm(),
             "accounts": user_accounts,
         },
     )

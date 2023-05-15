@@ -14,8 +14,11 @@
     {% include "partial/navbar.html" %}
     <div class="container">
         <div class="row mt-3">
-            <div class="col-12">
+            <div class="col-1">
                 <a href="{% url 'accounts:transfer_view' %}" class="btn btn-primary">Transfer</a>
+            </div>
+            <div class="col-1">
+                <a href="{% url 'accounts:add_view' %}" class="btn btn-primary">Add</a>
             </div>
         </div>
         {% block content %}
