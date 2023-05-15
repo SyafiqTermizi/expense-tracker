@@ -21,4 +21,36 @@
     </div>
     {% endfor %}
 </div>
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Description</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Account</th>
+                            <th scope="col">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for action in actions %}
+                        <tr>
+                            <td scope="row">{{ action.description }}</td>
+                            {% if action.action == "DEBIT" %}
+                            <td class="text-danger">-&nbsp;{{ action.amount }}</td>
+                            {% else %}
+                            <td class="text-success">&nbsp;{{ action.amount }}</td>
+                            {% endif %}
+                            <td>{{ action.account_type }}</td>
+                            <td>{{ action.date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

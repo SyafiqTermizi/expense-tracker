@@ -3,7 +3,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 from .forms import AccountTransferForm
-from .models import AccountType, Account
+from .models import AccountType, Account, AccountAction
 
 
 @login_required
@@ -28,6 +28,10 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     else:
         latest_saving = saving_account.amount
 
+    actions = AccountAction.objects.filter(belongs_to=request.user).order_by(
+        "-created_at"
+    )[:30]
+
     return render(
         request,
         "accounts/dashboard.html",
@@ -35,7 +39,8 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
             "accounts": {
                 "income": latest_income,
                 "saving": latest_saving,
-            }
+            },
+            "actions": actions,
         },
     )
 
