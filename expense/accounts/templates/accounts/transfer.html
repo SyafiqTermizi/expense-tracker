@@ -5,7 +5,7 @@
     <div class="col-12">
         <form method="post">
             {% csrf_token %}
-            {% if form.errors %}
+            {% if form.non_field_errors %}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {% for error in form.non_field_errors %}
                 <p>{{ error }}</p>
@@ -15,25 +15,42 @@
             <div class="row">
                 <div class="col">
                     <label class="form-label" for="id_from_account">From Account:</label>
-                    <select class="form-select" name="from_account" required="" id="id_from_account">
+                    <select class="form-select {% if form.from_account.errors %}is-invalid{% endif %}" name="from_account" required="" id="id_from_account">
                         {% for account in accounts %}
-                        <option value="{{ account.pk }}">{{ account.type.title }}</option>
+                        <option
+                            {% if account.pk == form.from_account.value|add:'0' %}selected{% endif %}
+                            value="{{ account.pk }}"
+                        >
+                            {{ account.type.title }}
+                        </option>
                         {% endfor %}
                     </select>
+                    {% for error in form.from_account.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                    {% endfor %}
                 </div>
+
                 <div class="col">
                     <label class="form-label" for="id_to_account">To Account:</label>
-                    <select class="form-select" name="to_account" required="" id="id_to_account">
+                    <select class="form-select {% if form.to_account.errors %}is-invalid{% endif %}" name="to_account" required="" id="id_to_account">
                         {% for account in accounts %}
-                        <option value="{{ account.pk }}">{{ account.type.title }}</option>
+                        <option
+                            {% if account.pk == form.to_account.value|add:'0' %}selected{% endif %}
+                            value="{{ account.pk }}"
+                        >
+                            {{ account.type.title }}
+                        </option>
                         {% endfor %}
                     </select>
+                    {% for error in form.to_account.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                    {% endfor %}
                 </div>
             </div>
 
             <label class="form-label" for="id_amount">Amount:</label>
             <input class="form-control {% if form.amount.errors %}is-invalid{% endif %}" type="number" name="amount"
-                step="0.01" required="" id="id_amount" value="{{ form.amount.value }}">
+                step="0.01" required id="id_amount" value="{{ form.amount.value }}">
             {% for error in form.amount.errors %}
             <p class="text-danger">{{ error }}</p>
             {% endfor %}

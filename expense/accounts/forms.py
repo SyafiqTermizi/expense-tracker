@@ -90,6 +90,7 @@ class AccountTransferForm(forms.Form):
         from_account = self.cleaned_data["from_account"]
         to_account = self.cleaned_data["to_account"]
         description = self.cleaned_data["description"]
+
         if not description:
             description = f"Transfer from {from_account.type} to {to_account.type}"
 
