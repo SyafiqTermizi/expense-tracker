@@ -15,7 +15,6 @@ class AccountActionAdminForm(forms.ModelForm):
             "action",
             "amount",
             "account_type",
-            "date",
             "belongs_to",
         ]
 
@@ -98,7 +97,6 @@ class AccountTransferForm(forms.Form):
                 "action": AccountAction.Action.DEBIT,
                 "amount": amount,
                 "account_type": from_account,
-                "date": timezone.now().date(),
                 "belongs_to": self.user,
             }
         ).save(commit=True)
@@ -109,7 +107,6 @@ class AccountTransferForm(forms.Form):
                 "action": AccountAction.Action.CREDIT,
                 "amount": amount,
                 "account_type": to_account,
-                "date": timezone.now().date(),
                 "belongs_to": self.user,
             }
         ).save(commit=True)

@@ -10,7 +10,7 @@ class AccountAction(admin.ModelAdmin):
         "description",
         "amount",
         "action",
-        "date",
+        "created_at",
         "created_at",
         "belongs_to",
     ]

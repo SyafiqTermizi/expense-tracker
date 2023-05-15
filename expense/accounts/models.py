@@ -52,10 +52,6 @@ class AccountAction(models.Model):
         on_delete=models.CASCADE,
         related_name="actions",
     )
-    date = models.DateField(
-        default=timezone.now
-    )  # Since this is a tracking app, we want the user to specify when was the action done to their actual account
-
     created_at = models.DateTimeField(
         auto_now_add=True
     )  # Indicate when was this action created
@@ -67,7 +63,7 @@ class AccountAction(models.Model):
     )
 
     class Meta:
-        get_latest_by = "date"
+        get_latest_by = "created_at"
 
 
 class Account(models.Model):
