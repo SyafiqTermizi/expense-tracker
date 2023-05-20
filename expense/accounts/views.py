@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
-from .forms import AccountActionForm, AccountTransferForm
+from .forms import AccountActionForm, AccountTransferForm, WithdrawForm
 from .models import AccountType, Account, AccountAction
 
 
@@ -28,6 +28,16 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     else:
         latest_saving = saving_account.amount
 
+    try:
+        cash_account = Account.objects.filter(
+            belongs_to=request.user,
+            action__account_type__type__in=[AccountType.Type.CASH],
+        ).latest()
+    except Account.DoesNotExist:
+        latest_cash = 0
+    else:
+        latest_cash = cash_account.amount
+
     actions = AccountAction.objects.filter(belongs_to=request.user).order_by(
         "-created_at"
     )[:30]
@@ -39,6 +49,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
             "accounts": {
                 "income": latest_income,
                 "saving": latest_saving,
+                "cash": latest_cash,
             },
             "actions": actions,
         },
@@ -68,10 +79,7 @@ def transfer_view(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "accounts/transfer.html",
-        context={
-            "form": AccountTransferForm(user=request.user),
-            "accounts": user_accounts,
-        },
+        context={"accounts": user_accounts},
     )
 
 
@@ -104,8 +112,29 @@ def add_view(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "accounts/add.html",
-        context={
-            "form": AccountActionForm(),
-            "accounts": user_accounts,
-        },
+        context={"accounts": user_accounts},
+    )
+
+
+@login_required
+def withdraw_view(request: HttpRequest) -> HttpResponse:
+    user_accounts = request.user.account_types.exclude(type=AccountType.Type.CASH)
+    if request.method == "POST":
+        form = WithdrawForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("accounts:dashboard_view")
+        else:
+            return render(
+                request,
+                "accounts/withdraw.html",
+                context={
+                    "form": form,
+                    "accounts": user_accounts,
+                },
+            )
+    return render(
+        request,
+        "accounts/withdraw.html",
+        context={"accounts": user_accounts},
     )

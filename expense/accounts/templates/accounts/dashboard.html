@@ -2,14 +2,6 @@
 
 {% block content %}
 <div class="row mt-5">
-    <div class="col-4">
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">Expenses</div>
-                <p class="card-text">0</p>
-            </div>
-        </div>
-    </div>
     {% for account_name, account_amount in accounts.items %}
     <div class="col-4">
         <div class="card">

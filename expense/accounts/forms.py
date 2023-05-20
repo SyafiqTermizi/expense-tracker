@@ -115,3 +115,48 @@ class AccountTransferForm(forms.Form):
                 "belongs_to": self.user,
             }
         ).save(commit=True)
+
+
+class WithdrawForm(forms.Form):
+    from_account = forms.ModelChoiceField(
+        queryset=AccountType.objects.all(),
+        label="From Account",
+    )
+    amount = forms.DecimalField(max_digits=10, decimal_places=2)
+    description = forms.CharField(max_length=255, required=False)
+
+    def __init__(self, user: User, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.user = user
+        self.fields["from_account"].queryset = user.account_types.exclude(
+            type=AccountType.Type.CASH
+        )
+
+    def save(self):
+        from_account = self.cleaned_data["from_account"]
+        description = self.cleaned_data["description"]
+
+        if not description:
+            description = f"Withdrawal from {from_account.type}"
+
+        amount = self.cleaned_data["amount"]
+
+        AccountActionForm(
+            data={
+                "description": description,
+                "action": AccountAction.Action.DEBIT,
+                "amount": amount,
+                "account_type": from_account,
+                "belongs_to": self.user,
+            }
+        ).save(commit=True)
+
+        AccountActionForm(
+            data={
+                "description": description,
+                "action": AccountAction.Action.CREDIT,
+                "amount": amount,
+                "account_type": self.user.account_types.get(type=AccountType.Type.CASH),
+                "belongs_to": self.user,
+            }
+        ).save(commit=True)

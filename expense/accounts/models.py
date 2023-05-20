@@ -12,7 +12,7 @@ class AccountType(models.Model):
     class Type(models.TextChoices):
         INCOME = "INCOME", "Income"
         SAVING = "SAVING", "Saving"
-        LOAN = "LOAN", "Loan"
+        CASH = "CASH", "Cash"
         OTHER = "OTHER", "Other"
 
     type = models.TextField(
