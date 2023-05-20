@@ -1,7 +1,6 @@
 from typing import Any, Dict
 
 from django import forms
-from django.utils import timezone
 from expense.users.models import User
 
 from .models import AccountAction, Account, AccountType
@@ -47,38 +46,36 @@ class AccountActionForm(forms.ModelForm):
                 .amount
             )
         except Account.DoesNotExist:
-            Account.objects.create(
-                amount=new_amount,
-                action=account_action,
-                belongs_to=account_action.belongs_to,
-            )
-        else:
-            Account.objects.create(
-                amount=(last_amount + new_amount),
-                action=account_action,
-                belongs_to=account_action.belongs_to,
-            )
+            last_amount = 0
+
+        Account.objects.create(
+            amount=(last_amount + new_amount),
+            action=account_action,
+            belongs_to=account_action.belongs_to,
+        )
 
         return account_action
 
 
 class AccountTransferForm(forms.Form):
-    from_account = forms.ModelChoiceField(
-        queryset=AccountType.objects.all(),
-        label="From Account",
-    )
-    to_account = forms.ModelChoiceField(
-        queryset=AccountType.objects.all(),
-        label="To Account",
-    )
+    """
+    Transfer money from one account to another, excluding cash account
+    """
+
     amount = forms.DecimalField(max_digits=10, decimal_places=2)
     description = forms.CharField(max_length=255, required=False)
 
     def __init__(self, user: User, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.user = user
-        self.fields["from_account"].queryset = user.account_types.all()
-        self.fields["to_account"].queryset = user.account_types.all()
+
+        # Fields
+        self.fields["from_account"] = forms.ModelChoiceField(
+            queryset=user.account_types.exclude(type=AccountType.Type.CASH)
+        )
+        self.fields["to_account"] = forms.ModelChoiceField(
+            queryset=user.account_types.exclude(type=AccountType.Type.CASH)
+        )
 
     def clean(self) -> Dict[str, Any]:
         fields = super().clean()
@@ -118,18 +115,20 @@ class AccountTransferForm(forms.Form):
 
 
 class WithdrawForm(forms.Form):
-    from_account = forms.ModelChoiceField(
-        queryset=AccountType.objects.all(),
-        label="From Account",
-    )
+    """
+    Transfer money from an account into the cash account
+    """
+
     amount = forms.DecimalField(max_digits=10, decimal_places=2)
     description = forms.CharField(max_length=255, required=False)
 
     def __init__(self, user: User, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.user = user
-        self.fields["from_account"].queryset = user.account_types.exclude(
-            type=AccountType.Type.CASH
+
+        # Fields
+        self.fields["from_account"] = forms.ModelChoiceField(
+            queryset=user.account_types.exclude(type=AccountType.Type.CASH)
         )
 
     def save(self):
