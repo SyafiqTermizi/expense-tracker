@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from django import forms
 
 from expense.accounts.forms import AccountActionForm
@@ -21,11 +22,18 @@ class AddExpenseForm(forms.Form):
 
         # Fields
         self.fields["category"] = forms.ModelChoiceField(
-            queryset=user.expense_categories.all()
+            queryset=user.expense_categories.all(),
+            required=False,
         )
         self.fields["from_account"] = forms.ModelChoiceField(
             queryset=user.account_types.all()
         )
+
+    def clean(self) -> Dict[str, Any]:
+        cleaned_data = super().clean()
+        if not cleaned_data.get("category") and not cleaned_data.get("description"):
+            raise forms.ValidationError("Either category or description is required")
+        return cleaned_data
 
     def save(self):
         from_account = self.cleaned_data["from_account"]

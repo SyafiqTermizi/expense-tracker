@@ -43,7 +43,7 @@
             {% endfor %}
 
             <label class="form-label" for="id_category">category:</label>
-            <select class="form-select {% if form.category.errors %}is-invalid{% endif %}" name="category" required id="id_category">
+            <select class="form-select {% if form.category.errors %}is-invalid{% endif %}" name="category" id="id_category">
                 {% for category in categories %}
                 <option
                     {% if category.pk == form.category.value|add:'0' %}selected{% endif %}
