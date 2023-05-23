@@ -13,6 +13,18 @@
             </div>
             {% endif %}
 
+            <label class="form-label" for="id_account_type">Account:</label>
+            <select class="form-select {% if form.account_type.errors %}is-invalid{% endif %}" name="account_type" required id="id_account_type">
+                {% for account in accounts %}
+                <option {% if account.pk == form.account_type.value|add:'0' %}selected{% endif %} value="{{ account.pk }}">
+                    {{ account.type.title }}
+                </option>
+                {% endfor %}
+            </select>
+            {% for error in form.account_type.errors %}
+            <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+
             <label class="form-label" for="id_amount">Amount:</label>
             <input class="form-control {% if form.amount.errors %}is-invalid{% endif %}" type="number" name="amount"
                 step="0.01" required id="id_amount" value="{{ form.amount.value }}">
@@ -24,18 +36,6 @@
             <input class="form-control" type="text" name="description" maxlength="255" required id="id_description"
                 value="{{ form.description.value|default:'' }}">
             {% for error in form.description.errors %}
-            <p class="text-danger">{{ error }}</p>
-            {% endfor %}
-
-            <label class="form-label" for="id_account_type">Account:</label>
-            <select class="form-select {% if form.account_type.errors %}is-invalid{% endif %}" name="account_type" required id="id_account_type">
-                {% for account in accounts %}
-                <option {% if account.pk == form.account_type.value|add:'0' %}selected{% endif %} value="{{ account.pk }}">
-                    {{ account.type.title }}
-                </option>
-                {% endfor %}
-            </select>
-            {% for error in form.account_type.errors %}
             <p class="text-danger">{{ error }}</p>
             {% endfor %}
 
