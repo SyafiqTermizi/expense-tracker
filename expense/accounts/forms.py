@@ -74,7 +74,7 @@ class AccountTransferForm(forms.Form):
             queryset=user.account_types.exclude(type=AccountType.Type.CASH)
         )
         self.fields["to_account"] = forms.ModelChoiceField(
-            queryset=user.account_types.exclude(type=AccountType.Type.CASH)
+            queryset=user.account_types.all()
         )
 
     def clean(self) -> Dict[str, Any]:
