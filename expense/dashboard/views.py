@@ -1,6 +1,9 @@
+from datetime import timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 
 from expense.accounts.models import Account, AccountAction
 
@@ -18,9 +21,14 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     ):
         account_balance[balance["action__account_type__type"]] = balance["amount"]
 
-    activities = AccountAction.objects.filter(belongs_to=request.user).order_by(
-        "-created_at"
-    )[:30]
+    activities = (
+        AccountAction.objects.filter(
+            belongs_to=request.user,
+            created_at__gte=(timezone.now() - timedelta(days=7)),
+        )
+        .order_by("-created_at")
+        .select_related("expense")
+    )
 
     return render(
         request,

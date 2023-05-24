@@ -30,10 +30,10 @@ class Expense(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True)
-    from_action = models.ForeignKey(
+    from_action = models.OneToOneField(
         AccountAction,
         on_delete=models.CASCADE,
-        related_name="expenses",
+        related_name="expense",
     )
     belongs_to = models.ForeignKey(
         User,
