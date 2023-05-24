@@ -15,7 +15,7 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
 
         if form.is_valid():
             form.save()
-            return redirect("accounts:dashboard_view")
+            return redirect("dashboard:index")
         else:
             return render(
                 request,

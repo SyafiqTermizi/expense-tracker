@@ -42,6 +42,7 @@ LOCAL_APPS = [
     "expense.users",
     "expense.accounts",
     "expense.expenses",
+    "expense.dashboard",
 ]
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 

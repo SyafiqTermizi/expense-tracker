@@ -39,7 +39,7 @@ def transfer_view(request: HttpRequest) -> HttpResponse:
 
         if form.is_valid():
             form.save()
-            return redirect("accounts:dashboard_view")
+            return redirect("dashboard:index")
         else:
             return render(
                 request,
@@ -72,7 +72,7 @@ def add_view(request: HttpRequest) -> HttpResponse:
 
         if form.is_valid():
             form.save(commit=True)
-            return redirect("accounts:dashboard_view")
+            return redirect("dashboard:index")
         else:
             return render(
                 request,
@@ -97,7 +97,7 @@ def withdraw_view(request: HttpRequest) -> HttpResponse:
         form = WithdrawForm(user=request.user, data=request.POST)
         if form.is_valid():
             form.save()
-            return redirect("accounts:dashboard_view")
+            return redirect("dashboard:index")
         else:
             return render(
                 request,

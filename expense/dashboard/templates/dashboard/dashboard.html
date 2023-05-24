@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row mt-5">
-    {% for account_name, account_amount in accounts.items %}
+    {% for account_name, account_amount in balance.items %}
     <div class="col-4">
         <div class="card">
             <div class="card-body">
@@ -27,16 +27,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for action in actions %}
+                        {% for activity in activities %}
                         <tr>
-                            <td scope="row">{{ action.description }}</td>
-                            {% if action.action == "DEBIT" %}
-                            <td class="text-danger">-&nbsp;{{ action.amount }}</td>
+                            <td scope="row">{{ activity.description }}</td>
+                            {% if activity.action == "DEBIT" %}
+                            <td class="text-danger">-&nbsp;{{ activity.amount }}</td>
                             {% else %}
-                            <td class="text-success">&nbsp;{{ action.amount }}</td>
+                            <td class="text-success">&nbsp;{{ activity.amount }}</td>
                             {% endif %}
-                            <td>{{ action.account_type }}</td>
-                            <td>{{ action.created_at }}</td>
+                            <td>{{ activity.account_type }}</td>
+                            <td>{{ activity.created_at }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
