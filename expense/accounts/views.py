@@ -14,7 +14,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         .distinct("action__account_type__type")
         .values("amount", "action__account_type__type")
     ):
-        accounts[balance["action__account_type__type"].title()] = balance["amount"]
+        accounts[balance["action__account_type__type"]] = balance["amount"]
 
     actions = AccountAction.objects.filter(belongs_to=request.user).order_by(
         "-created_at"
