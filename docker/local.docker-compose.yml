@@ -7,6 +7,10 @@ services:
     env_file:
       - ./postgres/.env
 
+  expense_cache:
+    container_name: expense_cache
+    image: redis:7-alpine
+
   expense_be:
     container_name: expense_be
     build:

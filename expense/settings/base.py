@@ -100,6 +100,17 @@ DATABASES = {
     }
 }
 
+# Cache
+# https://docs.djangoproject.com/en/4.2/topics/cache/#setting-up-the-cache
+CACHE = {
+    "default": {
+        "BACKEND": " django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"redis://{os.environ['REDIS_HOST']}:6379",
+    }
+}
+
+# Session
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
