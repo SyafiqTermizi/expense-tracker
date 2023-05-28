@@ -28,7 +28,7 @@ class AccountType(models.Model):
     )
 
     def __str__(self):
-        return self.description
+        return self.type.title()
 
 
 class AccountAction(models.Model):

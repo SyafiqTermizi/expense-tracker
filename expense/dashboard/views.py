@@ -7,6 +7,8 @@ from django.utils import timezone
 
 from expense.accounts.models import Account, AccountAction
 
+from .serializers import AccountActionAndExpenseSerializer
+
 
 @login_required
 def dashboard_view(request: HttpRequest) -> HttpResponse:
@@ -21,20 +23,19 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     ):
         account_balance[balance["action__account_type__type"]] = balance["amount"]
 
-    activities = (
-        AccountAction.objects.filter(
-            belongs_to=request.user,
-            created_at__gte=(timezone.now() - timedelta(days=7)),
-        )
-        .order_by("-created_at")
-        .select_related("expense")
-    )
-
     return render(
         request,
         "dashboard/dashboard.html",
         context={
             "balance": account_balance,
-            "activities": activities,
+            "activities": AccountActionAndExpenseSerializer(
+                AccountAction.objects.filter(
+                    belongs_to=request.user,
+                    created_at__gte=(timezone.now() - timedelta(days=30)),
+                )
+                .order_by("-created_at")
+                .select_related("expense"),
+                many=True,
+            ).data,
         },
     )

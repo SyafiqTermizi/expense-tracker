@@ -17,30 +17,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Description</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Account</th>
-                            <th scope="col">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for activity in activities %}
-                        <tr>
-                            <td scope="row">{{ activity.description }}</td>
-                            {% if activity.action == "DEBIT" %}
-                            <td class="text-danger">-&nbsp;{{ activity.amount }}</td>
-                            {% else %}
-                            <td class="text-success">&nbsp;{{ activity.amount }}</td>
-                            {% endif %}
-                            <td>{{ activity.account_type }}</td>
-                            <td>{{ activity.created_at }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                {{ activities|json_script:"hello-data" }}
             </div>
         </div>
     </div>
