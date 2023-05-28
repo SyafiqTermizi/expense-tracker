@@ -23,5 +23,6 @@ services:
       - ./expense/.env
     depends_on:
       - expense_db
+      - expense_cache
     ports:
       - 8000:8000
