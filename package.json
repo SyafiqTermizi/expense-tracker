@@ -12,10 +12,16 @@
   "devDependencies": {
     "bootstrap": "^5.2.3",
     "css-loader": "^6.7.3",
+    "i": "^0.3.7",
     "mini-css-extract-plugin": "^2.7.5",
+    "npm": "^9.6.7",
     "postcss-loader": "^7.3.0",
     "sass": "^1.62.1",
     "sass-loader": "^13.2.2",
+    "svelte": "^3.59.1",
+    "svelte-loader": "^3.1.8",
+    "svelte-preprocess": "^5.0.4",
+    "typescript": "^5.0.4",
     "webpack": "^5.82.1",
     "webpack-cli": "^5.1.1"
   }
