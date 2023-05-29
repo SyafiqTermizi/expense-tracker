@@ -16,6 +16,7 @@ djangorestframework = "^3.14.0"
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
 django-debug-toolbar = "^4.1.0"
+ipython = "^8.13.2"
 
 [build-system]
 requires = ["poetry-core"]
