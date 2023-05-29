@@ -7,7 +7,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     context: __dirname,
     entry: {
-        style: "./expense_fe/js/style.js"
+        style: "./expense_fe/js/style.js",
+        recentActivities: "./expense_fe/ts/dashboard/index.ts",
     },
     resolve: {
         alias: {

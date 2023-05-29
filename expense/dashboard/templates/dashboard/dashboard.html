@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <div class="row mt-3">
@@ -13,13 +14,10 @@
     </div>
     {% endfor %}
 </div>
-<div class="row mt-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                {{ activities|json_script:"hello-data" }}
-            </div>
-        </div>
-    </div>
-</div>
+
+<div id="activityFilter" class="row mt-5"></div>
+<div id="activityList" class="row mt-2"></div>
+
+{{ activities|json_script:"activities-data" }}
+<script src="{% static 'recentActivities.js' %}"></script>
 {% endblock content %}
