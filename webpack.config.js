@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     context: __dirname,
     entry: {
-        style: "./expense_fe/js/style.js",
+        style: "./expense_fe/js/style.js"
     },
     resolve: {
         alias: {
@@ -59,6 +59,11 @@ module.exports = {
                         })
                     }
                 }
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
             },
             {
                 test: /node_modules\/svelte\/.*\.mjs$/,
