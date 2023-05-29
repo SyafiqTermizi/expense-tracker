@@ -78,10 +78,21 @@ class AccountTransferForm(forms.Form):
         )
 
     def clean(self) -> Dict[str, Any]:
-        fields = super().clean()
-        if fields.get("from_account") == fields.get("to_account"):
+        cleaned_data = super().clean()
+        from_account = cleaned_data.get("from_account")
+
+        if from_account == cleaned_data.get("to_account"):
             raise forms.ValidationError("Transfer to same account is not allowed")
-        return fields
+
+        available_balance = (
+            Account.objects.filter(action__account_type=from_account).latest().amount
+        )
+
+        if available_balance < cleaned_data.get("amount"):
+            raise forms.ValidationError(
+                f"You don't have enough balance in {str(from_account)} account"
+            )
+        return cleaned_data
 
     def save(self):
         from_account = self.cleaned_data["from_account"]
@@ -130,6 +141,19 @@ class WithdrawForm(forms.Form):
         self.fields["from_account"] = forms.ModelChoiceField(
             queryset=user.account_types.exclude(type=AccountType.Type.CASH)
         )
+
+    def clean(self) -> Dict[str, Any]:
+        cleaned_data = super().clean()
+        from_account = cleaned_data.get("from_account")
+
+        available_balance = (
+            Account.objects.filter(action__account_type=from_account).latest().amount
+        )
+
+        if available_balance < cleaned_data.get("amount"):
+            raise forms.ValidationError(
+                f"You don't have enough balance in {str(from_account)} account"
+            )
 
     def save(self):
         from_account = self.cleaned_data["from_account"]

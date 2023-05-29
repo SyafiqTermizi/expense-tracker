@@ -2,7 +2,7 @@ from typing import Any, Dict
 from django import forms
 
 from expense.accounts.forms import AccountActionForm
-from expense.accounts.models import AccountAction
+from expense.accounts.models import AccountAction, Account
 from expense.users.models import User
 
 from .models import Expense
@@ -31,8 +31,20 @@ class AddExpenseForm(forms.Form):
 
     def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
+        from_account = cleaned_data.get("from_account")
+
         if not cleaned_data.get("category") and not cleaned_data.get("description"):
             raise forms.ValidationError("Either category or description is required")
+
+        available_balance = (
+            Account.objects.filter(action__account_type=from_account).latest().amount
+        )
+
+        if available_balance < cleaned_data.get("amount"):
+            raise forms.ValidationError(
+                f"You don't have enough balance in {str(from_account)} account"
+            )
+
         return cleaned_data
 
     def save(self):
