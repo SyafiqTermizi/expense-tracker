@@ -41,7 +41,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
             lambda acc_act: {
                 "expense": hasattr(acc_act, "expense"),
                 "account_type": str(acc_act.account_type),
-                "created_at": acc_act.created_at.strftime("%d-%m-%Y"),
+                "created_at": acc_act.created_at.strftime("%d/%m/%Y"),
                 "description": acc_act.description,
                 "amount": acc_act.amount,
                 "action": acc_act.action,

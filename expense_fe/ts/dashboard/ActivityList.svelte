@@ -4,11 +4,14 @@
 
     export let activities: AccountActivity[] = [];
     let filteredActivities: AccountActivity[];
+    let cardTitle: string;
 
     const unsubscribe = showAll.subscribe((value) => {
         if (value) {
             filteredActivities = activities;
+            cardTitle = "Recent account activities";
         } else {
+            cardTitle = "Recent expenses";
             filteredActivities = activities.filter(
                 (activity) => activity.expense
             );
@@ -20,8 +23,11 @@
 
 <div class="col-12">
     <div class="card">
+        <div class="card-header">
+            <h6 class="card-title ms-2 my-2">{cardTitle}</h6>
+        </div>
         <div class="card-body">
-            <table class="table table-striped">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th scope="col">Description</th>
