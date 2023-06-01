@@ -3,22 +3,11 @@
 
 {% block content %}
     {% if activities %}
-        <div class="row mt-3">
-            {% for account_name, account_amount in balance.items %}
-            <div class="col-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title">{{ account_name|title }}</div>
-                        <p class="card-text">{{ account_amount }}</p>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
+        <div id="accountBalance" class="row mt-2"></div>
         <div id="activityFilter" class="row mt-5"></div>
         <div id="activityList" class="row mt-2"></div>
 
+        {{ balance|json_script:"balance-data" }}
         {{ activities|json_script:"activities-data" }}
         <script src="{% static 'recentActivities.js' %}"></script>
     {% else %}

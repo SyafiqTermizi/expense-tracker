@@ -14,3 +14,7 @@ interface AccountActivity {
     amount: number;
     action: string;
 }
+
+interface AccountBalance {
+    [key: string]: number;
+}
