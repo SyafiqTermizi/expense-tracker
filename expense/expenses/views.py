@@ -7,7 +7,7 @@ from .forms import AddExpenseForm
 
 @login_required
 def add_expense_view(request: HttpRequest) -> HttpResponse:
-    user_accounts = request.user.account_types.all()
+    user_accounts = request.user.accounts.all()
     expense_categories = request.user.expense_categories.all()
 
     if request.method == "POST":

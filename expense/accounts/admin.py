@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .forms import AccountActionForm
-from .models import Account, AccountAction
+from .models import AccountBalance, AccountAction
 
 
 @admin.register(AccountAction)
@@ -17,6 +17,6 @@ class AccountAction(admin.ModelAdmin):
     form = AccountActionForm
 
 
-@admin.register(Account)
-class AccountAdmin(admin.ModelAdmin):
-    list_display = ["amount", "belongs_to", "type"]
+@admin.register(AccountBalance)
+class AccountBalanceAdmin(admin.ModelAdmin):
+    list_display = ["amount", "belongs_to", "account"]

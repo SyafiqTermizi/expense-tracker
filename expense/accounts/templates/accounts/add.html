@@ -20,15 +20,15 @@
                 </div>
                 {% endif %}
     
-                <label class="form-label" for="id_account_type">Account:</label>
-                <select class="form-select {% if form.account_type.errors %}is-invalid{% endif %}" name="account_type" required id="id_account_type">
+                <label class="form-label" for="id_account">Account:</label>
+                <select class="form-select {% if form.account.errors %}is-invalid{% endif %}" name="account" required id="id_account">
                     {% for account in accounts %}
-                    <option {% if account.pk == form.account_type.value|add:'0' %}selected{% endif %} value="{{ account.pk }}">
-                        {{ account.type.title }}
+                    <option {% if account.pk == form.account.value|add:'0' %}selected{% endif %} value="{{ account.pk }}">
+                        {{ account.name }}
                     </option>
                     {% endfor %}
                 </select>
-                {% for error in form.account_type.errors %}
+                {% for error in form.account.errors %}
                 <p class="text-danger">{{ error }}</p>
                 {% endfor %}
     

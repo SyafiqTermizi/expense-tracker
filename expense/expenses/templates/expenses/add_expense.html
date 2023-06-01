@@ -27,7 +27,7 @@
                         {% if account.pk == form.from_account.value|add:'0' %}selected{% endif %}
                         value="{{ account.pk }}"
                     >
-                        {{ account.type.title }}
+                        {{ account.name }}
                     </option>
                     {% endfor %}
                 </select>

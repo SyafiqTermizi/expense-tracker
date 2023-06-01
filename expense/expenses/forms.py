@@ -2,7 +2,7 @@ from typing import Any, Dict
 from django import forms
 
 from expense.accounts.forms import AccountActionForm
-from expense.accounts.models import AccountAction, Account
+from expense.accounts.models import AccountAction, AccountBalance
 from expense.users.models import User
 
 from .models import Expense
@@ -26,7 +26,7 @@ class AddExpenseForm(forms.Form):
             required=False,
         )
         self.fields["from_account"] = forms.ModelChoiceField(
-            queryset=user.account_types.all()
+            queryset=user.accounts.all()
         )
 
     def clean(self) -> Dict[str, Any]:
@@ -36,9 +36,14 @@ class AddExpenseForm(forms.Form):
         if not cleaned_data.get("category") and not cleaned_data.get("description"):
             raise forms.ValidationError("Either category or description is required")
 
-        available_balance = (
-            Account.objects.filter(action__account_type=from_account).latest().amount
-        )
+        try:
+            available_balance = (
+                AccountBalance.objects.filter(action__account=from_account)
+                .latest()
+                .amount
+            )
+        except AccountBalance.DoesNotExist:
+            available_balance = 0
 
         if available_balance < cleaned_data.get("amount"):
             raise forms.ValidationError(
@@ -48,7 +53,6 @@ class AddExpenseForm(forms.Form):
         return cleaned_data
 
     def save(self):
-        from_account = self.cleaned_data["from_account"]
         description = self.cleaned_data["description"]
         category = self.cleaned_data["category"]
         amount = self.cleaned_data["amount"]
@@ -61,7 +65,7 @@ class AddExpenseForm(forms.Form):
                 "description": description,
                 "action": AccountAction.Action.DEBIT,
                 "amount": amount,
-                "account_type": from_account,
+                "account": self.cleaned_data["from_account"],
                 "belongs_to": self.user,
             }
         ).save(commit=True)

@@ -21,6 +21,10 @@ class Category(models.Model):
 
 
 class Expense(models.Model):
+    """
+    This model tracks what the expense is for and its category.
+    """
+
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(
         Category,

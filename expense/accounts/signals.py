@@ -1,15 +1,15 @@
 def create_account_for_newly_created_user(sender, instance, created, **kwargs):
     if created:
-        from .models import AccountType
+        from .models import Account
 
-        account_types = []
-        for account_type in ["INCOME", "SAVING", "CASH"]:
-            account_types.append(
-                AccountType(
-                    type=account_type,
-                    description=f"{account_type.title()} account",
+        accounts = []
+        for account_name in ["Income", "Saving", "Cash"]:
+            accounts.append(
+                Account(
+                    name=account_name,
+                    description=f"{account_name} account",
                     belongs_to=instance,
                 )
             )
 
-        AccountType.objects.bulk_create(account_types)
+        Account.objects.bulk_create(accounts)

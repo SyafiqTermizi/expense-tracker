@@ -8,7 +8,7 @@ interface Expense {
 
 interface AccountActivity {
     expense?: Expense;
-    account_type: string;
+    account: string;
     created_at: string;
     description: string;
     amount: number;

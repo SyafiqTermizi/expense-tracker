@@ -5,7 +5,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 
-from expense.accounts.models import Account, AccountAction
+from expense.accounts.models import AccountBalance, AccountAction
 
 
 @login_required
@@ -17,14 +17,14 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     # 1. Get account balance
     account_balance = {}
     for balance in (
-        Account.objects.order_by(
-            "action__account_type__type",
+        AccountBalance.objects.order_by(
+            "action__account__name",
             "-created_at",
         )
-        .distinct("action__account_type__type")
-        .values("amount", "action__account_type__type")
+        .distinct("action__account__name")
+        .values("amount", "action__account__name")
     ):
-        account_balance[balance["action__account_type__type"]] = balance["amount"]
+        account_balance[balance["action__account__name"]] = balance["amount"]
 
     # 2. Get account activities
     account_actions = (
@@ -33,14 +33,14 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
             created_at__gte=(timezone.now() - timedelta(days=30)),
         )
         .order_by("-created_at")
-        .select_related("expense", "account_type")
+        .select_related("expense", "account")
     )
 
     activities = list(
         map(
             lambda acc_act: {
                 "expense": hasattr(acc_act, "expense"),
-                "account_type": str(acc_act.account_type),
+                "account": str(acc_act.account),
                 "created_at": acc_act.created_at.strftime("%d/%m/%Y"),
                 "description": acc_act.description,
                 "amount": acc_act.amount,

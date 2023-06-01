@@ -3,7 +3,7 @@ from typing import Any, Dict
 from django import forms
 from expense.users.models import User
 
-from .models import AccountAction, Account, AccountType
+from .models import AccountAction, AccountBalance
 
 
 class AccountActionForm(forms.ModelForm):
@@ -17,7 +17,7 @@ class AccountActionForm(forms.ModelForm):
             "description",
             "action",
             "amount",
-            "account_type",
+            "account",
             "belongs_to",
         ]
 
@@ -38,17 +38,17 @@ class AccountActionForm(forms.ModelForm):
 
         try:
             last_amount = (
-                Account.objects.filter(
+                AccountBalance.objects.filter(
                     belongs_to=account_action.belongs_to,
-                    action__account_type=account_action.account_type,
+                    action__account=account_action.account,
                 )
                 .latest("created_at")
                 .amount
             )
-        except Account.DoesNotExist:
+        except AccountBalance.DoesNotExist:
             last_amount = 0
 
-        Account.objects.create(
+        AccountBalance.objects.create(
             amount=(last_amount + new_amount),
             action=account_action,
             belongs_to=account_action.belongs_to,
@@ -59,7 +59,7 @@ class AccountActionForm(forms.ModelForm):
 
 class AccountTransferForm(forms.Form):
     """
-    Transfer money from one account to another, excluding cash account
+    Transfer money from one account to another
     """
 
     amount = forms.DecimalField(max_digits=10, decimal_places=2)
@@ -71,10 +71,10 @@ class AccountTransferForm(forms.Form):
 
         # Fields
         self.fields["from_account"] = forms.ModelChoiceField(
-            queryset=user.account_types.exclude(type=AccountType.Type.CASH)
+            queryset=user.accounts.all()
         )
         self.fields["to_account"] = forms.ModelChoiceField(
-            queryset=user.account_types.all()
+            queryset=user.accounts.all(),
         )
 
     def clean(self) -> Dict[str, Any]:
@@ -84,9 +84,14 @@ class AccountTransferForm(forms.Form):
         if from_account == cleaned_data.get("to_account"):
             raise forms.ValidationError("Transfer to same account is not allowed")
 
-        available_balance = (
-            Account.objects.filter(action__account_type=from_account).latest().amount
-        )
+        try:
+            available_balance = (
+                AccountBalance.objects.filter(action__account=from_account)
+                .latest()
+                .amount
+            )
+        except AccountBalance.DoesNotExist:
+            available_balance = 0
 
         if available_balance < cleaned_data.get("amount"):
             raise forms.ValidationError(
@@ -100,7 +105,7 @@ class AccountTransferForm(forms.Form):
         description = self.cleaned_data["description"]
 
         if not description:
-            description = f"Transfer from {from_account.type} to {to_account.type}"
+            description = f"Transfer from {str(from_account)} to {str(to_account)}"
 
         amount = self.cleaned_data["amount"]
 
@@ -109,7 +114,7 @@ class AccountTransferForm(forms.Form):
                 "description": description,
                 "action": AccountAction.Action.DEBIT,
                 "amount": amount,
-                "account_type": from_account,
+                "account": from_account,
                 "belongs_to": self.user,
             }
         ).save(commit=True)
@@ -119,67 +124,7 @@ class AccountTransferForm(forms.Form):
                 "description": description,
                 "action": AccountAction.Action.CREDIT,
                 "amount": amount,
-                "account_type": to_account,
-                "belongs_to": self.user,
-            }
-        ).save(commit=True)
-
-
-class WithdrawForm(forms.Form):
-    """
-    Transfer money from an account into the cash account
-    """
-
-    amount = forms.DecimalField(max_digits=10, decimal_places=2)
-    description = forms.CharField(max_length=255, required=False)
-
-    def __init__(self, user: User, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.user = user
-
-        # Fields
-        self.fields["from_account"] = forms.ModelChoiceField(
-            queryset=user.account_types.exclude(type=AccountType.Type.CASH)
-        )
-
-    def clean(self) -> Dict[str, Any]:
-        cleaned_data = super().clean()
-        from_account = cleaned_data.get("from_account")
-
-        available_balance = (
-            Account.objects.filter(action__account_type=from_account).latest().amount
-        )
-
-        if available_balance < cleaned_data.get("amount"):
-            raise forms.ValidationError(
-                f"You don't have enough balance in {str(from_account)} account"
-            )
-
-    def save(self):
-        from_account = self.cleaned_data["from_account"]
-        description = self.cleaned_data["description"]
-
-        if not description:
-            description = f"Withdrawal from {from_account.type}"
-
-        amount = self.cleaned_data["amount"]
-
-        AccountActionForm(
-            data={
-                "description": description,
-                "action": AccountAction.Action.DEBIT,
-                "amount": amount,
-                "account_type": from_account,
-                "belongs_to": self.user,
-            }
-        ).save(commit=True)
-
-        AccountActionForm(
-            data={
-                "description": description,
-                "action": AccountAction.Action.CREDIT,
-                "amount": amount,
-                "account_type": self.user.account_types.get(type=AccountType.Type.CASH),
+                "account": to_account,
                 "belongs_to": self.user,
             }
         ).save(commit=True)

@@ -22,13 +22,13 @@
                 <div class="row">
                     <div class="col">
                         <label class="form-label" for="id_from_account">From Account:</label>
-                        <select class="form-select {% if form.from_account.errors %}is-invalid{% endif %}" name="from_account" required="" id="id_from_account">
+                        <select class="form-select {% if form.from_account.errors %}is-invalid{% endif %}" name="from_account" required id="id_from_account">
                             {% for account in accounts %}
                             <option
                                 {% if account.pk == form.from_account.value|add:'0' %}selected{% endif %}
                                 value="{{ account.pk }}"
                             >
-                                {{ account.type.title }}
+                                {{ account.name }}
                             </option>
                             {% endfor %}
                         </select>
@@ -39,13 +39,13 @@
     
                     <div class="col">
                         <label class="form-label" for="id_to_account">To Account:</label>
-                        <select class="form-select {% if form.to_account.errors %}is-invalid{% endif %}" name="to_account" required="" id="id_to_account">
+                        <select class="form-select {% if form.to_account.errors %}is-invalid{% endif %}" name="to_account" required id="id_to_account">
                             {% for account in accounts %}
                             <option
                                 {% if account.pk == form.to_account.value|add:'0' %}selected{% endif %}
                                 value="{{ account.pk }}"
                             >
-                                {{ account.type.title }}
+                                {{ account.name }}
                             </option>
                             {% endfor %}
                         </select>

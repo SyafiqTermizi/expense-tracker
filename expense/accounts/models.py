@@ -4,31 +4,24 @@ from django.utils import timezone
 from expense.users.models import User
 
 
-class AccountType(models.Model):
+class Account(models.Model):
     """
-    Record the type of account that a user has
+    Record accounts that a user have
     """
 
-    class Type(models.TextChoices):
-        INCOME = "INCOME", "Income"
-        SAVING = "SAVING", "Saving"
-        CASH = "CASH", "Cash"
-        OTHER = "OTHER", "Other"
-
-    type = models.TextField(
-        choices=Type.choices,
-        default=Type.OTHER,
-        max_length=255,
-    )
+    name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     belongs_to = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="account_types",
+        related_name="accounts",
     )
 
+    class Meta:
+        unique_together = ("name", "belongs_to")
+
     def __str__(self):
-        return self.type.title()
+        return self.name.title()
 
 
 class AccountAction(models.Model):
@@ -47,8 +40,8 @@ class AccountAction(models.Model):
         default=Action.CREDIT,
         max_length=255,
     )
-    account_type = models.ForeignKey(
-        AccountType,
+    account = models.ForeignKey(
+        Account,
         on_delete=models.CASCADE,
         related_name="actions",
     )
@@ -66,7 +59,7 @@ class AccountAction(models.Model):
         get_latest_by = "created_at"
 
 
-class Account(models.Model):
+class AccountBalance(models.Model):
     """
     Record the current amount of a user's account
     """
@@ -83,5 +76,5 @@ class Account(models.Model):
         get_latest_by = "created_at"
 
     @property
-    def type(self):
-        return self.action.account_type.type
+    def account(self):
+        return self.action.account.name

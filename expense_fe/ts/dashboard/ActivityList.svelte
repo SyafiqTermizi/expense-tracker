@@ -45,7 +45,7 @@
                                     ? "text-danger"
                                     : "text-success"}>{activity.amount}</td
                             >
-                            <td>{activity.account_type}</td>
+                            <td>{activity.account}</td>
                             <td>{activity.created_at}</td>
                         </tr>
                     {/each}
