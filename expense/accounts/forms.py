@@ -1,7 +1,9 @@
 from typing import Any, Dict
 
 from django import forms
+
 from expense.users.models import User
+from expense.utils import BaseFromAccountForm
 
 from .models import AccountAction, AccountBalance
 
@@ -57,7 +59,7 @@ class AccountActionForm(forms.ModelForm):
         return account_action
 
 
-class AccountTransferForm(forms.Form):
+class AccountTransferForm(BaseFromAccountForm):
     """
     Transfer money from one account to another
     """
@@ -66,37 +68,18 @@ class AccountTransferForm(forms.Form):
     description = forms.CharField(max_length=255, required=False)
 
     def __init__(self, user: User, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.user = user
+        super().__init__(user, *args, **kwargs)
 
-        # Fields
-        self.fields["from_account"] = forms.ModelChoiceField(
-            queryset=user.accounts.all()
-        )
         self.fields["to_account"] = forms.ModelChoiceField(
             queryset=user.accounts.all(),
         )
 
     def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
-        from_account = cleaned_data.get("from_account")
 
-        if from_account == cleaned_data.get("to_account"):
+        if cleaned_data.get("from_account") == cleaned_data.get("to_account"):
             raise forms.ValidationError("Transfer to same account is not allowed")
 
-        try:
-            available_balance = (
-                AccountBalance.objects.filter(action__account=from_account)
-                .latest()
-                .amount
-            )
-        except AccountBalance.DoesNotExist:
-            available_balance = 0
-
-        if available_balance < cleaned_data.get("amount"):
-            raise forms.ValidationError(
-                f"You don't have enough balance in {str(from_account)} account"
-            )
         return cleaned_data
 
     def save(self):

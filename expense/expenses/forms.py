@@ -4,11 +4,12 @@ from django import forms
 from expense.accounts.forms import AccountActionForm
 from expense.accounts.models import AccountAction, AccountBalance
 from expense.users.models import User
+from expense.utils import BaseFromAccountForm
 
 from .models import Expense
 
 
-class AddExpenseForm(forms.Form):
+class AddExpenseForm(BaseFromAccountForm):
     """
     Deduct money from an account and Create a new expense instance
     """
@@ -17,38 +18,18 @@ class AddExpenseForm(forms.Form):
     description = forms.CharField(max_length=255, required=False)
 
     def __init__(self, user: User, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.user = user
+        super().__init__(user, *args, **kwargs)
 
         # Fields
-        self.fields["category"] = forms.ModelChoiceField(
-            queryset=user.expense_categories.all(),
-            required=False,
-        )
         self.fields["from_account"] = forms.ModelChoiceField(
             queryset=user.accounts.all()
         )
 
     def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
-        from_account = cleaned_data.get("from_account")
 
         if not cleaned_data.get("category") and not cleaned_data.get("description"):
             raise forms.ValidationError("Either category or description is required")
-
-        try:
-            available_balance = (
-                AccountBalance.objects.filter(action__account=from_account)
-                .latest()
-                .amount
-            )
-        except AccountBalance.DoesNotExist:
-            available_balance = 0
-
-        if available_balance < cleaned_data.get("amount"):
-            raise forms.ValidationError(
-                f"You don't have enough balance in {str(from_account)} account"
-            )
 
         return cleaned_data
 
