@@ -8,7 +8,8 @@ module.exports = {
     context: __dirname,
     entry: {
         style: "./expense_fe/js/style.js",
-        recentActivities: "./expense_fe/ts/dashboard/index.ts",
+        dashboard: "./expense_fe/ts/dashboard.ts",
+        detail: "./expense_fe/ts/detail.ts",
     },
     resolve: {
         alias: {

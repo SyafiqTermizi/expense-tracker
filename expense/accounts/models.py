@@ -32,6 +32,9 @@ class Account(models.Model):
     def __str__(self):
         return self.name.title()
 
+    def get_absolute_url(self):
+        pass
+
 
 class AccountAction(models.Model):
     """

@@ -1,6 +1,6 @@
-import ActivityFilter from "./ActivityFilter.svelte";
-import ActivityList from "./ActivityList.svelte";
-import AccountList from "./AccountList.svelte";
+import ActivityFilter from "./components/activities/ActivityFilter.svelte";
+import ActivityList from "./components/activities/ActivityList.svelte";
+import AccountList from "./components/accounts/AccountList.svelte";
 
 const recentActivities = JSON.parse(document.getElementById("activities-data")!.textContent || "{}");
 

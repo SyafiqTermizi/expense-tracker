@@ -1,34 +1,12 @@
+from datetime import timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
+from django.utils import timezone
 
 from .forms import AccountActionForm, AccountTransferForm
-from .models import AccountBalance, AccountAction
-
-
-@login_required
-def dashboard_view(request: HttpRequest) -> HttpResponse:
-    accounts = {}
-    for balance in (
-        AccountBalance.objects.filter(belongs_to=request.user)
-        .order_by("action__account__name", "-created_at")
-        .distinct("action__account__name")
-        .values("amount", "action__account__name")
-    ):
-        accounts[balance["action__account__name"]] = balance["amount"]
-
-    actions = AccountAction.objects.filter(belongs_to=request.user).order_by(
-        "-created_at"
-    )[:30]
-
-    return render(
-        request,
-        "accounts/dashboard.html",
-        context={
-            "accounts": accounts,
-            "actions": actions,
-        },
-    )
+from .models import AccountAction, Account
 
 
 @login_required
@@ -89,4 +67,45 @@ def add_view(request: HttpRequest) -> HttpResponse:
         request,
         "accounts/add.html",
         context={"accounts": user_accounts},
+    )
+
+
+@login_required
+def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
+    account = get_object_or_404(
+        Account.objects.filter(belongs_to=request.user),
+        slug=slug,
+    )
+
+    account_actions = (
+        AccountAction.objects.filter(
+            account=account,
+            belongs_to=request.user,
+            created_at__gte=(timezone.now() - timedelta(days=30)),
+        )
+        .order_by("-created_at")
+        .select_related("expense", "account")
+    )
+
+    activities = list(
+        map(
+            lambda acc_act: {
+                "expense": hasattr(acc_act, "expense"),
+                "account": str(acc_act.account),
+                "created_at": acc_act.created_at.strftime("%d/%m/%Y"),
+                "description": acc_act.description,
+                "amount": acc_act.amount,
+                "action": acc_act.action,
+            },
+            account_actions,
+        )
+    )
+
+    return render(
+        request,
+        "accounts/detail.html",
+        context={
+            "account": account,
+            "activities": activities,
+        },
     )

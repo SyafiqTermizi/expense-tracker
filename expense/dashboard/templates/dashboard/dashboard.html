@@ -9,7 +9,7 @@
 
         {{ balance|json_script:"balance-data" }}
         {{ activities|json_script:"activities-data" }}
-        <script src="{% static 'recentActivities.js' %}"></script>
+        <script src="{% static 'dashboard.js' %}"></script>
     {% else %}
         {% include "dashboard/empty_partial.html" %}
     {% endif %}
