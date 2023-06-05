@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 
 from expense.users.models import User
 
@@ -10,7 +9,8 @@ class Account(models.Model):
     """
 
     name = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255)
+    description = models.CharField(max_length=255, blank=True)
     belongs_to = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -18,7 +18,16 @@ class Account(models.Model):
     )
 
     class Meta:
-        unique_together = ("name", "belongs_to")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "belongs_to"],
+                name="unique_account",
+            ),
+            models.UniqueConstraint(
+                fields=["slug", "belongs_to"],
+                name="unique_slug",
+            ),
+        ]
 
     def __str__(self):
         return self.name.title()
