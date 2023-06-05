@@ -42,13 +42,14 @@ class AddExpenseForm(BaseFromAccountForm):
             description = f"{category.name} expenses"
 
         account_action = AccountActionForm(
+            user=self.user,
             data={
                 "description": description,
                 "action": AccountAction.Action.DEBIT,
                 "amount": amount,
                 "account": self.cleaned_data["from_account"],
                 "belongs_to": self.user,
-            }
+            },
         ).save(commit=True)
 
         return Expense.objects.create(

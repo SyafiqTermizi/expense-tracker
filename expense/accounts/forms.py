@@ -5,7 +5,7 @@ from django import forms
 from expense.users.models import User
 from expense.utils import BaseFromAccountForm
 
-from .models import AccountAction, AccountBalance, Account
+from .models import AccountAction, AccountBalance
 
 
 class AccountActionForm(forms.ModelForm):
@@ -13,10 +13,12 @@ class AccountActionForm(forms.ModelForm):
     This form will automatically create related Account instance on save
     """
 
-    account = forms.ModelChoiceField(
-        queryset=Account.objects.all(),
-        to_field_name="slug",
-    )
+    def __init__(self, user: User, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["account"] = forms.ModelChoiceField(
+            queryset=user.accounts.all(),
+            to_field_name="slug",
+        )
 
     class Meta:
         model = AccountAction
@@ -99,21 +101,23 @@ class AccountTransferForm(BaseFromAccountForm):
         amount = self.cleaned_data["amount"]
 
         AccountActionForm(
+            user=self.user,
             data={
                 "description": description,
                 "action": AccountAction.Action.DEBIT,
                 "amount": amount,
                 "account": from_account,
                 "belongs_to": self.user,
-            }
+            },
         ).save(commit=True)
 
         AccountActionForm(
+            user=self.user,
             data={
                 "description": description,
                 "action": AccountAction.Action.CREDIT,
                 "amount": amount,
                 "account": to_account,
                 "belongs_to": self.user,
-            }
+            },
         ).save(commit=True)

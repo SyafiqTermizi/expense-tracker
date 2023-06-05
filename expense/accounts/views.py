@@ -64,11 +64,12 @@ def add_view(request: HttpRequest) -> HttpResponse:
 
     if request.method == "POST":
         form = AccountActionForm(
+            user=request.user,
             data={
                 **request.POST.dict(),
                 "belongs_to": request.user,
                 "action": AccountAction.Action.CREDIT,
-            }
+            },
         )
 
         if form.is_valid():
