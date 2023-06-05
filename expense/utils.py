@@ -16,6 +16,7 @@ class BaseFromAccountForm(forms.Form):
 
         self.fields["from_account"] = forms.ModelChoiceField(
             queryset=user.accounts.all(),
+            to_field_name="slug",
         )
 
     def clean(self) -> Dict[str, Any]:

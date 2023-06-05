@@ -10,7 +10,8 @@ from .models import AccountBalance, AccountAction
 def dashboard_view(request: HttpRequest) -> HttpResponse:
     accounts = {}
     for balance in (
-        AccountBalance.objects.order_by("action__account__name", "-created_at")
+        AccountBalance.objects.filter(belongs_to=request.user)
+        .order_by("action__account__name", "-created_at")
         .distinct("action__account__name")
         .values("amount", "action__account__name")
     ):
@@ -32,7 +33,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def transfer_view(request: HttpRequest) -> HttpResponse:
-    user_accounts = request.user.accounts.all()
+    user_accounts = request.user.accounts.values("name", "slug")
 
     if request.method == "POST":
         form = AccountTransferForm(user=request.user, data=request.POST)
@@ -59,7 +60,7 @@ def transfer_view(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def add_view(request: HttpRequest) -> HttpResponse:
-    user_accounts = request.user.accounts.all()
+    user_accounts = request.user.accounts.values("name", "slug")
 
     if request.method == "POST":
         form = AccountActionForm(

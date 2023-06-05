@@ -21,8 +21,8 @@ class AddExpenseForm(BaseFromAccountForm):
         super().__init__(user, *args, **kwargs)
 
         # Fields
-        self.fields["from_account"] = forms.ModelChoiceField(
-            queryset=user.accounts.all()
+        self.fields["category"] = forms.ModelChoiceField(
+            queryset=user.expense_categories.all()
         )
 
     def clean(self) -> Dict[str, Any]:

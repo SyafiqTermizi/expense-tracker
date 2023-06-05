@@ -1,17 +1,22 @@
-from typing import Any, Dict
+from typing import Dict, Any
 
 from django import forms
 
 from expense.users.models import User
 from expense.utils import BaseFromAccountForm
 
-from .models import AccountAction, AccountBalance
+from .models import AccountAction, AccountBalance, Account
 
 
 class AccountActionForm(forms.ModelForm):
     """
     This form will automatically create related Account instance on save
     """
+
+    account = forms.ModelChoiceField(
+        queryset=Account.objects.all(),
+        to_field_name="slug",
+    )
 
     class Meta:
         model = AccountAction
@@ -72,6 +77,7 @@ class AccountTransferForm(BaseFromAccountForm):
 
         self.fields["to_account"] = forms.ModelChoiceField(
             queryset=user.accounts.all(),
+            to_field_name="slug",
         )
 
     def clean(self) -> Dict[str, Any]:
