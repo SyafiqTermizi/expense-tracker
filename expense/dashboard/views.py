@@ -32,11 +32,12 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
             }
         )
 
-    # 2. Get account activities
+    # 2. Get account activities for current month
     account_actions = (
         AccountAction.objects.filter(
             belongs_to=request.user,
-            created_at__gte=(timezone.now() - timedelta(days=30)),
+            created_at__month=timezone.now().month,
+            created_at__year=timezone.now().year,
         )
         .order_by("-created_at")
         .select_related("expense", "account")
