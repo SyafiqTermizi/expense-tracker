@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from expense.users.models import User
 
@@ -33,7 +34,7 @@ class Account(models.Model):
         return self.name.title()
 
     def get_absolute_url(self):
-        pass
+        return reverse("accounts:detail_view", kwargs={"slug": self.slug})
 
 
 class AccountAction(models.Model):

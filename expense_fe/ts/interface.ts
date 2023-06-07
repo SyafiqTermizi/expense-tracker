@@ -15,6 +15,8 @@ interface AccountActivity {
     action: string;
 }
 
-interface AccountBalance {
-    [key: string]: number;
+interface Account {
+    name: string;
+    balance: number;
+    url: string;
 }

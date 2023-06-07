@@ -7,7 +7,7 @@
         <div id="activityFilter" class="row mt-5"></div>
         <div id="activityList" class="row mt-2"></div>
 
-        {{ balance|json_script:"balance-data" }}
+        {{ accounts|json_script:"accounts-data" }}
         {{ activities|json_script:"activities-data" }}
         <script src="{% static 'dashboard.js' %}"></script>
     {% else %}

@@ -15,11 +15,9 @@ new ActivityList({
     }
 });
 
-const accountBalance = JSON.parse(document.getElementById("balance-data")!.textContent || "{}");
+const accounts = JSON.parse(document.getElementById("accounts-data")!.textContent || "{}");
 
 new AccountList({
     target: document.getElementById("accountBalance")!,
-    props: {
-        accountBalance: accountBalance,
-    }
+    props: { accounts }
 });

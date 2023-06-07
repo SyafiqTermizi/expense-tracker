@@ -15,16 +15,22 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     """
 
     # 1. Get account balance
-    account_balance = {}
+    accounts = []
     for balance in (
         AccountBalance.objects.order_by(
             "action__account__name",
             "-created_at",
         )
+        .select_related("action__account")
         .distinct("action__account__name")
-        .values("amount", "action__account__name")
     ):
-        account_balance[balance["action__account__name"]] = balance["amount"]
+        accounts.append(
+            {
+                "name": balance.action.account.name,
+                "balance": balance.amount,
+                "url": balance.action.account.get_absolute_url(),
+            }
+        )
 
     # 2. Get account activities
     account_actions = (
@@ -53,5 +59,5 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "dashboard/dashboard.html",
-        context={"balance": account_balance, "activities": activities},
+        context={"accounts": accounts, "activities": activities},
     )
