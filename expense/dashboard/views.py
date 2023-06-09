@@ -18,7 +18,8 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     # 1. Get account balance
     accounts = []
     for balance in (
-        AccountBalance.objects.order_by(
+        AccountBalance.objects.filter(belongs_to=request.user)
+        .order_by(
             "action__account__name",
             "-created_at",
         )
@@ -66,6 +67,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
                 "amount": expense["amount"],
             },
             Expense.objects.filter(
+                belongs_to=request.user,
                 created_at__month=timezone.now().month,
                 created_at__year=timezone.now().year,
             )

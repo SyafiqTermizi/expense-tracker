@@ -3,21 +3,24 @@
 
 {% block content %}
     {% if activities %}
-        <div class="row mt-5">
-            <div class="col-6">
-                <div id="accountBalance"></div>
-            </div>
-            <div class="col-6">
+        <div class="row mt-4">
+            <div class="col-md-6 col-sm-12 mt-2">
                 <div class="card">
                     <div class="card-body">
-                        <h1>Expenses</h1>
+                        <h6 class="card-title">
+                            {% now "F" %}'s Expense breakdown
+                        </h6>
                         <div id="chart"></div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-6 col-sm-12 mt-2">
+                <h6>Balance</h6>
+                <div class="row" id="accountBalance"></div>
+            </div>
         </div>
         <div id="activityFilter" class="row mt-5"></div>
-        <div id="activityList" class="row mt-2"></div>
+        <div id="activityList" class="row mt-2 mb-5"></div>
 
         {{ accounts|json_script:"accounts-data" }}
         {{ activities|json_script:"activities-data" }}

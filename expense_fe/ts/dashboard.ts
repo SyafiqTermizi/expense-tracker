@@ -33,6 +33,9 @@ var options = {
     },
     series: expenseData.map(expense => parseFloat(expense["amount"])),
     labels: expenseData.map(expense => expense["category"]),
+    legend: {
+        position: 'bottom'
+    },
 }
 
 const chart = new Chart(document.getElementById("chart"), options);
