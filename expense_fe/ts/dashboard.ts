@@ -21,3 +21,19 @@ new AccountList({
     target: document.getElementById("accountBalance")!,
     props: { accounts }
 });
+
+import Chart from "apexcharts";
+
+const expenseData: Expense[] = JSON.parse(document.getElementById("expenses-data")!.textContent)
+
+
+var options = {
+    chart: {
+        type: 'donut'
+    },
+    series: expenseData.map(expense => parseFloat(expense["amount"])),
+    labels: expenseData.map(expense => expense["category"]),
+}
+
+const chart = new Chart(document.getElementById("chart"), options);
+chart.render();

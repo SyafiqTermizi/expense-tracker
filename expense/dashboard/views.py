@@ -1,4 +1,4 @@
-from datetime import timedelta
+from django.db.models import Sum
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.utils import timezone
 
 from expense.accounts.models import AccountBalance, AccountAction
+from expense.expenses.models import Expense
 
 
 @login_required
@@ -57,8 +58,28 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         )
     )
 
+    # 3. Get expenses for current month
+    expenses = list(
+        map(
+            lambda expense: {
+                "category": expense["category__name"],
+                "amount": expense["amount"],
+            },
+            Expense.objects.filter(
+                created_at__month=timezone.now().month,
+                created_at__year=timezone.now().year,
+            )
+            .values("category__name")
+            .annotate(amount=Sum("amount")),
+        )
+    )
+
     return render(
         request,
         "dashboard/dashboard.html",
-        context={"accounts": accounts, "activities": activities},
+        context={
+            "accounts": accounts,
+            "activities": activities,
+            "expenses": expenses,
+        },
     )

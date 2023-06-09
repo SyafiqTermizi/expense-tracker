@@ -6,12 +6,15 @@
     let filteredActivities: AccountActivity[];
     let cardTitle: string;
 
+    const date = new Date(2009, 10, 10); // 2009-11-10
+    const month = date.toLocaleString("default", { month: "long" });
+
     const unsubscribe = showAll.subscribe((value) => {
         if (value) {
             filteredActivities = activities;
-            cardTitle = "Recent account activities";
+            cardTitle = `Showing transactions for ${month}`;
         } else {
-            cardTitle = "Recent expenses";
+            cardTitle = `Showing expenses for ${month}`;
             filteredActivities = activities.filter(
                 (activity) => activity.expense
             );

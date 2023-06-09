@@ -3,12 +3,25 @@
 
 {% block content %}
     {% if activities %}
-        <div id="accountBalance" class="row mt-2"></div>
+        <div class="row mt-5">
+            <div class="col-6">
+                <div id="accountBalance"></div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h1>Expenses</h1>
+                        <div id="chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="activityFilter" class="row mt-5"></div>
         <div id="activityList" class="row mt-2"></div>
 
         {{ accounts|json_script:"accounts-data" }}
         {{ activities|json_script:"activities-data" }}
+        {{ expenses|json_script:"expenses-data" }}
         <script src="{% static 'dashboard.js' %}"></script>
     {% else %}
         {% include "dashboard/empty_partial.html" %}
