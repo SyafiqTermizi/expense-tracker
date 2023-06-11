@@ -4,9 +4,15 @@
 {% block content %}
 <div class="row mt-4">
     <h3>{{ account.name|title }}</h3>
+    {% if account.description %}
     <p class="text-secondary">
-        {{ account.name|title }} detail
+        {{ account.description|title }} detail
     </p>
+    {% else %}
+    <p class="text-secondary">
+        {{ account.name|title }}
+    </p>
+    {% endif %}
 </div>
 
 <div id="activityFilter" class="row mt-3"></div>
