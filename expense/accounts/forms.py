@@ -1,11 +1,14 @@
-from typing import Dict, Any
+from typing import Dict, Any, Mapping, Optional, Type, Union
 
 from django import forms
+from django.core.files.base import File
+from django.db.models.base import Model
+from django.forms.utils import ErrorList
 
 from expense.users.models import User
 from expense.utils import BaseFromAccountForm
 
-from .models import AccountAction, AccountBalance
+from .models import AccountAction, AccountBalance, Account
 
 
 class AccountActionForm(forms.ModelForm):
@@ -121,3 +124,9 @@ class AccountTransferForm(BaseFromAccountForm):
                 "belongs_to": self.user,
             },
         ).save(commit=True)
+
+
+class AccountForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = ["name", "description"]

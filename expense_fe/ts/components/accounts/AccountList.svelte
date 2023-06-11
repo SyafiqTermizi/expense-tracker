@@ -16,7 +16,7 @@
 <div class="mb-3 col-6">
     <div class="card py-2" style="background: none; border-style: dashed">
         <div class="card-body text-center">
-            <a class="card-link" href="/">
+            <a class="card-link" href="/accounts/create">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="icon icon-tabler icon-tabler-plus"
