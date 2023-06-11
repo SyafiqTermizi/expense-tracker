@@ -73,7 +73,7 @@ def add_view(request: HttpRequest) -> HttpResponse:
 @login_required
 def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
     account = get_object_or_404(
-        Account.objects.filter(belongs_to=request.user),
+        request.user.accounts.all(),
         slug=slug,
     )
 
@@ -126,3 +126,20 @@ def create_account_view(request: HttpRequest) -> HttpResponse:
                 context={"form": form},
             )
     return render(request, "accounts/create.html")
+
+
+def delete_account_view(request: HttpRequest, slug: str) -> HttpResponse:
+    account = get_object_or_404(
+        request.user.accounts.all(),
+        slug=slug,
+    )
+
+    if request.method == "POST":
+        account.delete()
+        return redirect("dashboard:index")
+
+    return render(
+        request,
+        "accounts/delete.html",
+        context={"account": account},
+    )
