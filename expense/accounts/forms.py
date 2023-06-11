@@ -1,9 +1,7 @@
-from typing import Dict, Any, Mapping, Optional, Type, Union
+from typing import Dict, Any
 
 from django import forms
-from django.core.files.base import File
-from django.db.models.base import Model
-from django.forms.utils import ErrorList
+from django.utils.text import slugify
 
 from expense.users.models import User
 from expense.utils import BaseFromAccountForm
@@ -127,6 +125,32 @@ class AccountTransferForm(BaseFromAccountForm):
 
 
 class AccountForm(forms.ModelForm):
+    initial_balance = forms.DecimalField(required=False)
+
+    def __init__(self, user: User, *args, **kwargs) -> None:
+        self.user = user
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = Account
         fields = ["name", "description"]
+
+    def save(self) -> Any:
+        account = super().save(commit=False)
+        account.belongs_to = self.user
+        account.slug = slugify(account.name)
+        account.save()
+
+        if amount := self.cleaned_data["initial_balance"]:
+            AccountActionForm(
+                user=self.user,
+                data={
+                    "description": f"{account.name.title()} initial balance",
+                    "action": AccountAction.Action.CREDIT,
+                    "amount": amount,
+                    "account": account,
+                    "belongs_to": self.user,
+                },
+            ).save(commit=True)
+
+        return account

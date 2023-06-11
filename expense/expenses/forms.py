@@ -2,7 +2,7 @@ from typing import Any, Dict
 from django import forms
 
 from expense.accounts.forms import AccountActionForm
-from expense.accounts.models import AccountAction, AccountBalance
+from expense.accounts.models import AccountAction
 from expense.users.models import User
 from expense.utils import BaseFromAccountForm
 

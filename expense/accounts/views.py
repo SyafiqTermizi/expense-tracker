@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
-from django.utils.text import slugify
 
 from .forms import AccountActionForm, AccountTransferForm, AccountForm
 from .models import AccountAction, Account
@@ -115,20 +114,15 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
 @login_required
 def create_account_view(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        form = AccountForm(data=request.POST)
+        form = AccountForm(user=request.user, data=request.POST)
 
         if form.is_valid():
-            account = form.save(commit=False)
-            account.belongs_to = request.user
-            account.slug = slugify(account.name)
-            account.save()
+            form.save()
             return redirect("dashboard:index")
         else:
             return render(
                 request,
                 "accounts/create.html",
-                context={
-                    "form": form,
-                },
+                context={"form": form},
             )
     return render(request, "accounts/create.html")
