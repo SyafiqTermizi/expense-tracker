@@ -5,9 +5,6 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 
-from expense.accounts.models import AccountBalance, AccountAction
-from expense.expenses.models import Expense
-
 
 @login_required
 def dashboard_view(request: HttpRequest) -> HttpResponse:
@@ -18,8 +15,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     # 1. Get account balance
     accounts = []
     for balance in (
-        AccountBalance.objects.filter(belongs_to=request.user)
-        .order_by(
+        request.user.account_balances.order_by(
             "action__account__name",
             "-created_at",
         )
@@ -34,10 +30,21 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
             }
         )
 
+    # 1.1 Add accounts with no balance
+    for account in request.user.accounts.exclude(
+        name__in=list(map(lambda acc: acc["name"], accounts))
+    ):
+        accounts.append(
+            {
+                "name": account.name,
+                "balance": 0,
+                "url": account.get_absolute_url(),
+            }
+        )
+
     # 2. Get account activities for current month
     account_actions = (
-        AccountAction.objects.filter(
-            belongs_to=request.user,
+        request.user.account_actions.filter(
             created_at__month=timezone.now().month,
             created_at__year=timezone.now().year,
         )
@@ -66,8 +73,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
                 "category": expense["category__name"],
                 "amount": expense["amount"],
             },
-            Expense.objects.filter(
-                belongs_to=request.user,
+            request.user.expenses.filter(
                 created_at__month=timezone.now().month,
                 created_at__year=timezone.now().year,
             )

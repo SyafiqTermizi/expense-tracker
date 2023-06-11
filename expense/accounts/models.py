@@ -83,7 +83,11 @@ class AccountBalance(models.Model):
         on_delete=models.CASCADE,
     )  # The action that created this account instance
     created_at = models.DateTimeField(auto_now_add=True)
-    belongs_to = models.ForeignKey(User, on_delete=models.CASCADE)
+    belongs_to = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="account_balances",
+    )
 
     class Meta:
         get_latest_by = "created_at"
