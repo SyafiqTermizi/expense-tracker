@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 
 from .forms import AccountActionForm, AccountTransferForm, AccountForm
-from .models import AccountAction, Account
+from .models import AccountAction
 
 
 @login_required
@@ -128,6 +128,7 @@ def create_account_view(request: HttpRequest) -> HttpResponse:
     return render(request, "accounts/create.html")
 
 
+@login_required
 def delete_account_view(request: HttpRequest, slug: str) -> HttpResponse:
     account = get_object_or_404(
         request.user.accounts.all(),
@@ -142,4 +143,37 @@ def delete_account_view(request: HttpRequest, slug: str) -> HttpResponse:
         request,
         "accounts/delete.html",
         context={"account": account},
+    )
+
+
+def update_account_view(request: HttpRequest, slug: str) -> HttpResponse:
+    account = get_object_or_404(
+        request.user.accounts.all(),
+        slug=slug,
+    )
+
+    if request.method == "POST":
+        form = AccountForm(user=request.user, data=request.POST, instance=account)
+
+        if form.is_valid():
+            account = form.save()
+            return redirect("accounts:detail_view", slug=account.slug)
+        else:
+            return render(
+                request,
+                "accounts/update.html",
+                context={
+                    "account": account,
+                    "form": form,
+                },
+            )
+
+    form = AccountForm(user=request.user, instance=account)
+    return render(
+        request,
+        "accounts/update.html",
+        context={
+            "account": account,
+            "form": form,
+        },
     )

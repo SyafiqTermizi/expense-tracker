@@ -4,6 +4,7 @@
 {% block content %}
     {% if activities %}
         <div class="row mt-4">
+            {% if expenses %}
             <div class="col-md-6 col-sm-12 mt-2">
                 <div class="card">
                     <div class="card-body">
@@ -14,7 +15,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-12 mt-2">
+            {% endif %}
+            <div class="{% if expenses %}col-md-6{% endif %} col-sm-12 mt-2">
                 <h6>Balance</h6>
                 <div class="row" id="accountBalance"></div>
             </div>

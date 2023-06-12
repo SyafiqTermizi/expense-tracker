@@ -16,7 +16,7 @@
         {% endif %}
     </div>
     <div class="col-6 text-end">
-        <a href="{% url 'dashboard:index' %}" class="mt-3 btn btn-outline-primary">Edit</a>
+        <a href="{% url 'accounts:update_view' account.slug %}" class="mt-3 btn btn-outline-primary">Edit</a>
         <a class="mt-3 btn btn-danger" href="{% url 'accounts:delete_view' account.slug %}">Delete</a>
     </div>
 </div>
