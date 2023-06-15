@@ -20,3 +20,8 @@ interface Account {
     balance: number;
     url: string;
 }
+
+interface ChartData {
+    x: number;
+    y: number;
+}

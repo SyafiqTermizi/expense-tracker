@@ -20,10 +20,21 @@
         <a class="mt-3 btn btn-danger" href="{% url 'accounts:delete_view' account.slug %}">Delete</a>
     </div>
 </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Available Balance: RM {{ available_balance }}</h3>
+                <div id="chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="activityFilter" class="row mt-3"></div>
 <div id="activityList" class="row mt-2"></div>
 {{ activities|json_script:"activities-data" }}
+{{ balances|json_script:"balances-data" }}
 
 <script src="{% static 'detail.js' %}"></script>
 {% endblock content %}

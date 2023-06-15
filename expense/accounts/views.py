@@ -1,5 +1,4 @@
-from datetime import timedelta
-
+from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -78,13 +77,32 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
     )
 
     account_actions = (
-        AccountAction.objects.filter(
+        request.user.account_actions.filter(
             account=account,
-            belongs_to=request.user,
-            created_at__gte=(timezone.now() - timedelta(days=30)),
+            created_at__month=timezone.now().month,
+            created_at__year=timezone.now().year,
         )
         .order_by("-created_at")
         .select_related("expense", "account")
+    )
+
+    daily_balance = list(
+        map(
+            lambda balance: {
+                "y": balance.amount,
+                "x": balance.created_at.strftime("%d"),
+            },
+            request.user.account_balances.filter(
+                created_at__month=timezone.now().month,
+                created_at__year=timezone.now().year,
+                action__account=account,
+            )
+            .order_by(
+                "-created_at__day",
+                "-created_at",
+            )
+            .distinct("created_at__day"),
+        )
     )
 
     activities = list(
@@ -107,6 +125,12 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         context={
             "account": account,
             "activities": activities,
+            "balances": daily_balance,
+            "available_balance": request.user.account_balances.filter(
+                action__account=account
+            )
+            .latest()
+            .amount,
         },
     )
 
