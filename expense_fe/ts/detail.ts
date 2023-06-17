@@ -23,12 +23,13 @@ dailyBalance.sort((a, b) => {
 })
 var options = {
     chart: {
-        type: 'line'
+        type: 'line',
+        height: '100%'
     },
-    series: [{ data: dailyBalance }],
-    legend: {
-        position: 'bottom'
-    },
+    series: [{
+        name: 'RM',
+        data: dailyBalance,
+    }]
 }
 
 const chart = new Chart(document.getElementById("chart"), options);
