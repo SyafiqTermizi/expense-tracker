@@ -8,6 +8,7 @@ module.exports = {
     context: __dirname,
     entry: {
         style: "./expense_fe/js/style.js",
+        styleJs: "./expense_fe/ts/bootstrap.ts",
         dashboard: "./expense_fe/ts/dashboard.ts",
         detail: "./expense_fe/ts/detail.ts",
     },
