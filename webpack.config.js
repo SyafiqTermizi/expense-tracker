@@ -4,6 +4,43 @@ const path = require('path');
 const SveltePreprocess = require('svelte-preprocess');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const SvelteDevConfig = {
+    compilerOptions: {
+        dev: true
+    },
+    emitCss: false,
+    hotReload: true,
+    hotOptions: {
+        noPreserveState: false,
+        optimistic: true,
+    },
+    preprocess: SveltePreprocess({
+        scss: false,
+        sass: false,
+    })
+}
+
+const SvelteProdConfig = {
+    compilerOptions: {
+        dev: false
+    },
+    emitCss: false,
+    hotReload: false,
+    hotOptions: {
+        preserveLocalState: false,
+        noPreserveStateKey: '@!hmr',
+        noReload: false,
+        optimistic: false,
+        acceptAccessors: true,
+        acceptNamedExports: true,
+    },
+    preprocess: SveltePreprocess({
+        scss: false,
+        sass: false,
+    })
+}
+
+
 module.exports = {
     context: __dirname,
     entry: {
@@ -44,23 +81,7 @@ module.exports = {
                 test: /\.svelte$/,
                 use: {
                     loader: 'svelte-loader',
-                    options: {
-                        compilerOptions: {
-                            // Dev mode must be enabled for HMR to work!
-                            dev: true
-                        },
-                        emitCss: false,
-                        hotReload: true,
-                        hotOptions: {
-                            // List of options and defaults: https://www.npmjs.com/package/svelte-loader-hot#usage
-                            noPreserveState: false,
-                            optimistic: true,
-                        },
-                        preprocess: SveltePreprocess({
-                            scss: false,
-                            sass: false,
-                        })
-                    }
+                    options: process.env.NODE_ENV === 'production' ? SvelteProdConfig : SvelteDevConfig
                 }
             },
             {

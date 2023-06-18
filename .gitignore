@@ -285,3 +285,4 @@ webpack-stats.json
 
 static/*.css
 static/*.js
+static/*.txt
