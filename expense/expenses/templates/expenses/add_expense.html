@@ -18,7 +18,7 @@
                     <p>{{ error }}</p>
                     {% endfor %}
                 </div>
-                {% endif %}            
+                {% endif %}
     
                 <label class="form-label" for="id_from_account">From Account:</label>
                 <select class="form-select {% if form.from_account.errors %}is-invalid{% endif %}" name="from_account" required="" id="id_from_account">
@@ -61,6 +61,16 @@
                     </option>
                     {% endfor %}
                 </select>
+
+                <p class="text-end">
+                    <a
+                        class="card-link"
+                        href="{% url 'expenses:categories:add' %}?next={% url 'expenses:add' %}"
+                    >
+                        Add new category
+                    </a>
+                </p>
+
                 {% for error in form.category.errors %}
                 <p class="text-danger">{{ error }}</p>
                 {% endfor %}

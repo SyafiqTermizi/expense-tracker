@@ -14,7 +14,7 @@
     </div>
 {/each}
 <div class="mb-3 col-6">
-    <div class="card py-2" style="background: none; border-style: dashed">
+    <div class="card py-lg-2" style="background: none; border-style: dashed">
         <div class="card-body text-center">
             <a class="card-link" href="/accounts/create">
                 <svg
@@ -33,6 +33,7 @@
                     <path d="M12 5l0 14" />
                     <path d="M5 12l14 0" />
                 </svg>
+                Add new account
             </a>
         </div>
     </div>

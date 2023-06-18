@@ -6,7 +6,7 @@ from expense.accounts.models import AccountAction
 from expense.users.models import User
 from expense.utils import BaseFromAccountForm
 
-from .models import Expense
+from .models import Category, Expense
 
 
 class AddExpenseForm(BaseFromAccountForm):
@@ -59,3 +59,9 @@ class AddExpenseForm(BaseFromAccountForm):
             from_action=account_action,
             belongs_to=self.user,
         )
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ("name",)

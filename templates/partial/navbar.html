@@ -33,7 +33,7 @@
                 </a>
             </li>
             <li class="nav-item me-2">
-                <a href="{% url 'expenses:add_view' %}" class="{% if request.resolver_match.view_name == 'expenses:add_view' %}text-primary{% endif %} nav-link">
+                <a href="{% url 'expenses:add' %}" class="{% if request.resolver_match.view_name == 'expenses:add' %}text-primary{% endif %} nav-link">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-report-money" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
