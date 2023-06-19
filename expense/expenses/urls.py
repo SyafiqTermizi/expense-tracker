@@ -14,8 +14,8 @@ categories = (
     [
         path("add", add_expense_category, name="add"),
         path("list", list_expense_categories, name="list"),
-        path("update/<int:pk>", update_expense_categories, name="update"),
-        path("delete/<int:pk>", delete_expense_categories, name="delete"),
+        path("update/<slug:slug>", update_expense_categories, name="update"),
+        path("delete/<slug:slug>", delete_expense_categories, name="delete"),
     ],
     "categories",
 )

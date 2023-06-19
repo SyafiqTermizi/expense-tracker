@@ -11,11 +11,20 @@ class Category(models.Model):
     """
 
     name = models.CharField(max_length=120)
+    slug = models.SlugField(max_length=120)
     belongs_to = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="expense_categories",
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "belongs_to"],
+                name="unique_category",
+            )
+        ]
 
     def __str__(self):
         return self.name

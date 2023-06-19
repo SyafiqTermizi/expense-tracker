@@ -30,12 +30,12 @@
                                     <div class="col-6">
                                         <a  
                                             class="card-link"
-                                            href="{% url 'expenses:categories:update' category.pk %}?next={% url 'expenses:categories:list' %}">
+                                            href="{% url 'expenses:categories:update' category.slug %}?next={% url 'expenses:categories:list' %}">
                                             {{ category.name }}
                                         </a>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <a href="{% url 'expenses:categories:delete' category.pk %}" class="btn btn-danger">
+                                        <a href="{% url 'expenses:categories:delete' category.slug %}" class="btn btn-danger">
                                             Delete
                                         </a>
                                     </div>

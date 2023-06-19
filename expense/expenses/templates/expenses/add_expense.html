@@ -54,27 +54,32 @@
                     <option value="">----</option>
                     {% for category in categories %}
                     <option
-                        {% if category.pk == form.category.value|add:'0' %}selected{% endif %}
-                        value="{{ category.pk }}"
+                        {% if category.slug == form.category.value|add:'0' %}selected{% endif %}
+                        value="{{ category.slug }}"
                     >
                         {{ category.name }}
                     </option>
                     {% endfor %}
                 </select>
 
-                <p class="text-end">
-                    <a
-                        class="card-link"
-                        href="{% url 'expenses:categories:add' %}?next={% url 'expenses:add' %}"
-                    >
-                        Add new category
-                    </a>
-                </p>
+                <div class="row">
+                    <div class="col-6">
+                        {% for error in form.category.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    <div class="col-6 text-end">
+                        <p>
+                            <a
+                                class="card-link"
+                                href="{% url 'expenses:categories:add' %}?next={% url 'expenses:add' %}"
+                            >
+                                Add new category
+                            </a>
+                        </p>
+                    </div>
+                </div>
 
-                {% for error in form.category.errors %}
-                <p class="text-danger">{{ error }}</p>
-                {% endfor %}
-    
                 <input class="mt-3 btn btn-primary" type="submit" value="Submit">
             </div>
         </form>

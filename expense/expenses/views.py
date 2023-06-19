@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.text import slugify
 
 from .forms import AddExpenseForm, CategoryForm
 
@@ -8,7 +9,7 @@ from .forms import AddExpenseForm, CategoryForm
 @login_required
 def add_expense_view(request: HttpRequest) -> HttpResponse:
     user_accounts = request.user.accounts.values("name", "slug")
-    expense_categories = request.user.expense_categories.all()
+    expense_categories = request.user.expense_categories.values("name", "slug")
 
     if request.method == "POST":
         form = AddExpenseForm(user=request.user, data=request.POST)
@@ -45,6 +46,7 @@ def add_expense_category(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             category = form.save(commit=False)
             category.belongs_to = request.user
+            category.slug = slugify(category.name)
             category.save()
 
             return redirect(
@@ -65,13 +67,13 @@ def list_expense_categories(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "expenses/list_category.html",
-        context={"categories": request.user.expense_categories.values("name", "pk")},
+        context={"categories": request.user.expense_categories.values("name", "slug")},
     )
 
 
 @login_required
-def update_expense_categories(request: HttpRequest, pk: int) -> HttpResponse:
-    category = get_object_or_404(request.user.expense_categories, pk=pk)
+def update_expense_categories(request: HttpRequest, slug: str) -> HttpResponse:
+    category = get_object_or_404(request.user.expense_categories, slug=slug)
 
     if request.method == "POST":
         form = CategoryForm(data=request.POST, instance=category)
@@ -79,6 +81,7 @@ def update_expense_categories(request: HttpRequest, pk: int) -> HttpResponse:
         if form.is_valid():
             category = form.save(commit=False)
             category.belongs_to = request.user
+            category.slug = slugify(category.name)
             category.save()
 
             return redirect(
@@ -99,8 +102,8 @@ def update_expense_categories(request: HttpRequest, pk: int) -> HttpResponse:
 
 
 @login_required
-def delete_expense_categories(request: HttpRequest, pk: int) -> HttpResponse:
-    category = get_object_or_404(request.user.expense_categories, pk=pk)
+def delete_expense_categories(request: HttpRequest, slug: str) -> HttpResponse:
+    category = get_object_or_404(request.user.expense_categories, slug=slug)
 
     if request.method == "POST":
         category.delete()
