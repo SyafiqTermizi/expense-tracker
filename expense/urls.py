@@ -22,6 +22,7 @@ urls = [
     path("", include("expense.dashboard.urls")),
     path("accounts/", include("expense.accounts.urls")),
     path("expenses/", include("expense.expenses.urls")),
+    path("users/", include("expense.users.urls")),
     path("admin/", admin.site.urls),
 ]
 
