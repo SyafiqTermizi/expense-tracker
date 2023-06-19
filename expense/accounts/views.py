@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 
 from .forms import AccountActionForm, AccountTransferForm, AccountForm
-from .models import AccountAction
+from .models import AccountAction, AccountBalance
 
 
 @login_required
@@ -119,6 +119,17 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         )
     )
 
+    try:
+        available_balance = (
+            request.user.account_balances.filter(
+                action__account=account,
+            )
+            .latest()
+            .amount
+        )
+    except AccountBalance.DoesNotExist:
+        available_balance = 0
+
     return render(
         request,
         "accounts/detail.html",
@@ -126,11 +137,7 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
             "account": account,
             "activities": activities,
             "balances": daily_balance,
-            "available_balance": request.user.account_balances.filter(
-                action__account=account
-            )
-            .latest()
-            .amount,
+            "available_balance": available_balance,
         },
     )
 
