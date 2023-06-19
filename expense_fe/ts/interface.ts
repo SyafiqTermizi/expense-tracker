@@ -22,6 +22,6 @@ interface Account {
 }
 
 interface ChartData {
-    x: number;
+    x: string;
     y: number;
 }
