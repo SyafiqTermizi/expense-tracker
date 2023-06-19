@@ -22,21 +22,19 @@ new AccountList({
     props: { accounts }
 });
 
-import Chart from "apexcharts";
-
+import { PieChart } from "chartist"
 const expenseData: Expense[] = JSON.parse(document.getElementById("expenses-data")!.textContent)
 
-
-var options = {
-    chart: {
-        type: 'donut'
+new PieChart(
+    document.getElementById("chart"),
+    {
+        series: expenseData.map(expense => parseFloat(expense["amount"])),
+        labels: expenseData.map(expense => expense["category"]),
     },
-    series: expenseData.map(expense => parseFloat(expense["amount"])),
-    labels: expenseData.map(expense => expense["category"]),
-    legend: {
-        position: 'bottom'
-    },
-}
-
-const chart = new Chart(document.getElementById("chart"), options);
-chart.render();
+    {
+        donut: true,
+        donutWidth: "50%",
+        height: "50vh",
+        showLabel: true
+    }
+)

@@ -14,23 +14,24 @@ new ActivityList({
     }
 });
 
-import Chart from "apexcharts";
-
 const dailyBalance: ChartData[] = JSON.parse(document.getElementById("balances-data")!.textContent)
 
 dailyBalance.sort((a, b) => {
-    return a.x > b.x ? 1 : -1
+    return parseInt(a.x.slice(0, 2)) > parseInt(b.x.slice(0, 2)) ? 1 : -1
 })
-var options = {
-    chart: {
-        type: 'line',
-        height: '100%'
-    },
-    series: [{
-        name: 'RM',
-        data: dailyBalance,
-    }]
-}
 
-const chart = new Chart(document.getElementById("chart"), options);
-chart.render();
+import { LineChart, AutoScaleAxis } from "chartist";
+
+new LineChart(
+    "#chart",
+    {
+        labels: dailyBalance.map(data => data.x),
+        series: [dailyBalance.map(data => data.y)],
+    },
+    {
+        axisY: {
+            showLabel: true,
+            type: AutoScaleAxis
+        }
+    }
+)

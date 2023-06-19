@@ -90,7 +90,7 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         map(
             lambda balance: {
                 "y": balance.amount,
-                "x": balance.created_at.strftime("%d"),
+                "x": balance.created_at.strftime("%d %b"),
             },
             request.user.account_balances.filter(
                 created_at__month=timezone.now().month,
