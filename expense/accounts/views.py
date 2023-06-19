@@ -170,6 +170,7 @@ def delete_account_view(request: HttpRequest, slug: str) -> HttpResponse:
     )
 
 
+@login_required
 def update_account_view(request: HttpRequest, slug: str) -> HttpResponse:
     account = get_object_or_404(
         request.user.accounts.all(),
@@ -192,12 +193,11 @@ def update_account_view(request: HttpRequest, slug: str) -> HttpResponse:
                 },
             )
 
-    form = AccountForm(user=request.user, instance=account)
     return render(
         request,
         "accounts/update.html",
         context={
             "account": account,
-            "form": form,
+            "form": AccountForm(user=request.user, instance=account),
         },
     )

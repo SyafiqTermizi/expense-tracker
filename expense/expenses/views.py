@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import AddExpenseForm, CategoryForm
 
@@ -54,5 +54,60 @@ def add_expense_category(request: HttpRequest) -> HttpResponse:
                 )
             )
         else:
-            return render(request, "expenses/add_category.html", context={"form": form})
-    return render(request, "expenses/add_category.html")
+            return render(
+                request, "expenses/category_form.html", context={"form": form}
+            )
+    return render(request, "expenses/category_form.html")
+
+
+@login_required
+def list_expense_categories(request: HttpRequest) -> HttpResponse:
+    return render(
+        request,
+        "expenses/list_category.html",
+        context={"categories": request.user.expense_categories.values("name", "pk")},
+    )
+
+
+@login_required
+def update_expense_categories(request: HttpRequest, pk: int) -> HttpResponse:
+    category = get_object_or_404(request.user.expense_categories, pk=pk)
+
+    if request.method == "POST":
+        form = CategoryForm(data=request.POST, instance=category)
+
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.belongs_to = request.user
+            category.save()
+
+            return redirect(
+                request.GET.get(
+                    "next",
+                    "dashboard:index",
+                )
+            )
+        else:
+            return render(
+                request, "expenses/category_form.html", context={"form": form}
+            )
+    return render(
+        request,
+        "expenses/category_form.html",
+        context={"form": CategoryForm(instance=category)},
+    )
+
+
+@login_required
+def delete_expense_categories(request: HttpRequest, pk: int) -> HttpResponse:
+    category = get_object_or_404(request.user.expense_categories, pk=pk)
+
+    if request.method == "POST":
+        category.delete()
+        return redirect("expenses:categories:list")
+
+    return render(
+        request,
+        "expenses/delete_category.html",
+        context={"category": category},
+    )

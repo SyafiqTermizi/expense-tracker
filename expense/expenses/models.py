@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from expense.users.models import User
 from expense.accounts.models import AccountAction
@@ -18,6 +19,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("expenses:categories:update", kwargs={"pk": self.pk})
 
 
 class Expense(models.Model):
