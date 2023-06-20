@@ -138,8 +138,8 @@ AUTH_USER_MODEL = "users.User"
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
 LOGIN_REDIRECT_URL = reverse_lazy("dashboard:index")
-
 LOGOUT_REDIRECT_URL = reverse_lazy("users:login")
+LOGIN_URL = LOGOUT_REDIRECT_URL
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
