@@ -23,7 +23,7 @@ filterExpenseButton.addEventListener("click", () => {
 
     expenseTable.classList.remove("d-none");
     activityTable.classList.add("d-none");
-})
+});
 
 import { PieChart } from "chartist"
 const expenseData: Expense[] = JSON.parse(document.getElementById("expenses-data")!.textContent)

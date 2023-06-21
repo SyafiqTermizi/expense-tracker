@@ -140,8 +140,6 @@
             </div>
         </div>
 
-        {{ accounts|json_script:"accounts-data" }}
-        {{ activities|json_script:"activities-data" }}
         {{ expenses|json_script:"expenses-data" }}
         <script src="{% static 'dashboard.js' %}"></script>
     {% else %}

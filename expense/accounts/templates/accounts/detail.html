@@ -31,9 +31,86 @@
     </div>
 </div>
 
-<div id="activityFilter" class="row mt-3"></div>
-<div id="activityList" class="row mt-2"></div>
-{{ activities|json_script:"activities-data" }}
+<div class="row mt-5">
+    <div class="col-12">
+        Show:
+        <button id="filter-all-activities" class="ms-1 btn btn-primary btn-sm">
+            All Activities
+        </button>
+        <button id="filter-expenses" class="ms-1 btn btn-outline-secondary btn-sm">
+            Expenses
+        </button>
+    </div>
+</div>
+<div class="row mt-2 mb-5">
+    <div class="col-12">
+        <div id="activity-table" class="card">
+            <div class="card-header">
+                <h6 class="card-title ms-2 my-2">{% now "F" %}'s transactions</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Description</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Account</th>
+                            <th scope="col">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities %}
+                            <tr>
+                                <td>{{ activity.description }}</td>
+                                <td
+                                    class="{% if activity.action == 'DEBIT' %}text-danger{% else %}text-success{% endif %}"
+                                >
+                                    {{ activity.amount }}
+                                </td>
+                                <td>{{ activity.account }}</td>
+                                <td>{{ activity.created_at }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="expense-table" class="card d-none">
+            <div class="card-header">
+                <h6 class="card-title ms-2 my-2">{% now "F" %}'s expenses</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Description</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Account</th>
+                            <th scope="col">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities %}
+                            {% if activity.expense %}
+                            <tr>
+                                <td>{{ activity.description }}</td>
+                                <td
+                                    class="{% if activity.action == 'DEBIT' %}text-danger{% else %}text-success{% endif %}"
+                                >
+                                    {{ activity.amount }}
+                                </td>
+                                <td>{{ activity.account }}</td>
+                                <td>{{ activity.created_at }}</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {{ balances|json_script:"balances-data" }}
 
 <script src="{% static 'detail.js' %}"></script>
