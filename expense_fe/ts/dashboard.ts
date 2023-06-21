@@ -1,26 +1,29 @@
-import ActivityFilter from "./components/activities/ActivityFilter.svelte";
-import ActivityList from "./components/activities/ActivityList.svelte";
-import AccountList from "./components/accounts/AccountList.svelte";
+const filterAllActivityButton = document.getElementById("filter-all-activities");
+const filterExpenseButton = document.getElementById("filter-expenses");
+const activityTable = document.getElementById("activity-table");
+const expenseTable = document.getElementById("expense-table");
 
-const recentActivities = JSON.parse(document.getElementById("activities-data")!.textContent || "{}");
+filterAllActivityButton.addEventListener("click", () => {
+    filterAllActivityButton.classList.remove("btn-outline-secondary");
+    filterAllActivityButton.classList.add("btn-primary");
 
-new ActivityFilter({
-    target: document.getElementById("activityFilter")!,
+    filterExpenseButton.classList.add("btn-outline-secondary");
+    filterExpenseButton.classList.remove("btn-primary");
+
+    activityTable.classList.remove("d-none");
+    expenseTable.classList.add("d-none");
 });
 
-new ActivityList({
-    target: document.getElementById("activityList")!,
-    props: {
-        activities: recentActivities,
-    }
-});
+filterExpenseButton.addEventListener("click", () => {
+    filterExpenseButton.classList.remove("btn-outline-secondary");
+    filterExpenseButton.classList.add("btn-primary");
 
-const accounts = JSON.parse(document.getElementById("accounts-data")!.textContent || "{}");
+    filterAllActivityButton.classList.add("btn-outline-secondary");
+    filterAllActivityButton.classList.remove("btn-primary");
 
-new AccountList({
-    target: document.getElementById("accountBalance")!,
-    props: { accounts }
-});
+    expenseTable.classList.remove("d-none");
+    activityTable.classList.add("d-none");
+})
 
 import { PieChart } from "chartist"
 const expenseData: Expense[] = JSON.parse(document.getElementById("expenses-data")!.textContent)
