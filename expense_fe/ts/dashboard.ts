@@ -25,19 +25,21 @@ filterExpenseButton.addEventListener("click", () => {
     activityTable.classList.add("d-none");
 });
 
-import { PieChart } from "chartist"
+import Chart from "apexcharts";
+
 const expenseData: Expense[] = JSON.parse(document.getElementById("expenses-data")!.textContent)
 
-new PieChart(
-    document.getElementById("chart"),
-    {
-        series: expenseData.map(expense => parseFloat(expense["amount"])),
-        labels: expenseData.map(expense => expense["category"]),
+
+var options = {
+    chart: {
+        type: 'donut'
     },
-    {
-        donut: true,
-        donutWidth: "50%",
-        height: "50vh",
-        showLabel: true
-    }
-)
+    series: expenseData.map(expense => parseFloat(expense["amount"])),
+    labels: expenseData.map(expense => expense["category"]),
+    legend: {
+        position: 'bottom'
+    },
+}
+
+const chart = new Chart(document.getElementById("chart"), options);
+chart.render();

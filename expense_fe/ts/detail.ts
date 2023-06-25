@@ -31,18 +31,33 @@ dailyBalance.sort((a, b) => {
     return parseInt(a.x.slice(0, 2)) > parseInt(b.x.slice(0, 2)) ? 1 : -1
 })
 
-import { LineChart, AutoScaleAxis } from "chartist";
+import Chart from "apexcharts"
 
-new LineChart(
-    "#chart",
-    {
-        labels: dailyBalance.map(data => data.x),
-        series: [dailyBalance.map(data => data.y)],
+const options = {
+    chart: {
+        type: 'line',
+        height: '100%'
     },
-    {
-        axisY: {
-            showLabel: true,
-            type: AutoScaleAxis
+    series: [
+        {
+            name: "Monthly Balance",
+            data: dailyBalance.map(data => data.y)
         }
+    ],
+    xaxis: {
+        categories: dailyBalance.map(data => data.x)
+    },
+    dataLabels: {
+        enabled: true,
+    },
+    markers: {
+        size: 1
+    },
+    grid: {
+        show: false
     }
-)
+}
+
+const chart = new Chart(document.getElementById("chart"), options);
+chart.render();
+
