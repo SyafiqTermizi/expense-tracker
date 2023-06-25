@@ -1,6 +1,8 @@
+from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.utils.text import slugify
 
 from .forms import AddExpenseForm, CategoryForm
@@ -113,4 +115,44 @@ def delete_expense_categories(request: HttpRequest, slug: str) -> HttpResponse:
         request,
         "expenses/delete_category.html",
         context={"category": category},
+    )
+
+
+@login_required
+def expense_detail_view(request: HttpRequest) -> HttpResponse:
+    expense_by_category = list(
+        map(
+            lambda x: {"x": x["category__name"], "y": x["total"]},
+            (
+                request.user.expenses.filter(
+                    created_at__month=timezone.now().month,
+                    created_at__year=timezone.now().year,
+                )
+                .values("category__name")
+                .annotate(total=Sum("amount"))
+            ),
+        )
+    )
+
+    expense_by_account = list(
+        map(
+            lambda x: {"x": x["from_action__account__name"], "y": x["total"]},
+            (
+                request.user.expenses.filter(
+                    created_at__month=timezone.now().month,
+                    created_at__year=timezone.now().year,
+                )
+                .values("from_action__account__name")
+                .annotate(total=Sum("amount"))
+            ),
+        )
+    )
+
+    return render(
+        request,
+        "expenses/detail.html",
+        context={
+            "expense_by_category": expense_by_category,
+            "expense_by_account": expense_by_account,
+        },
     )

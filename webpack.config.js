@@ -47,7 +47,8 @@ module.exports = {
         style: "./expense_fe/js/style.js",
         styleJs: "./expense_fe/ts/bootstrap.ts",
         dashboard: "./expense_fe/ts/dashboard.ts",
-        detail: "./expense_fe/ts/detail.ts",
+        accountDetail: "./expense_fe/ts/accountDetail.ts",
+        expenseDetail: "./expense_fe/ts/expenseDetail.ts",
     },
     resolve: {
         alias: {

@@ -2,6 +2,7 @@ from django.urls import path, include
 
 from .views import (
     add_expense_view,
+    expense_detail_view,
     add_expense_category,
     list_expense_categories,
     update_expense_categories,
@@ -22,5 +23,6 @@ categories = (
 
 urlpatterns = [
     path("add", add_expense_view, name="add"),
+    path("detail", expense_detail_view, name="detail"),
     path("categories/", include(categories), name="categories"),
 ]
