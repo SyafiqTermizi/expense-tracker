@@ -148,11 +148,17 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
         )
     )
 
+    expense_this_month = request.user.expenses.filter(
+        created_at__month=timezone.now().month,
+        created_at__year=timezone.now().year,
+    ).values("account", "created_at", "description", "amount")
+
     return render(
         request,
         "expenses/detail.html",
         context={
             "expense_by_category": expense_by_category,
             "expense_by_account": expense_by_account,
+            "expenses": expense_this_month,
         },
     )

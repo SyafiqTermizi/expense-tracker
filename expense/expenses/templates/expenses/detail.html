@@ -32,6 +32,41 @@
         </div>
     </div>
 </div>
+<div class="row mt-2 mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title ms-2 my-2">{% now "F" %}'s transactions</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Description</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Account</th>
+                            <th scope="col">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for expense in expenses %}
+                            <tr>
+                                <td>{{ expense.description }}</td>
+                                <td
+                                    class="{% if expense.action == 'DEBIT' %}text-danger{% else %}text-success{% endif %}"
+                                >
+                                    {{ expense.amount }}
+                                </td>
+                                <td>{{ expense.account }}</td>
+                                <td>{{ expense.created_at }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {{ expense_by_category|json_script:"expense-by-category" }}
 {{ expense_by_account|json_script:"expense-by-account" }}
 
