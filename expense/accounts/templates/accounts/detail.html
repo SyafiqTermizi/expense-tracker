@@ -24,7 +24,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body p-4">
-                <h4 class="card-title">Available Balance: RM {{ available_balance }}</h4>
+                <h4 class="card-title">Available Balance: {{ request.user.currency }} {{ available_balance }}</h4>
                 <div id="chart"></div>
             </div>
         </div>
@@ -53,7 +53,7 @@
                     <thead>
                         <tr>
                             <th scope="col">Description</th>
-                            <th scope="col">Amount</th>
+                            <th scope="col">Amount ({{ request.user.currency }})</th>
                             <th scope="col">Account</th>
                             <th scope="col">Date</th>
                         </tr>

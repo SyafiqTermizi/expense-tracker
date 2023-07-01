@@ -27,5 +27,5 @@ class UserAdminCreationForm(base_forms.UserCreationForm):
 
 class UserCreationForm(base_forms.BaseUserCreationForm):
     class Meta(base_forms.BaseUserCreationForm.Meta):
-        fields = ["email", "username"]
+        fields = ["email", "username", "currency"]
         model = User

@@ -25,7 +25,7 @@
                         <div class="card-body">
                             <a class="card-link" href="{{ account.url }}"><b>{{ account.name }}</b></a
                             >
-                            <div class="card-text">RM&nbsp;{{ account.balance }}</div>
+                            <div class="card-text">{{ request.user.currency }}&nbsp;{{ account.balance }}</div>
                         </div>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                     <thead>
                         <tr>
                             <th scope="col">Description</th>
-                            <th scope="col">Amount</th>
+                            <th scope="col">Amount ({{ request.user.currency }})</th>
                             <th scope="col">Account</th>
                             <th scope="col">Date</th>
                         </tr>
@@ -111,7 +111,7 @@
                     <thead>
                         <tr>
                             <th scope="col">Description</th>
-                            <th scope="col">Amount</th>
+                            <th scope="col">Amount ({{ request.user.currency }})</th>
                             <th scope="col">Account</th>
                             <th scope="col">Date</th>
                         </tr>

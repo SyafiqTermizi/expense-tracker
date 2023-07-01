@@ -73,6 +73,21 @@
                     <span class="form-text">Enter the same password as before, for verification.</span>
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label" for="id_currency">Currency:</label>
+                    <select class="form-select {% if form.currency.errors %}is-invalid{% endif %}" name="currency" id="id_currency" required>
+                        <option value="">----</option>
+                        {% for currency in currencies %}
+                        <option
+                            {% if currency.0 == form.currency.value %}selected{% endif %}
+                            value="{{ currency.0 }}"
+                        >
+                            {{ currency.1 }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
                 <div class="d-grid gap-2">
                     <input type="submit" value="Sign Up" class="btn btn-primary">
                 </div>
