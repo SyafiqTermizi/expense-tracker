@@ -52,12 +52,10 @@
                         {% for expense in expenses %}
                             <tr>
                                 <td>{{ expense.description }}</td>
-                                <td
-                                    class="{% if expense.action == 'DEBIT' %}text-danger{% else %}text-success{% endif %}"
-                                >
+                                <td class="text-danger">
                                     {{ expense.amount }}
                                 </td>
-                                <td>{{ expense.account }}</td>
+                                <td>{{ expense.from_action__account__name }}</td>
                                 <td>{{ expense.created_at }}</td>
                             </tr>
                         {% endfor %}
