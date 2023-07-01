@@ -73,7 +73,15 @@
                     <span class="form-text">Enter the same password as before, for verification.</span>
                 </div>
 
-                <input type="submit" value="Sign Up" class="btn btn-primary">
+                <div class="d-grid gap-2">
+                    <input type="submit" value="Sign Up" class="btn btn-primary">
+                </div>
+                <hr>
+                <p>
+                    <small>
+                        Already have an account, <a href="{% url 'users:signin' %}">Sign In</a>
+                    </small>
+                </p>
             </form>
         </div>
     </div>
