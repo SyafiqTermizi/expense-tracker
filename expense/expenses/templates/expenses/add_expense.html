@@ -13,70 +13,80 @@
             <div class="card-body p-4">
                 {% csrf_token %}
                 {% if form.non_field_errors %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {% for error in form.non_field_errors %}
-                    <p>{{ error }}</p>
-                    {% endfor %}
+                <div class="mb-3">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
                 </div>
                 {% endif %}
     
-                <label class="form-label" for="id_from_account">From Account:</label>
-                <select class="form-select {% if form.from_account.errors %}is-invalid{% endif %}" name="from_account" required="" id="id_from_account">
-                    {% for account in accounts %}
-                    <option
-                        {% if account.slug == form.from_account.value %}selected{% endif %}
-                        value="{{ account.slug }}"
-                    >
-                        {{ account.name }}
-                    </option>
-                    {% endfor %}
-                </select>
-                {% for error in form.from_account.errors %}
-                <p class="text-danger">{{ error }}</p>
-                {% endfor %}
-    
-                <label class="form-label" for="id_amount">Amount:</label>
-                <input class="form-control {% if form.amount.errors %}is-invalid{% endif %}" type="number" name="amount"
-                    step="0.01" required id="id_amount" value="{{ form.amount.value }}">
-                {% for error in form.amount.errors %}
-                <p class="text-danger">{{ error }}</p>
-                {% endfor %}
-    
-                <label class="form-label" for="id_description">Description:</label>
-                <input class="form-control" type="text" name="description" maxlength="255" id="id_description"
-                    value="{{ form.description.value|default:'' }}">
-                {% for error in form.description.errors %}
-                <p class="text-danger">{{ error }}</p>
-                {% endfor %}
-    
-                <label class="form-label" for="id_category">category:</label>
-                <select class="form-select {% if form.category.errors %}is-invalid{% endif %}" name="category" id="id_category">
-                    <option value="">----</option>
-                    {% for category in categories %}
-                    <option
-                        {% if category.slug == form.category.value|add:'0' %}selected{% endif %}
-                        value="{{ category.slug }}"
-                    >
-                        {{ category.name }}
-                    </option>
-                    {% endfor %}
-                </select>
-
-                <div class="row">
-                    <div class="col-6">
-                        {% for error in form.category.errors %}
-                        <p class="text-danger">{{ error }}</p>
+                <div class="mb-3">
+                    <label class="form-label" for="id_from_account">From Account:</label>
+                    <select class="form-select {% if form.from_account.errors %}is-invalid{% endif %}" name="from_account" required="" id="id_from_account">
+                        {% for account in accounts %}
+                        <option
+                            {% if account.slug == form.from_account.value %}selected{% endif %}
+                            value="{{ account.slug }}"
+                        >
+                            {{ account.name }}
+                        </option>
                         {% endfor %}
-                    </div>
-                    <div class="col-6 text-end">
-                        <p>
-                            <a
-                                class="card-link"
-                                href="{% url 'expenses:categories:add' %}?next={% url 'expenses:add' %}"
-                            >
-                                Add new category
-                            </a>
-                        </p>
+                    </select>
+                    {% for error in form.from_account.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+    
+                <div class="mb-3">
+                    <label class="form-label" for="id_amount">Amount:</label>
+                    <input class="form-control {% if form.amount.errors %}is-invalid{% endif %}" type="number" name="amount"
+                        step="0.01" required id="id_amount" value="{{ form.amount.value }}">
+                    {% for error in form.amount.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+    
+                <div class="mb-3">
+                    <label class="form-label" for="id_description">Description:</label>
+                    <input class="form-control" type="text" name="description" maxlength="255" id="id_description"
+                        value="{{ form.description.value|default:'' }}">
+                    {% for error in form.description.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+    
+                <div class="mb-3">
+                    <label class="form-label" for="id_category">category:</label>
+                    <select class="form-select {% if form.category.errors %}is-invalid{% endif %}" name="category" id="id_category">
+                        <option value="">----</option>
+                        {% for category in categories %}
+                        <option
+                            {% if category.slug == form.category.value|add:'0' %}selected{% endif %}
+                            value="{{ category.slug }}"
+                        >
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+    
+                    <div class="row">
+                        <div class="col-6">
+                            {% for error in form.category.errors %}
+                            <p class="text-danger">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        <div class="col-6 text-end">
+                            <p>
+                                <a
+                                    class="card-link"
+                                    href="{% url 'expenses:categories:add' %}?next={% url 'expenses:add' %}"
+                                >
+                                    Add new category
+                                </a>
+                            </p>
+                        </div>
                     </div>
                 </div>
 

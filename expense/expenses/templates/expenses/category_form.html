@@ -11,19 +11,23 @@
             <div class="card-body p-4">
                 {% csrf_token %}
                 {% if form.non_field_errors %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {% for error in form.non_field_errors %}
-                    <p>{{ error }}</p>
-                    {% endfor %}
+                <div class="mb-3">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
                 </div>
                 {% endif %}
     
-                <label class="form-label" for="id_name">Name:</label>
-                <input class="form-control" type="text" name="name" maxlength="255" id="id_name"
-                    value="{{ form.name.value|default:'' }}" required>
-                {% for error in form.name.errors %}
-                <p class="text-danger">{{ error }}</p>
-                {% endfor %}
+                <div class="mb-3">
+                    <label class="form-label" for="id_name">Name:</label>
+                    <input class="form-control" type="text" name="name" maxlength="255" id="id_name"
+                        value="{{ form.name.value|default:'' }}" required>
+                    {% for error in form.name.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
 
                 <input class="mt-3 btn btn-primary" type="submit" value="Submit">
             </div>
