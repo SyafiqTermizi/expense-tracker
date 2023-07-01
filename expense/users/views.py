@@ -1,6 +1,6 @@
-from django.contrib.auth.views import LoginView as BaseLoginView
+from django.contrib.auth.views import LoginView as BaseSignInView
 
 
-class LoginView(BaseLoginView):
-    template_name = "users/login.html"
+class SignInView(BaseSignInView):
+    template_name = "users/signin.html"
     redirect_authenticated_user = True

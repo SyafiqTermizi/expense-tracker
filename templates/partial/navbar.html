@@ -62,7 +62,7 @@
                         <li><a class="dropdown-item" href="#">Expenses</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <form action="{% url 'users:logout' %}" method="post">
+                            <form action="{% url 'users:signout' %}" method="post">
                                 {% csrf_token %}
                                 <input class="dropdown-item" type="submit" value="Logout">
                             </form>
