@@ -1,26 +1,31 @@
-from django.contrib.auth import forms as admin_forms
-from django.contrib.auth import get_user_model
+from django.contrib.auth import forms as base_forms
 from django.forms import EmailField
 
-User = get_user_model()
+from .models import User
 
 
-class UserAdminChangeForm(admin_forms.UserChangeForm):
-    class Meta(admin_forms.UserChangeForm.Meta):
+class UserAdminChangeForm(base_forms.UserChangeForm):
+    class Meta(base_forms.UserChangeForm.Meta):
         model = User
         field_classes = {"email": EmailField}
 
 
-class UserAdminCreationForm(admin_forms.UserCreationForm):
+class UserAdminCreationForm(base_forms.UserCreationForm):
     """
     Form for User Creation in the Admin Area.
     To change user signup, see UserSignupForm and UserSocialSignupForm.
     """
 
-    class Meta(admin_forms.UserCreationForm.Meta):
+    class Meta(base_forms.UserCreationForm.Meta):
         model = User
         fields = ("email",)
         field_classes = {"email": EmailField}
         error_messages = {
             "email": {"unique": "This email has already been taken."},
         }
+
+
+class UserCreationForm(base_forms.BaseUserCreationForm):
+    class Meta(base_forms.BaseUserCreationForm.Meta):
+        fields = ["email", "username"]
+        model = User
