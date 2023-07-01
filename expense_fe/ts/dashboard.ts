@@ -28,7 +28,7 @@ filterExpenseButton.addEventListener("click", () => {
 import Chart from "apexcharts";
 
 const expenseData: Expense[] = JSON.parse(document.getElementById("expenses-data")!.textContent)
-
+const currency: string = document.getElementById("user-currency").textContent
 
 var options = {
     chart: {
@@ -39,6 +39,11 @@ var options = {
     legend: {
         position: 'bottom'
     },
+    tooltip: {
+        y: {
+            formatter: (value) => `${currency} ${value}`
+        }
+    }
 }
 
 const chart = new Chart(document.getElementById("chart"), options);

@@ -33,6 +33,8 @@ dailyBalance.sort((a, b) => {
 
 import Chart from "apexcharts"
 
+const currency: string = document.getElementById("user-currency").textContent
+
 const options = {
     chart: {
         type: 'line',
@@ -49,12 +51,16 @@ const options = {
     },
     dataLabels: {
         enabled: true,
+        formatter: (value) => `${currency} ${value}`
     },
     markers: {
         size: 1
     },
     grid: {
         show: false
+    },
+    tooltip: {
+        enabled: false
     }
 }
 

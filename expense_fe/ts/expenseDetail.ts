@@ -1,5 +1,7 @@
 import Chart from "apexcharts";
 
+const currency: string = document.getElementById("user-currency").textContent
+
 const expenseByCategory = JSON.parse(document.getElementById("expense-by-category")!.textContent);
 const expenseByAccount = JSON.parse(document.getElementById("expense-by-account")!.textContent);
 
@@ -11,7 +13,7 @@ function getChartOption(data) {
         },
         series: [
             {
-                name: "Monthly Balance",
+                name: "Spent",
                 data: data.map(data => data.y)
             }
         ],
@@ -20,12 +22,16 @@ function getChartOption(data) {
         },
         dataLabels: {
             enabled: true,
+            formatter: (value) => `${currency} ${value}`
         },
         markers: {
             size: 1
         },
         grid: {
             show: false
+        },
+        tooltip: {
+            enabled: false
         }
     }
 }

@@ -12,6 +12,7 @@
 </head>
 
 <body style="background-color: #f6f8fb;">
+    <div id="user-currency" class="d-none">{{ request.user.currency }}</div>
     {% if request.user.is_authenticated %}
     {% include "partial/navbar.html" %}
     {% endif %}
