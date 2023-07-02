@@ -60,3 +60,16 @@ class Expense(models.Model):
 
     class Meta:
         get_latest_by = "created_at"
+
+
+def get_upload_path(instance, filename):
+    return f"{instance.expense.belongs_to.username}/{filename}"
+
+
+class Image(models.Model):
+    expense = models.ForeignKey(
+        Expense,
+        related_name="images",
+        on_delete=models.CASCADE,
+    )
+    image = models.ImageField(upload_to=get_upload_path)

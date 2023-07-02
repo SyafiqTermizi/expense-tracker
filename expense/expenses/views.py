@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.text import slugify
 
-from .forms import AddExpenseForm, CategoryForm
+from .forms import AddExpenseForm, AddExpenseImageForm, CategoryForm
 
 
 @login_required
@@ -14,17 +14,21 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
     expense_categories = request.user.expense_categories.values("name", "slug")
 
     if request.method == "POST":
-        form = AddExpenseForm(user=request.user, data=request.POST)
+        expense_form = AddExpenseForm(user=request.user, data=request.POST)
+        image_form = AddExpenseImageForm(request.POST, request.FILES)
 
-        if form.is_valid():
-            form.save()
+        if expense_form.is_valid() and image_form.is_valid():
+            expense = expense_form.save()
+            image_instance = image_form.save(commit=False)
+            image_instance.expense = expense
+            image_instance.save()
             return redirect("dashboard:index")
         else:
             return render(
                 request,
                 "expenses/add_expense.html",
                 context={
-                    "form": form,
+                    "form": expense_form,
                     "accounts": user_accounts,
                     "categories": expense_categories,
                 },

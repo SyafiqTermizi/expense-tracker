@@ -11,6 +11,7 @@ django = "^4.2"
 psycopg2-binary = "^2.9.6"
 redis = {extras = ["hiredis"], version = "^4.5.5"}
 djangorestframework = "^3.14.0"
+pillow = "^10.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
