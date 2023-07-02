@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mt-4">
+    <h3>Profile</h3>
+    <p class="text-secondary">
+        Update {{ request.user.username }}'s profile.
+    </p>
+</div>
+<div class="row mt-3">
+    <div class="col-12">
+        <form class="card" method="post">
+            <div class="card-body p-4">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="mb-3">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label" for="id_email">Email:</label>
+                    <input class="form-control" type="email" name="email" value="{{ form.email.value|default:'' }}" maxlength="254" required id="id_email">
+                    {% for error in form.email.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="id_username">Username:</label>
+                    <input class="form-control" type="text" name="username" value="{{ form.username.value|default:'' }}" maxlength="150" required id="id_username">
+                    <span class="form-text">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</span>
+                    {% for error in form.username.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="id_currency">Currency:</label>
+                    <select class="form-select {% if form.currency.errors %}is-invalid{% endif %}" name="currency" id="id_currency" required>
+                        <option value="">----</option>
+                        {% for currency in currencies %}
+                        <option
+                            {% if currency.0 == form.currency.value %}selected{% endif %}
+                            value="{{ currency.0 }}"
+                        >
+                            {{ currency.1 }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <input class="mt-3 btn btn-primary" type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
