@@ -25,8 +25,6 @@ filterExpenseButton.addEventListener("click", () => {
     activityTable.classList.add("d-none");
 });
 
-import Chart from "apexcharts";
-
 const expenseData: Expense[] = JSON.parse(document.getElementById("expenses-data")!.textContent)
 const currency: string = document.getElementById("user-currency").textContent
 
@@ -46,5 +44,13 @@ var options = {
     }
 }
 
-const chart = new Chart(document.getElementById("chart"), options);
-chart.render();
+window.addEventListener("load", () => {
+    import("apexcharts").then((ApexCharts) => {
+        const Chart = ApexCharts.default;
+
+        const chart = new Chart(document.getElementById("chart"), options);
+        chart.render();
+    })
+});
+
+export { };

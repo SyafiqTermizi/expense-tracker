@@ -62,6 +62,7 @@ module.exports = {
     output: {
         path: path.resolve('./static/'),
         filename: '[name].js',
+        chunkFilename: 'chunk.[id].js',
     },
     plugins: [
         new MiniCssExtractPlugin(),

@@ -31,8 +31,6 @@ dailyBalance.sort((a, b) => {
     return parseInt(a.x.slice(0, 2)) > parseInt(b.x.slice(0, 2)) ? 1 : -1
 })
 
-import Chart from "apexcharts"
-
 const currency: string = document.getElementById("user-currency").textContent
 
 const options = {
@@ -64,6 +62,14 @@ const options = {
     }
 }
 
-const chart = new Chart(document.getElementById("chart"), options);
-chart.render();
+window.addEventListener("load", () => {
+    import("apexcharts").then((ApexCharts) => {
+        const Chart = ApexCharts.default;
 
+        const chart = new Chart(document.getElementById("chart"), options);
+        chart.render();
+
+    })
+});
+
+export { };

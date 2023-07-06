@@ -10,6 +10,7 @@
         "public/*"
     ],
     "compilerOptions": {
+        "module": "esnext",
         "moduleResolution": "node",
         "target": "es2017",
         "importsNotUsedAsValues": "remove",

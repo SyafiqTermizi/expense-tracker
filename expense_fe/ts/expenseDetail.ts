@@ -1,4 +1,33 @@
-import Chart from "apexcharts";
+const showByCategory = document.getElementById("show-by-category");
+const showByAccount = document.getElementById("show-by-account");
+const categoryChartContainer = document.getElementById("category-chart");
+const accountChartContainer = document.getElementById("account-chart");
+const chartTitle = document.getElementById("chart-title");
+
+showByCategory.addEventListener("click", () => {
+    showByCategory.classList.remove("btn-outline-secondary");
+    showByCategory.classList.add("btn-primary");
+
+    showByAccount.classList.add("btn-outline-secondary");
+    showByAccount.classList.remove("btn-primary");
+
+    categoryChartContainer.classList.remove("d-none");
+    accountChartContainer.classList.add("d-none");
+    chartTitle.textContent = "Expense by category";
+
+});
+
+showByAccount.addEventListener("click", () => {
+    showByAccount.classList.remove("btn-outline-secondary");
+    showByAccount.classList.add("btn-primary");
+
+    showByCategory.classList.add("btn-outline-secondary");
+    showByCategory.classList.remove("btn-primary");
+
+    accountChartContainer.classList.remove("d-none");
+    categoryChartContainer.classList.add("d-none");
+    chartTitle.textContent = "Expense by acccount";
+});
 
 const currency: string = document.getElementById("user-currency").textContent
 
@@ -31,43 +60,26 @@ function getChartOption(data) {
             show: false
         },
         tooltip: {
-            enabled: false
+            y: {
+                formatter: (value) => `${currency} ${value}`
+            }
         }
     }
 }
-const categoryChart = new Chart(document.getElementById("category-chart"), getChartOption(expenseByCategory));
-categoryChart.render();
 
-const accountChart = new Chart(document.getElementById("account-chart"), getChartOption(expenseByAccount));
-accountChart.render();
 
-const showByCategory = document.getElementById("show-by-category");
-const showByAccount = document.getElementById("show-by-account");
-const categoryChartContainer = document.getElementById("category-chart");
-const accountChartContainer = document.getElementById("account-chart");
-const chartTitle = document.getElementById("chart-title");
+window.addEventListener("load", () => {
+    import("apexcharts").then((ApexCharts) => {
+        const Chart = ApexCharts.default;
 
-showByCategory.addEventListener("click", () => {
-    showByCategory.classList.remove("btn-outline-secondary");
-    showByCategory.classList.add("btn-primary");
+        const categoryChart = new Chart(document.getElementById("category-chart"), getChartOption(expenseByCategory));
+        categoryChart.render();
 
-    showByAccount.classList.add("btn-outline-secondary");
-    showByAccount.classList.remove("btn-primary");
+        const accountChart = new Chart(document.getElementById("account-chart"), getChartOption(expenseByAccount));
+        accountChart.render();
 
-    categoryChartContainer.classList.remove("d-none");
-    accountChartContainer.classList.add("d-none");
-    chartTitle.textContent = "Expense by category";
-
+    })
 });
 
-showByAccount.addEventListener("click", () => {
-    showByAccount.classList.remove("btn-outline-secondary");
-    showByAccount.classList.add("btn-primary");
 
-    showByCategory.classList.add("btn-outline-secondary");
-    showByCategory.classList.remove("btn-primary");
-
-    accountChartContainer.classList.remove("d-none");
-    categoryChartContainer.classList.add("d-none");
-    chartTitle.textContent = "Expense by acccount";
-});
+export { };

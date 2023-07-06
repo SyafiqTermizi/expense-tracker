@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "NODE_ENV=production webpack --config webpack.config.js --progress --mode production",
-    "watch": "NODE_ENV=development webpack --config webpack.config.js --watch --mode development"
+    "watch": "NODE_ENV=development webpack --config webpack.config.js --watch --mode development",
+    "clear": "rm static/*.js && rm static/*.css && rm static/*.txt",
+    "build": "NODE_ENV=production webpack --config webpack.config.js --progress --mode production"
   },
   "author": "",
   "license": "ISC",
