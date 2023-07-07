@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.utils.text import slugify
 
 from .forms import AddExpenseForm, AddExpenseImageForm, CategoryForm
@@ -13,35 +14,50 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
     user_accounts = request.user.accounts.values("name", "slug")
     expense_categories = request.user.expense_categories.values("name", "slug")
 
-    if request.method == "POST":
-        expense_form = AddExpenseForm(user=request.user, data=request.POST)
-        image_form = AddExpenseImageForm(request.POST, request.FILES)
+    # Return early if rqeuest is GET
+    if request.method == "GET":
+        return render(
+            request,
+            "expenses/add_expense.html",
+            context={
+                "accounts": user_accounts,
+                "categories": expense_categories,
+            },
+        )
 
-        if expense_form.is_valid() and image_form.is_valid():
-            expense = expense_form.save()
+    form_error = False
+
+    # validate expense form
+    expense_form = AddExpenseForm(user=request.user, data=request.POST)
+    if expense_form.is_valid():
+        expense = expense_form.save()
+    else:
+        form_error = True
+
+    # validate image form
+    if request.FILES:
+        image_form = AddExpenseImageForm(request.POST, request.FILES)
+        if image_form.is_valid():
             image_instance = image_form.save(commit=False)
             image_instance.expense = expense
             image_instance.save()
-            return redirect("dashboard:index")
         else:
-            return render(
-                request,
-                "expenses/add_expense.html",
-                context={
-                    "form": expense_form,
-                    "accounts": user_accounts,
-                    "categories": expense_categories,
-                },
-            )
+            form_error = True
 
-    return render(
-        request,
-        "expenses/add_expense.html",
-        context={
-            "accounts": user_accounts,
-            "categories": expense_categories,
-        },
-    )
+    # render form with errors
+    if form_error:
+        return render(
+            request,
+            "expenses/add_expense.html",
+            context={
+                "expense_form": expense_form,
+                "image_form": image_form,
+                "accounts": user_accounts,
+                "categories": expense_categories,
+            },
+        )
+
+    return redirect("dashboard:index")
 
 
 @login_required
@@ -152,10 +168,28 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
         )
     )
 
-    expense_this_month = request.user.expenses.filter(
-        created_at__month=timezone.now().month,
-        created_at__year=timezone.now().year,
-    ).values("from_action__account__name", "created_at", "description", "amount")
+    expense_this_month = list(
+        map(
+            lambda expense: {
+                "account_name": expense["from_action__account__name"],
+                "image": f"/media/{expense['images__image']}",
+                "uid": get_random_string(length=10),
+                **expense,
+            },
+            request.user.expenses.filter(
+                created_at__month=timezone.now().month,
+                created_at__year=timezone.now().year,
+            )
+            .prefetch_related("images")
+            .values(
+                "from_action__account__name",
+                "created_at",
+                "description",
+                "amount",
+                "images__image",
+            ),
+        )
+    )
 
     return render(
         request,
