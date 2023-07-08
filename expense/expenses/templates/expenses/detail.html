@@ -54,15 +54,7 @@
                             <tr>
                                 <td data-bs-toggle="modal" data-bs-target="#expense-modal-{{ expense.uid }}">
                                 {{ expense.description }} 
-                                <a href="#">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-description" width="12" height="12" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
-                                        <path d="M9 17h6"></path>
-                                        <path d="M9 13h6"></path>
-                                     </svg>
-                                </a>
+                                {% include 'partial/icon_receipt.html' %}
                                 </td>
                                 <td class="text-danger">
                                     {{ expense.amount }}
@@ -80,23 +72,7 @@
 </div>
 
 {% for expense in expenses %}
-<div class="modal fade" id="expense-modal-{{ expense.uid }}" tabindex="-1" aria-labelledby="expense-modal-label" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h1 class="modal-title fs-5 mb-3" id="expense-modal-label">{{ expense.description }}</h1>
-                <p><b>Account:</b>&nbsp;{{ expense.account }}</p>
-                <p><b>Amount:</b>&nbsp;{{ expense.amount }}</p>
-                <p><b>Category:</b>&nbsp;{{ expense.category }}</p>
-                <p><b>Created at:</b>&nbsp;{{ expense.created_at }}</p>
-                {% if expense.image %}
-                <img class="img-thumbnail mb-2" src="{{ expense.image }}">
-                {% endif %}
-                <button type="button" class="text-end btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+{% include "partial/modal_expense.html" with uid=expense.uid description=expense.description account=expense.account amount=expense.amount category=expense.category created_at=expense.created_at image=expense.image %}
 {% endfor %}
   
 {{ expense_by_category|json_script:"expense-by-category" }}

@@ -53,12 +53,13 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         )
         .order_by("-created_at")
         .select_related("expense", "account")
-        .prefetch_related("expense__images")
     )
 
     expense_image_mapping = {}
     for image in ExpenseImage.objects.filter(
-        expense__belongs_to=request.user
+        expense__created_at__month=timezone.now().month,
+        expense__created_at__year=timezone.now().year,
+        expense__belongs_to=request.user,
     ).select_related("expense"):
         expense_image_mapping.update({image.expense.pk: image.image.url})
 
