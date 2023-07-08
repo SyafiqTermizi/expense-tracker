@@ -88,7 +88,20 @@
                     <tbody>
                         {% for activity in activities %}
                             <tr>
-                                <td>{{ activity.description }}</td>
+                                <td data-bs-toggle="modal" data-bs-target="#expense-modal-{{ activity.uid }}">
+                                    {{ activity.description }}
+                                    {% if activity.expense %}
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-description" width="12" height="12" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                            <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                            <path d="M9 17h6"></path>
+                                            <path d="M9 13h6"></path>
+                                         </svg>
+                                    </a>
+                                    {% endif %}
+                                </td>
                                 <td
                                     class="{% if activity.action == 'DEBIT' %}text-danger{% else %}text-success{% endif %}"
                                 >
@@ -120,7 +133,18 @@
                         {% for activity in activities %}
                             {% if activity.expense %}
                             <tr>
-                                <td>{{ activity.description }}</td>
+                                <td data-bs-toggle="modal" data-bs-target="#expense-modal-{{ activity.uid }}">
+                                    {{ activity.description }}
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-description" width="12" height="12" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                            <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                            <path d="M9 17h6"></path>
+                                            <path d="M9 13h6"></path>
+                                         </svg>
+                                    </a>
+                                </td>
                                 <td
                                     class="{% if activity.action == 'DEBIT' %}text-danger{% else %}text-success{% endif %}"
                                 >
@@ -137,6 +161,29 @@
         </div>
     </div>
 </div>
+
+{% for activity in activities %}
+    {% if activity.expense %}
+    <div class="modal fade" id="expense-modal-{{ activity.uid }}" tabindex="-1" aria-labelledby="activity-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h1 class="modal-title fs-5 mb-3" id="activity-modal-label">{{ activity.description }}</h1>
+                    <p><b>Account:</b>&nbsp;{{ activity.account_name }}</p>
+                    <p><b>Amount:</b>&nbsp;{{ activity.amount }}</p>
+                    <p><b>Category:</b>&nbsp;{{ activity.category }}</p>
+                    <p><b>Created at:</b>&nbsp;{{ activity.created_at }}</p>
+                    {% if activity.image %}
+                    <img class="img-thumbnail mb-2" src="{{ activity.image }}">
+                    {% endif %}
+                    <button type="button" class="text-end btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+
 {{ expenses|json_script:"expenses-data" }}
 <script src="{% static 'dashboard.js' %}"></script>
 {% endblock content %}
