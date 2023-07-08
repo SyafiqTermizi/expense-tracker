@@ -1,6 +1,5 @@
 from django.db import models
 from django.urls import reverse
-
 from expense.users.models import User
 from expense.accounts.models import AccountAction
 
@@ -33,6 +32,29 @@ class Category(models.Model):
         return reverse("expenses:categories:update", kwargs={"pk": self.pk})
 
 
+class ExpenseManager(models.Manager):
+    def get_user_expense_for_month(self, user: User, month: int, year: int):
+        """
+        Get all expenses for a user for a given month and year
+        """
+        return (
+            self.filter(
+                belongs_to=user,
+                created_at__month=month,
+                created_at__year=year,
+            )
+            .order_by("-created_at")
+            .values(
+                "from_action__account__name",
+                "created_at",
+                "description",
+                "amount",
+                "images__image",
+                "category__name",
+            )
+        )
+
+
 class Expense(models.Model):
     """
     This model tracks what the expense is for and its category.
@@ -58,6 +80,8 @@ class Expense(models.Model):
         on_delete=models.CASCADE,
     )
 
+    objects = ExpenseManager()
+
     class Meta:
         get_latest_by = "created_at"
 
@@ -73,3 +97,6 @@ class Image(models.Model):
         on_delete=models.CASCADE,
     )
     image = models.ImageField(upload_to=get_upload_path)
+
+    def __str__(self) -> str:
+        return self.image.url

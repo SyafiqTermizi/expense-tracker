@@ -3,10 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 from django.utils.text import slugify
 
 from .forms import AddExpenseForm, AddExpenseImageForm, CategoryForm
+from .models import Expense
+from .utils import get_formatted_user_expense_for_month
 
 
 @login_required
@@ -168,26 +169,11 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
         )
     )
 
-    expense_this_month = list(
-        map(
-            lambda expense: {
-                "account_name": expense["from_action__account__name"],
-                "image": f"/media/{expense['images__image']}",
-                "uid": get_random_string(length=10),
-                **expense,
-            },
-            request.user.expenses.filter(
-                created_at__month=timezone.now().month,
-                created_at__year=timezone.now().year,
-            )
-            .prefetch_related("images")
-            .values(
-                "from_action__account__name",
-                "created_at",
-                "description",
-                "amount",
-                "images__image",
-            ),
+    expense_this_month = get_formatted_user_expense_for_month(
+        Expense.objects.get_user_expense_for_month(
+            user=request.user,
+            month=timezone.now().month,
+            year=timezone.now().year,
         )
     )
 
