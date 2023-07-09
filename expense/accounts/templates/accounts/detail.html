@@ -68,7 +68,7 @@
                                     {{ activity.amount }}
                                 </td>
                                 <td>{{ activity.account }}</td>
-                                <td>{{ activity.created_at }}</td>
+                                <td>{{ activity.created_at|date:'d M Y' }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -101,7 +101,7 @@
                                     {{ activity.amount }}
                                 </td>
                                 <td>{{ activity.account }}</td>
-                                <td>{{ activity.created_at }}</td>
+                                <td>{{ activity.created_at|date:'d M Y' }}</td>
                             </tr>
                             {% endif %}
                         {% endfor %}

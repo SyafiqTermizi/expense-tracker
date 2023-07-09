@@ -1,7 +1,9 @@
+from django.db.models.functions import TruncDay
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
+from django.template import defaultfilters
 from django.utils import timezone
 
 from .forms import AccountActionForm, AccountTransferForm, AccountForm
@@ -88,31 +90,38 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         .select_related("expense", "account")
     )
 
-    daily_balance = list(
-        map(
-            lambda balance: {
-                "y": balance.amount,
-                "x": balance.created_at.strftime("%d %b"),
-            },
-            request.user.account_balances.filter(
-                created_at__month=timezone.now().month,
-                created_at__year=timezone.now().year,
-                action__account=account,
-            )
-            .order_by(
-                "-created_at__day",
-                "-created_at",
-            )
-            .distinct("created_at__day"),
+    last_daily_transcation = list(
+        request.user.account_balances.filter(
+            action__account=account,
+            created_at__month=timezone.now().month,
+            created_at__year=timezone.now().year,
         )
+        .annotate(day=TruncDay("created_at"))
+        .values("day")
+        .annotate(the_date=Max("created_at"))
+        .values_list("the_date", flat=True)
     )
 
+    daily_balance = list(
+        map(
+            lambda bal: {
+                "y": bal.amount,
+                "x": defaultfilters.date(bal.date, "d M"),
+            },
+            request.user.account_balances.filter(
+                action__account=account,
+                created_at__in=last_daily_transcation,
+            )
+            .annotate(date=TruncDay("created_at"))
+            .order_by("created_at"),
+        )
+    )
     activities = list(
         map(
             lambda acc_act: {
                 "expense": hasattr(acc_act, "expense"),
                 "account": str(acc_act.account),
-                "created_at": acc_act.created_at.strftime("%d/%m/%Y"),
+                "created_at": acc_act.created_at,
                 "description": acc_act.description,
                 "amount": acc_act.amount,
                 "action": acc_act.action,

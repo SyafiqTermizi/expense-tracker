@@ -8,7 +8,7 @@
                 {% if category %}
                 <p><b>Category:</b>&nbsp;{{ category }}</p>
                 {% endif %}
-                <p><b>Created at:</b>&nbsp;{{ created_at }}</p>
+                <p><b>Created at:</b>&nbsp;{{ created_at|date:'d M Y, h:i a' }}</p>
                 {% if image %}
                 <img class="img-thumbnail mb-2" src="{{ image }}">
                 {% endif %}

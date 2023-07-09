@@ -67,7 +67,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     for action in account_actions:
         data = {
             "account": str(action.account),
-            "created_at": action.created_at.strftime("%d/%m/%Y"),
+            "created_at": action.created_at,
             "description": action.description,
             "amount": action.amount,
             "action": action.action,
