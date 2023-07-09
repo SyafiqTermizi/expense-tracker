@@ -12,61 +12,63 @@ from .models import AccountAction, AccountBalance
 def transfer_view(request: HttpRequest) -> HttpResponse:
     user_accounts = request.user.accounts.values("name", "slug")
 
-    if request.method == "POST":
-        form = AccountTransferForm(user=request.user, data=request.POST)
+    if request.method == "GET":
+        return render(
+            request,
+            "accounts/transfer.html",
+            context={"accounts": user_accounts},
+        )
 
-        if form.is_valid():
-            form.save()
-            return redirect("dashboard:index")
-        else:
-            return render(
-                request,
-                "accounts/transfer.html",
-                context={
-                    "form": form,
-                    "accounts": user_accounts,
-                },
-            )
+    # Handle POST request
+    form = AccountTransferForm(user=request.user, data=request.POST)
 
-    return render(
-        request,
-        "accounts/transfer.html",
-        context={"accounts": user_accounts},
-    )
+    if form.is_valid():
+        form.save()
+        return redirect("dashboard:index")
+    else:
+        return render(
+            request,
+            "accounts/transfer.html",
+            context={
+                "form": form,
+                "accounts": user_accounts,
+            },
+        )
 
 
 @login_required
 def add_view(request: HttpRequest) -> HttpResponse:
     user_accounts = request.user.accounts.values("name", "slug")
 
-    if request.method == "POST":
-        form = AccountActionForm(
-            user=request.user,
-            data={
-                **request.POST.dict(),
-                "belongs_to": request.user,
-                "action": AccountAction.Action.CREDIT,
-            },
+    if request.method == "GET":
+        return render(
+            request,
+            "accounts/add.html",
+            context={"accounts": user_accounts},
         )
 
-        if form.is_valid():
-            form.save(commit=True)
-            return redirect("dashboard:index")
-        else:
-            return render(
-                request,
-                "accounts/add.html",
-                context={
-                    "form": form,
-                    "accounts": user_accounts,
-                },
-            )
-
-    return render(
-        request,
-        "accounts/add.html",
-        context={"accounts": user_accounts},
+    # Handle POST request
+    form = AccountActionForm(
+        user=request.user,
+        data={
+            **request.POST.dict(),
+            "belongs_to": request.user,
+            "action": AccountAction.Action.CREDIT,
+        },
     )
+
+    if form.is_valid():
+        form.save(commit=True)
+        return redirect("dashboard:index")
+    else:
+        return render(
+            request,
+            "accounts/add.html",
+            context={
+                "form": form,
+                "accounts": user_accounts,
+            },
+        )
 
 
 @login_required
@@ -144,19 +146,20 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
 
 @login_required
 def create_account_view(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        form = AccountForm(user=request.user, data=request.POST)
+    if request.method == "GET":
+        return render(request, "accounts/create.html")
 
-        if form.is_valid():
-            form.save()
-            return redirect("dashboard:index")
-        else:
-            return render(
-                request,
-                "accounts/create.html",
-                context={"form": form},
-            )
-    return render(request, "accounts/create.html")
+    form = AccountForm(user=request.user, data=request.POST)
+
+    if form.is_valid():
+        form.save()
+        return redirect("dashboard:index")
+    else:
+        return render(
+            request,
+            "accounts/create.html",
+            context={"form": form},
+        )
 
 
 @login_required
@@ -184,27 +187,27 @@ def update_account_view(request: HttpRequest, slug: str) -> HttpResponse:
         slug=slug,
     )
 
-    if request.method == "POST":
-        form = AccountForm(user=request.user, data=request.POST, instance=account)
+    if request.method == "GET":
+        return render(
+            request,
+            "accounts/update.html",
+            context={
+                "account": account,
+                "form": AccountForm(user=request.user, instance=account),
+            },
+        )
 
-        if form.is_valid():
-            account = form.save()
-            return redirect("accounts:detail_view", slug=account.slug)
-        else:
-            return render(
-                request,
-                "accounts/update.html",
-                context={
-                    "account": account,
-                    "form": form,
-                },
-            )
+    form = AccountForm(user=request.user, data=request.POST, instance=account)
 
-    return render(
-        request,
-        "accounts/update.html",
-        context={
-            "account": account,
-            "form": AccountForm(user=request.user, instance=account),
-        },
-    )
+    if form.is_valid():
+        instance = form.save()
+        return redirect("accounts:detail_view", slug=instance.slug)
+    else:
+        return render(
+            request,
+            "accounts/update.html",
+            context={
+                "account": account,
+                "form": form,
+            },
+        )
