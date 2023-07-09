@@ -25,3 +25,7 @@ navbarToggleButton.addEventListener("click", () => {
         navbarMobileMenu.classList.remove("show");
     }
 });
+
+import { Modal } from "bootstrap"
+
+export { };
