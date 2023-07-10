@@ -5,7 +5,11 @@
 <div class="row mt-4">
     <h3>{% now 'F' %}'s expense breakdown</h3>
     <p class="text-secondary">
+        {% if total_expense %}
+        You've spent <b>{{ request.user.currency }}  {{ total_expense }}</b> this month.
+        {% else %}
         A breakdown of your expenses for the month of {% now 'F' %}.
+        {% endif %}
     </p>
 </div>
 <div class="row mt-3">

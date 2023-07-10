@@ -63,26 +63,24 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def add_expense_category(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        form = CategoryForm(data=request.POST)
+    if request.method == "GET":
+        return render(request, "expenses/category_form.html")
 
-        if form.is_valid():
-            category = form.save(commit=False)
-            category.belongs_to = request.user
-            category.slug = slugify(category.name)
-            category.save()
+    form = CategoryForm(data=request.POST)
 
-            return redirect(
-                request.GET.get(
-                    "next",
-                    "dashboard:index",
-                )
+    if form.is_valid():
+        category = form.save(commit=False)
+        category.belongs_to = request.user
+        category.slug = slugify(category.name)
+        category.save()
+        return redirect(
+            request.GET.get(
+                "next",
+                "dashboard:index",
             )
-        else:
-            return render(
-                request, "expenses/category_form.html", context={"form": form}
-            )
-    return render(request, "expenses/category_form.html")
+        )
+    else:
+        return render(request, "expenses/category_form.html", context={"form": form})
 
 
 @login_required
@@ -177,6 +175,8 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
         )
     )
 
+    total_expense = sum(expense["amount"] for expense in expense_this_month)
+
     return render(
         request,
         "expenses/detail.html",
@@ -184,5 +184,6 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
             "expense_by_category": expense_by_category,
             "expense_by_account": expense_by_account,
             "expenses": expense_this_month,
+            "total_expense": total_expense,
         },
     )
