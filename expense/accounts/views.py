@@ -1,5 +1,5 @@
+from django.db.models import Max, Subquery
 from django.db.models.functions import TruncDay
-from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -90,7 +90,21 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         .select_related("expense", "account")
     )
 
-    last_daily_transcation = list(
+    activities = list(
+        map(
+            lambda acc_act: {
+                "expense": hasattr(acc_act, "expense"),
+                "account": str(acc_act.account),
+                "created_at": acc_act.created_at,
+                "description": acc_act.description,
+                "amount": acc_act.amount,
+                "action": acc_act.action,
+            },
+            account_actions,
+        )
+    )
+
+    last_daily_transcation = (
         request.user.account_balances.filter(
             action__account=account,
             created_at__month=timezone.now().month,
@@ -110,23 +124,10 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
             },
             request.user.account_balances.filter(
                 action__account=account,
-                created_at__in=last_daily_transcation,
+                created_at__in=Subquery(last_daily_transcation),
             )
             .annotate(date=TruncDay("created_at"))
             .order_by("created_at"),
-        )
-    )
-    activities = list(
-        map(
-            lambda acc_act: {
-                "expense": hasattr(acc_act, "expense"),
-                "account": str(acc_act.account),
-                "created_at": acc_act.created_at,
-                "description": acc_act.description,
-                "amount": acc_act.amount,
-                "action": acc_act.action,
-            },
-            account_actions,
         )
     )
 
