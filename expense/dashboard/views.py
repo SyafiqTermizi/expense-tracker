@@ -44,7 +44,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
             }
         )
 
-    # 3. Get expenses for current month
+    # 2. Get expenses for current month
     expenses = list(
         map(
             lambda expense: {
