@@ -5,6 +5,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.text import slugify
 
+from expense.accounts.utils import get_latest_account_balance
+
 from .forms import AddExpenseForm, AddExpenseImageForm, CategoryForm
 from .models import Expense
 from .utils import get_formatted_user_expense_for_month
@@ -12,7 +14,7 @@ from .utils import get_formatted_user_expense_for_month
 
 @login_required
 def add_expense_view(request: HttpRequest) -> HttpResponse:
-    user_accounts = request.user.accounts.values("name", "slug")
+    user_accounts = get_latest_account_balance(request.user)
     expense_categories = request.user.expense_categories.values("name", "slug")
 
     # Return early if rqeuest is GET

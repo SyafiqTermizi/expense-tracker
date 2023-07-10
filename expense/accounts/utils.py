@@ -11,6 +11,9 @@ def get_actions_with_expense_data(
     year: int,
     account: Account = None,
 ):
+    """
+    Retrieve all actions for a given month and year along with expense data
+    """
     action_filter_kwargs = {
         "created_at__month": month,
         "created_at__year": year,
@@ -55,3 +58,42 @@ def get_actions_with_expense_data(
         activities.append(data)
 
     return activities
+
+
+def get_latest_account_balance(user: User):
+    """
+    Get latest balance for all accounts for a given user
+    """
+    # 1. Get account balance
+    accounts = []
+    for balance in (
+        user.account_balances.order_by(
+            "action__account__name",
+            "-created_at",
+        )
+        .select_related("action__account")
+        .distinct("action__account__name")
+    ):
+        accounts.append(
+            {
+                "name": balance.action.account.name,
+                "balance": balance.amount,
+                "url": balance.action.account.get_absolute_url(),
+                "slug": balance.action.account.slug,
+            }
+        )
+
+    # 1.1 Add accounts with no balance
+    for account in user.accounts.exclude(
+        name__in=list(map(lambda acc: acc["name"], accounts))
+    ):
+        accounts.append(
+            {
+                "name": account.name,
+                "balance": 0,
+                "url": account.get_absolute_url(),
+                "slug": account.slug,
+            }
+        )
+
+    return accounts

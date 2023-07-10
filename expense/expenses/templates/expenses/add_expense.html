@@ -40,7 +40,7 @@
                             {% if account.slug == expense_form.from_account.value %}selected{% endif %}
                             value="{{ account.slug }}"
                         >
-                            {{ account.name }}
+                            {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance }} 
                         </option>
                         {% endfor %}
                     </select>

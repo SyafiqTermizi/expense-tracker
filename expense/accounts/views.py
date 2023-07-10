@@ -6,7 +6,10 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template import defaultfilters
 from django.utils import timezone
 
-from expense.accounts.utils import get_actions_with_expense_data
+from expense.accounts.utils import (
+    get_actions_with_expense_data,
+    get_latest_account_balance,
+)
 
 from .forms import AccountActionForm, AccountTransferForm, AccountForm
 from .models import AccountAction, AccountBalance
@@ -14,7 +17,7 @@ from .models import AccountAction, AccountBalance
 
 @login_required
 def transfer_view(request: HttpRequest) -> HttpResponse:
-    user_accounts = request.user.accounts.values("name", "slug")
+    user_accounts = get_latest_account_balance(request.user)
 
     if request.method == "GET":
         return render(
@@ -42,7 +45,7 @@ def transfer_view(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def add_view(request: HttpRequest) -> HttpResponse:
-    user_accounts = request.user.accounts.values("name", "slug")
+    user_accounts = get_latest_account_balance(request.user)
 
     if request.method == "GET":
         return render(

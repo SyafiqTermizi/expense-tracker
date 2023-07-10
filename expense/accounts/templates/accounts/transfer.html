@@ -28,7 +28,7 @@
                                 {% if account.slug == form.from_account.value %}selected{% endif %}
                                 value="{{ account.slug }}"
                             >
-                                {{ account.name }}
+                                {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance }} 
                             </option>
                             {% endfor %}
                         </select>
@@ -45,7 +45,7 @@
                                 {% if account.slug == form.to_account.value %}selected{% endif %}
                                 value="{{ account.slug }}"
                             >
-                                {{ account.name }}
+                                {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance }} 
                             </option>
                             {% endfor %}
                         </select>
