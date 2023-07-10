@@ -6,6 +6,8 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template import defaultfilters
 from django.utils import timezone
 
+from expense.accounts.utils import get_actions_with_expense_data
+
 from .forms import AccountActionForm, AccountTransferForm, AccountForm
 from .models import AccountAction, AccountBalance
 
@@ -80,30 +82,6 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         slug=slug,
     )
 
-    account_actions = (
-        request.user.account_actions.filter(
-            account=account,
-            created_at__month=timezone.now().month,
-            created_at__year=timezone.now().year,
-        )
-        .order_by("-created_at")
-        .select_related("expense", "account")
-    )
-
-    activities = list(
-        map(
-            lambda acc_act: {
-                "expense": hasattr(acc_act, "expense"),
-                "account": str(acc_act.account),
-                "created_at": acc_act.created_at,
-                "description": acc_act.description,
-                "amount": acc_act.amount,
-                "action": acc_act.action,
-            },
-            account_actions,
-        )
-    )
-
     last_daily_transcation = (
         request.user.account_balances.filter(
             action__account=account,
@@ -147,7 +125,12 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         "accounts/detail.html",
         context={
             "account": account,
-            "activities": activities,
+            "activities": get_actions_with_expense_data(
+                request.user,
+                timezone.now().month,
+                timezone.now().year,
+                account=account,
+            ),
             "balances": daily_balance,
             "available_balance": available_balance,
         },

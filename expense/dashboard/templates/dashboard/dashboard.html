@@ -117,6 +117,7 @@
                             <th scope="col">Description</th>
                             <th scope="col">Amount ({{ request.user.currency }})</th>
                             <th scope="col">Account</th>
+                            <th scope="col">Category</th>
                             <th scope="col">Date</th>
                         </tr>
                     </thead>
@@ -134,6 +135,7 @@
                                     {{ activity.amount }}
                                 </td>
                                 <td>{{ activity.account }}</td>
+                                <td>{{ activity.category }}</td>
                                 <td>{{ activity.created_at|date:'d M Y' }}</td>
                             </tr>
                             {% endif %}

@@ -4,9 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 
-from expense.expenses.models import Image as ExpenseImage
+from expense.accounts.utils import get_actions_with_expense_data
 
 
 @login_required
@@ -45,45 +44,6 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
             }
         )
 
-    # 2. Get account activities for current month
-    account_actions = (
-        request.user.account_actions.filter(
-            created_at__month=timezone.now().month,
-            created_at__year=timezone.now().year,
-        )
-        .order_by("-created_at")
-        .select_related("expense", "account")
-    )
-
-    expense_image_mapping = {}
-    for image in ExpenseImage.objects.filter(
-        expense__created_at__month=timezone.now().month,
-        expense__created_at__year=timezone.now().year,
-        expense__belongs_to=request.user,
-    ).select_related("expense"):
-        expense_image_mapping.update({image.expense.pk: image.image.url})
-
-    activities = []
-    for action in account_actions:
-        data = {
-            "account": str(action.account),
-            "created_at": action.created_at,
-            "description": action.description,
-            "amount": action.amount,
-            "action": action.action,
-        }
-
-        if hasattr(action, "expense"):
-            data.update(
-                {
-                    "expense": True,
-                    "image": expense_image_mapping.get(action.expense.pk),
-                    "uid": get_random_string(10),
-                }
-            )
-
-        activities.append(data)
-
     # 3. Get expenses for current month
     expenses = list(
         map(
@@ -105,7 +65,12 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         "dashboard/dashboard.html",
         context={
             "accounts": accounts,
-            "activities": activities,
+            "activities": get_actions_with_expense_data(
+                request.user,
+                timezone.now().month,
+                timezone.now().year,
+                account=None,
+            ),
             "expenses": expenses,
         },
     )

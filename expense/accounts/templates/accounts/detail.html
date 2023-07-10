@@ -61,7 +61,12 @@
                     <tbody>
                         {% for activity in activities %}
                             <tr>
-                                <td>{{ activity.description }}</td>
+                                <td data-bs-toggle="modal" data-bs-target="#expense-modal-{{ activity.uid }}">
+                                    {{ activity.description }}
+                                    {% if activity.expense %}
+                                    {% include 'partial/icon_receipt.html' %}
+                                    {% endif %}
+                                </td>
                                 <td
                                     class="{% if activity.action == 'DEBIT' %}text-danger{% else %}text-success{% endif %}"
                                 >
@@ -75,7 +80,6 @@
                 </table>
             </div>
         </div>
-
         <div id="expense-table" class="card d-none">
             <div class="card-header">
                 <h6 class="card-title ms-2 my-2">{% now "F" %}'s expenses</h6>
@@ -85,8 +89,9 @@
                     <thead>
                         <tr>
                             <th scope="col">Description</th>
-                            <th scope="col">Amount</th>
+                            <th scope="col">Amount ({{ request.user.currency }})</th>
                             <th scope="col">Account</th>
+                            <th scope="col">Category</th>
                             <th scope="col">Date</th>
                         </tr>
                     </thead>
@@ -94,13 +99,17 @@
                         {% for activity in activities %}
                             {% if activity.expense %}
                             <tr>
-                                <td>{{ activity.description }}</td>
+                                <td data-bs-toggle="modal" data-bs-target="#expense-modal-{{ activity.uid }}">
+                                    {{ activity.description }}
+                                    {% include 'partial/icon_receipt.html' %}
+                                </td>
                                 <td
                                     class="{% if activity.action == 'DEBIT' %}text-danger{% else %}text-success{% endif %}"
                                 >
                                     {{ activity.amount }}
                                 </td>
                                 <td>{{ activity.account }}</td>
+                                <td>{{ activity.category }}</td>
                                 <td>{{ activity.created_at|date:'d M Y' }}</td>
                             </tr>
                             {% endif %}
@@ -111,6 +120,12 @@
         </div>
     </div>
 </div>
+
+{% for activity in activities %}
+    {% if activity.expense %}
+    {% include "partial/modal_expense.html" with uid=activity.uid description=activity.description account=activity.account amount=activity.amount category=activity.category created_at=activity.created_at image=activity.image %}
+    {% endif %}
+{% endfor %}
 {{ balances|json_script:"balances-data" }}
 
 <script src="{% static 'accountDetail.js' %}"></script>
