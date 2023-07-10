@@ -49,6 +49,7 @@ module.exports = {
         dashboard: "./expense_fe/ts/dashboard.ts",
         accountDetail: "./expense_fe/ts/accountDetail.ts",
         expenseDetail: "./expense_fe/ts/expenseDetail.ts",
+        activityTable: "./expense_fe/ts/activityTable.ts",
     },
     resolve: {
         alias: {

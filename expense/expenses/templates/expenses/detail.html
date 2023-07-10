@@ -76,7 +76,7 @@
 </div>
 
 {% for expense in expenses %}
-{% include "partial/modal_expense.html" with uid=expense.uid description=expense.description account=expense.account amount=expense.amount category=expense.category created_at=expense.created_at image=expense.image %}
+{% include "partial/expense_modal.html" with uid=expense.uid description=expense.description account=expense.account amount=expense.amount category=expense.category created_at=expense.created_at image=expense.image %}
 {% endfor %}
   
 {{ expense_by_category|json_script:"expense-by-category" }}
