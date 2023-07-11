@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import FormView, UpdateView
 
-from .forms import UserCreationForm
+from .forms import UserCreationForm, PasswordResetForm
 from .models import CURRENCIES, User
 
 
@@ -33,7 +33,7 @@ class SignUpview(CurrencyContextMixin, FormView):
     template_name = "users/signup.html"
     form_class = UserCreationForm
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(sAelf, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context.update({"currencies": CURRENCIES})
         return context
@@ -58,6 +58,7 @@ class PasswordResetView(BasePasswordResetView):
     email_template_name = "users/email/password_reset.html"
     html_email_template_name = "users/email/password_reset_html.html"
     success_url = reverse_lazy("users:password_reset_done")
+    form_class = PasswordResetForm
 
 
 class PasswordResetConfirmView(BasePasswordResetConfirmView):

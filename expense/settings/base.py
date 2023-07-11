@@ -50,6 +50,7 @@ LOCAL_APPS = [
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "huey.contrib.djhuey",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -168,3 +169,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "media/"
+
+# https://huey.readthedocs.io/en/latest/contrib.html#setting-things-up
+HUEY = {
+    "huey_class": "huey.RedisHuey",  # Huey implementation to use.
+    "store_none": False,  # If a task returns None, do not save to results.
+    "immediate": False,  # If DEBUG=True, run synchronously.
+    "utc": True,  # Use UTC for all times internally.
+    "blocking": True,  # Perform blocking pop rather than poll Redis.
+    "connection": {
+        "host": os.environ["REDIS_HOST"],
+        "port": 6379,
+    },
+}

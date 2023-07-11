@@ -12,6 +12,8 @@ psycopg2-binary = "^2.9.6"
 redis = {extras = ["hiredis"], version = "^4.5.5"}
 djangorestframework = "^3.14.0"
 pillow = "^10.0.0"
+huey = "^2.4.5"
+gevent = "^22.10.2"
 
 
 [tool.poetry.group.dev.dependencies]

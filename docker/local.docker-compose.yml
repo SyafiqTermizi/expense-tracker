@@ -12,6 +12,7 @@ services:
     image: redis:7-alpine
 
   expense_be:
+    &base_app
     container_name: expense_be
     build:
       context: ../
@@ -32,3 +33,15 @@ services:
     image: mailhog/mailhog:latest
     ports:
       - 8025:8025
+
+  expense_worker:
+    <<: *base_app
+    image: expense_worker
+    container_name: expense_worker
+    depends_on:
+      - expense_db
+      - expense_cache
+      - expense_be
+      - expense_mailbox
+    ports: []
+    command: python manage.py run_huey
