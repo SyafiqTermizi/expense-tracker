@@ -56,6 +56,7 @@ class UpdateView(LoginRequiredMixin, CurrencyContextMixin, UpdateView):
 class PasswordResetView(BasePasswordResetView):
     template_name = "users/password_reset.html"
     email_template_name = "users/email/password_reset.html"
+    html_email_template_name = "users/email/password_reset_html.html"
     success_url = reverse_lazy("users:password_reset_done")
 
 
