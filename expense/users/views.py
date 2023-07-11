@@ -1,9 +1,16 @@
 from typing import Any, Dict
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView as BaseSignInView
+from django.contrib.auth.views import (
+    LoginView as BaseSignInView,
+    PasswordResetView as BasePasswordResetView,
+    PasswordResetConfirmView as BasePasswordResetConfirmView,
+    PasswordResetDoneView as BasePasswordResetDoneView,
+    PasswordResetCompleteView as BasePasswordResetCompleteView,
+)
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import FormView, UpdateView
 
 from .forms import UserCreationForm
@@ -44,3 +51,30 @@ class UpdateView(LoginRequiredMixin, CurrencyContextMixin, UpdateView):
 
     def get_object(self, *args, **kwargs):
         return get_object_or_404(User, pk=self.request.user.pk)
+
+
+class PasswordResetView(BasePasswordResetView):
+    template_name = "users/password_reset.html"
+    email_template_name = "users/email/password_reset.html"
+    success_url = reverse_lazy("users:password_reset_done")
+
+
+class PasswordResetConfirmView(BasePasswordResetConfirmView):
+    template_name = "users/password_reset_confirm.html"
+    success_url = reverse_lazy("users:password_reset_complete")
+
+    def form_valid(self, form: Any) -> HttpResponse:
+        print("shit valid")
+        return super().form_valid(form)
+
+    def form_invalid(self, form: Any) -> HttpResponse:
+        print("shit invalid")
+        return super().form_invalid(form)
+
+
+class PasswordResetDoneView(BasePasswordResetDoneView):
+    template_name = "users/password_reset_done.html"
+
+
+class PasswordResetCompleteView(BasePasswordResetCompleteView):
+    template_name = "users/password_reset_complete.html"

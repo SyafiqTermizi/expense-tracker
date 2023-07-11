@@ -14,3 +14,5 @@ INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + [
 ]
 
 INSTALLED_APPS += ["debug_toolbar"]
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
