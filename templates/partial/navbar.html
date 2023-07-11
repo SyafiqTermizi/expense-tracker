@@ -1,6 +1,8 @@
 <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
     <div class="container">
-        <a class="navbar-brand text-primary" href="{% url 'dashboard:index' %}">Lejar</a>
+        <a class="navbar-brand text-primary" href="{% url 'dashboard:index' %}">
+            {% include 'partial/icon_lejar.html' %}
+        </a>
         <button id="navbar-toggle-button" class="navbar-toggler" type="button">
             <span class="navbar-toggler-icon"></span>
         </button>
