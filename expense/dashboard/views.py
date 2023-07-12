@@ -14,7 +14,7 @@ from expense.accounts.utils import (
 @login_required
 def dashboard_view(request: HttpRequest) -> HttpResponse:
     """
-    Returns an overview of the user's account balance and spending activities
+    Returns an overview of the user's account balance and spendings
     """
 
     # 2. Get expenses for current month
@@ -38,7 +38,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         "dashboard/dashboard.html",
         context={
             "accounts": get_latest_account_balance(request.user),
-            "activities": get_actions_with_expense_data(
+            "transactions": get_actions_with_expense_data(
                 request.user,
                 timezone.now().month,
                 timezone.now().year,

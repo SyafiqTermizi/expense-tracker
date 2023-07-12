@@ -6,8 +6,11 @@ interface Expense {
     from_action: string;
 }
 
-interface AccountActivity {
+interface Transaction {
     expense?: Expense;
+    image?: string;
+    uid?: string;
+    category: string;
     account: string;
     created_at: string;
     description: string;

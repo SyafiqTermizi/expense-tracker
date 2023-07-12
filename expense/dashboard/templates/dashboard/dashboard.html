@@ -58,14 +58,16 @@
     </div>
 </div>
 
-{% include "partial/activity_table.html" with activities=activities %}
+<div class="row mt-5" id="transaction-filter"></div>
+<div class="row mt-2 mb-5" id="transaction-list"></div>
 
-{% for activity in activities %}
-    {% if activity.expense %}
-    {% include "partial/expense_modal.html" with uid=activity.uid description=activity.description account=activity.account amount=activity.amount category=activity.category created_at=activity.created_at image=activity.image %}
+{% for transaction in transactions %}
+    {% if transaction.expense %}
+    {% include "partial/expense_modal.html" with uid=transaction.uid description=transaction.description account=transaction.account amount=transaction.amount category=transaction.category created_at=transaction.created_at image=transaction.image %}
     {% endif %}
 {% endfor %}
 
 {{ expenses|json_script:"expenses-data" }}
+{{ transactions|json_script:"transaction-data" }}
 <script src="{% static 'dashboard.js' %}"></script>
 {% endblock content %}

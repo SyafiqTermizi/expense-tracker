@@ -12,7 +12,7 @@ def get_actions_with_expense_data(
     account: Account = None,
 ):
     """
-    Retrieve all actions for a given month and year along with expense data
+    Retrieve all actions for a given month and year along with expenses
     """
     action_filter_kwargs = {
         "created_at__month": month,
@@ -35,7 +35,7 @@ def get_actions_with_expense_data(
     ).select_related("expense"):
         expense_image_mapping.update({image.expense.pk: image.image.url})
 
-    activities = []
+    transactions = []
     for action in account_actions:
         data = {
             "account": str(action.account),
@@ -55,9 +55,9 @@ def get_actions_with_expense_data(
                 }
             )
 
-        activities.append(data)
+        transactions.append(data)
 
-    return activities
+    return transactions
 
 
 def get_latest_account_balance(user: User):

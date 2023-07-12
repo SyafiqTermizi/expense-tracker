@@ -1,10 +1,26 @@
+import TransactionList from "./components/transactions/TransactionList.svelte";
+import TransactionFilter from "./components/transactions/TransactionFilter.svelte";
+
+const transactionData: Transaction[] = JSON.parse(document.getElementById("transaction-data")!.textContent)
+const currency: string = document.getElementById("user-currency").textContent
+
+new TransactionList({
+    target: document.getElementById("transaction-list"),
+    props: {
+        transactions: transactionData,
+        currency: currency,
+    }
+});
+
+new TransactionFilter({
+    target: document.getElementById("transaction-filter"),
+});
+
 const dailyBalance: ChartData[] = JSON.parse(document.getElementById("balances-data")!.textContent)
 
 dailyBalance.sort((a, b) => {
     return parseInt(a.x.slice(0, 2)) > parseInt(b.x.slice(0, 2)) ? 1 : -1
 })
-
-const currency: string = document.getElementById("user-currency").textContent
 
 const options = {
     chart: {

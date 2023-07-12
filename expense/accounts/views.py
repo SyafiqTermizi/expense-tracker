@@ -128,7 +128,7 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         "accounts/detail.html",
         context={
             "account": account,
-            "activities": get_actions_with_expense_data(
+            "transactions": get_actions_with_expense_data(
                 request.user,
                 timezone.now().month,
                 timezone.now().year,

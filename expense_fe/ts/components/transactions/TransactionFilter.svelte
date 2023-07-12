@@ -11,7 +11,7 @@
         class={$showAll ? activeClass : inactiveClass}
         on:click={() => showAll.set(true)}
     >
-        All Activities
+        All Transactions
     </button>
     <button
         class={!$showAll ? activeClass : inactiveClass}
