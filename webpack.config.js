@@ -46,6 +46,7 @@ module.exports = {
     entry: {
         style: "./expense_fe/js/style.js",
         styleJs: "./expense_fe/ts/bootstrap.ts",
+        transactions: "./expense_fe/ts/components/transactions/index.ts",
         dashboard: "./expense_fe/ts/dashboard.ts",
         accountDetail: "./expense_fe/ts/accountDetail.ts",
         expenseDetail: "./expense_fe/ts/expenseDetail.ts",

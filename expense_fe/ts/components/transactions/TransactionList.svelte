@@ -1,36 +1,14 @@
 <script lang="ts">
-    import { onDestroy } from "svelte";
-    import { showAll } from "./store";
+    import { transactions, cardTitle } from "./store";
     import { isoToLocalDate } from "../../utils";
 
-    export let transactions: Transaction[] = [];
     export let currency: string = "";
-
-    let filteredTransactions: Transaction[];
-    let cardTitle: string;
-
-    const date = new Date();
-    const month = date.toLocaleString("default", { month: "long" });
-
-    const unsubscribe = showAll.subscribe((value) => {
-        if (value) {
-            filteredTransactions = transactions;
-            cardTitle = `${month}'s Transactions`;
-        } else {
-            cardTitle = `${month}'s Expenses`;
-            filteredTransactions = transactions.filter(
-                (transaction) => transaction.expense
-            );
-        }
-    });
-
-    onDestroy(unsubscribe);
 </script>
 
 <div class="col-12">
     <div class="card">
         <div class="card-header">
-            <h6 class="card-title ms-2 my-2">{cardTitle}</h6>
+            <h6 class="card-title ms-2 my-2">{$cardTitle}</h6>
         </div>
         <div class="card-body">
             <table class="table table-hover">
@@ -43,7 +21,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each filteredTransactions as transaction}
+                    {#each $transactions as transaction}
                         <tr>
                             <td
                                 data-bs-toggle="modal"

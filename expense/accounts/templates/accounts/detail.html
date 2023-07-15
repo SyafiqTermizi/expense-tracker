@@ -31,7 +31,10 @@
     </div>
 </div>
 
-<div class="row mt-5" id="transaction-filter"></div>
+<div class="row mt-5">
+    <div class="col-8" id="transaction-filter"></div>
+    <div class="col-4" id="transaction-search"></div>
+</div>
 <div class="row mt-2 mb-5" id="transaction-list"></div>
 
 {% for transaction in transactions %}
@@ -42,6 +45,6 @@
 
 {{ balances|json_script:"balances-data" }}
 {{ transactions|json_script:"transaction-data" }}
-
+<script src="{% static 'transactions.js' %}"></script>
 <script src="{% static 'accountDetail.js' %}"></script>
 {% endblock content %}

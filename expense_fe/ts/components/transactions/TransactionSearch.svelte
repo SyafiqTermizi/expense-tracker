@@ -1,0 +1,12 @@
+<script lang="ts">
+    import { keyword } from "./store";
+</script>
+
+<input
+    class="form-control"
+    placeholder="Search transactions..."
+    type="search"
+    name="search"
+    id="search"
+    bind:value={$keyword}
+/>
