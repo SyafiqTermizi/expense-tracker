@@ -7,14 +7,11 @@
         document.getElementById("user-currency").textContent;
 </script>
 
-<div class="row mt-5">
-    <div class="col-8" id="transaction-filter">
+<div class="card">
+    <div class="row pt-2 px-3">
         <TransactionFilter />
-    </div>
-    <div class="col-4" id="transaction-search">
         <TransactionSearch />
     </div>
-</div>
-<div class="row mt-2 mb-5" id="transaction-list">
+    <hr />
     <TransactionList {currency} />
 </div>

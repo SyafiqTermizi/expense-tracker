@@ -25,8 +25,3 @@ export const transactions = derived([showAll, keyword, initialTransactions], ([$
 
     return tempTransactions
 });
-
-const date = new Date();
-const month = date.toLocaleString("default", { month: "long" });
-
-export let cardTitle = derived(showAll, ($showAll) => $showAll === true ? `${month}'s Transactions` : `${month}'s Expenses`)
