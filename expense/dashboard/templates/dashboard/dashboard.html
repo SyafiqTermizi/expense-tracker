@@ -58,11 +58,7 @@
     </div>
 </div>
 
-<div class="row mt-5">
-    <div class="col-8" id="transaction-filter"></div>
-    <div class="col-4" id="transaction-search"></div>
-</div>
-<div class="row mt-2 mb-5" id="transaction-list"></div>
+<div id="transactions"></div>
 
 {% for transaction in transactions %}
     {% if transaction.expense %}
