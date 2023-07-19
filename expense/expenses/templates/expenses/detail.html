@@ -3,12 +3,32 @@
 
 {% block content %}
 <div class="row mt-4">
-    <h3>{% now 'F' %}'s expense breakdown</h3>
+    <h3>
+        <a id="expense-date-button" style="color: black; text-decoration: none;" role="button">
+            {{ month_name }}'s expense breakdown
+            <svg id="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-arrow-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+                <path d="M8 12l4 4"></path>
+                <path d="M12 8v8"></path>
+                <path d="M16 12l-4 4"></path>
+            </svg>
+        </a>
+    </h3>
+    <ul id="expense-date-dropdown" style="width: 50%;" class="dropdown-menu mt-4">
+        <li><p class="dropdown-item">Show breakdown for:</p></li>
+        <li><hr class="dropdown-divider"></li>
+        {% for date in all_expense_months %}
+        <li><a class="dropdown-item" href="{% url 'expenses:detail' %}?month={{ date.date.month }}&year={{ date.date.year }}">{{ date.date|date:"M Y" }}</a></li>
+        {% endfor %}
+        </li>
+
+    </ul>
     <p class="text-secondary">
         {% if total_expense %}
         You've spent <b>{{ request.user.currency }}  {{ total_expense }}</b> this month.
         {% else %}
-        A breakdown of your expenses for the month of {% now 'F' %}.
+        A breakdown of your expenses for the month of {{ month_name }}.
         {% endif %}
     </p>
 </div>

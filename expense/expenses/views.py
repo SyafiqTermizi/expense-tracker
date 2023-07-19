@@ -1,4 +1,7 @@
+import calendar
+
 from django.db.models import Sum
+from django.db.models.functions import TruncMonth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -7,8 +10,12 @@ from django.utils.text import slugify
 
 from expense.accounts.utils import get_latest_account_balance
 
-from .forms import AddExpenseForm, AddExpenseImageForm, CategoryForm
-from .models import Expense
+from .forms import (
+    AddExpenseForm,
+    AddExpenseImageForm,
+    CategoryForm,
+    MonthQueryParamForm,
+)
 from .utils import get_formatted_user_expense_for_month
 
 
@@ -98,30 +105,28 @@ def list_expense_categories(request: HttpRequest) -> HttpResponse:
 def update_expense_categories(request: HttpRequest, slug: str) -> HttpResponse:
     category = get_object_or_404(request.user.expense_categories, slug=slug)
 
-    if request.method == "POST":
-        form = CategoryForm(data=request.POST, instance=category)
+    if request.method == "GET":
+        return render(
+            request,
+            "expenses/category_form.html",
+            context={"form": CategoryForm(instance=category)},
+        )
 
-        if form.is_valid():
-            category = form.save(commit=False)
-            category.belongs_to = request.user
-            category.slug = slugify(category.name)
-            category.save()
+    form = CategoryForm(data=request.POST, instance=category)
 
-            return redirect(
-                request.GET.get(
-                    "next",
-                    "dashboard:index",
-                )
+    if form.is_valid():
+        category = form.save(commit=False)
+        category.belongs_to = request.user
+        category.slug = slugify(category.name)
+        category.save()
+        return redirect(
+            request.GET.get(
+                "next",
+                "dashboard:index",
             )
-        else:
-            return render(
-                request, "expenses/category_form.html", context={"form": form}
-            )
-    return render(
-        request,
-        "expenses/category_form.html",
-        context={"form": CategoryForm(instance=category)},
-    )
+        )
+    else:
+        return render(request, "expenses/category_form.html", context={"form": form})
 
 
 @login_required
@@ -141,14 +146,25 @@ def delete_expense_categories(request: HttpRequest, slug: str) -> HttpResponse:
 
 @login_required
 def expense_detail_view(request: HttpRequest) -> HttpResponse:
+    filter_kwargs = {
+        "created_at__month": timezone.now().month,
+        "created_at__year": timezone.now().year,
+    }
+
+    form = MonthQueryParamForm(data=request.GET)
+    if form.is_valid():
+        filter_kwargs.update(
+            {
+                "created_at__month": form.cleaned_data["month"],
+                "created_at__year": form.cleaned_data["year"],
+            }
+        )
+
     expense_by_category = list(
         map(
             lambda x: {"x": x["category__name"], "y": x["total"]},
             (
-                request.user.expenses.filter(
-                    created_at__month=timezone.now().month,
-                    created_at__year=timezone.now().year,
-                )
+                request.user.expenses.filter(**filter_kwargs)
                 .values("category__name")
                 .annotate(total=Sum("amount"))
             ),
@@ -159,10 +175,7 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
         map(
             lambda x: {"x": x["from_action__account__name"], "y": x["total"]},
             (
-                request.user.expenses.filter(
-                    created_at__month=timezone.now().month,
-                    created_at__year=timezone.now().year,
-                )
+                request.user.expenses.filter(**filter_kwargs)
                 .values("from_action__account__name")
                 .annotate(total=Sum("amount"))
             ),
@@ -170,14 +183,28 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
     )
 
     expense_this_month = get_formatted_user_expense_for_month(
-        Expense.objects.get_user_expense_for_month(
-            user=request.user,
-            month=timezone.now().month,
-            year=timezone.now().year,
+        request.user.expenses.filter(belongs_to=request.user, **filter_kwargs)
+        .order_by("-created_at")
+        .values(
+            "from_action__account__name",
+            "created_at",
+            "description",
+            "amount",
+            "images__image",
+            "category__name",
         )
     )
 
+    all_expense_months = (
+        request.user.expenses.annotate(date=TruncMonth("created_at"))
+        .distinct("date")
+        .values("date")
+    )
+
     total_expense = sum(expense["amount"] for expense in expense_this_month)
+
+    month_int = form.cleaned_data["month"] if form.is_valid() else timezone.now().month
+    month_name = calendar.month_name[month_int]
 
     return render(
         request,
@@ -187,5 +214,7 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
             "expense_by_account": expense_by_account,
             "expenses": expense_this_month,
             "total_expense": total_expense,
+            "all_expense_months": all_expense_months,
+            "month_name": month_name,
         },
     )

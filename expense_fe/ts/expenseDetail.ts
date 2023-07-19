@@ -1,3 +1,20 @@
+const dateDropdownButton = document.getElementById("expense-date-button");
+const dateDropdownList = document.getElementById("expense-date-dropdown");
+const dropdownArrow = document.getElementById("dropdown-arrow");
+
+dateDropdownButton.addEventListener("click", () => {
+    if (dateDropdownButton.classList.contains("show")) {
+        dateDropdownButton.classList.remove("show");
+        dateDropdownList.classList.remove("show");
+        dropdownArrow.style.transform = "rotate(0deg)";
+    } else {
+        dateDropdownButton.classList.add("show");
+        dateDropdownList.classList.add("show");
+        dropdownArrow.style.transform = "rotate(180deg)";
+    }
+});
+
+
 const showByCategory = document.getElementById("show-by-category");
 const showByAccount = document.getElementById("show-by-account");
 const categoryChartContainer = document.getElementById("category-chart");
