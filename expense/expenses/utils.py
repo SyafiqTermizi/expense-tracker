@@ -18,6 +18,7 @@ def get_formatted_user_expense_for_month(user_monthly_expenses: list) -> list:
                 else None,
                 "category": expense["category__name"],
                 "uid": get_random_string(10),
+                "expense": True,
             },
             user_monthly_expenses,
         )

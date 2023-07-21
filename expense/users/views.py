@@ -65,14 +65,6 @@ class PasswordResetConfirmView(BasePasswordResetConfirmView):
     template_name = "users/password_reset_confirm.html"
     success_url = reverse_lazy("users:password_reset_complete")
 
-    def form_valid(self, form: Any) -> HttpResponse:
-        print("shit valid")
-        return super().form_valid(form)
-
-    def form_invalid(self, form: Any) -> HttpResponse:
-        print("shit invalid")
-        return super().form_invalid(form)
-
 
 class PasswordResetDoneView(BasePasswordResetDoneView):
     template_name = "users/password_reset_done.html"

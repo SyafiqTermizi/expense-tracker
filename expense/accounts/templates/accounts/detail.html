@@ -31,7 +31,7 @@
     </div>
 </div>
 
-<div id="transactions" class="mt-4"></div>
+{% include "partial/transaction_table.html" with transactions=transactions hide_filter="false" %}
 
 {% for transaction in transactions %}
     {% if transaction.expense %}
@@ -40,7 +40,5 @@
 {% endfor %}
 
 {{ balances|json_script:"balances-data" }}
-{{ transactions|json_script:"transaction-data" }}
-<script src="{% static 'transactions.js' %}"></script>
 <script src="{% static 'accountDetail.js' %}"></script>
 {% endblock content %}

@@ -7,7 +7,7 @@
     const month = date.toLocaleString("default", { month: "long" });
 </script>
 
-<div class="col-md-8 col-sm-12 mt-2">
+<div class="col-md-8 col-sm-12 mt-2 text-sm-start text-md-end">
     Show {month}'s:
     <button
         class={$showAll ? activeClass : inactiveClass}

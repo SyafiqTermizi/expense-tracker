@@ -1,12 +1,6 @@
-import { writable, readable, derived } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 
-const transactionData: Transaction[] = JSON.parse(document.getElementById("transaction-data")!.textContent) || [];
-
-const initialTransactions = readable(transactionData, function start(set) {
-    return function stop() {
-        return []
-    }
-});
+export const initialTransactions = writable([]);
 
 export const showAll = writable(true);
 export const keyword = writable("");
