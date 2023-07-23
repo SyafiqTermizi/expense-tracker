@@ -2,6 +2,7 @@ from django.utils.crypto import get_random_string
 
 from expense.accounts.models import Account
 from expense.expenses.models import Image as ExpenseImage
+from expense.types import AccountBalance
 from expense.users.models import User
 
 
@@ -60,7 +61,7 @@ def get_actions_with_expense_data(
     return transactions
 
 
-def get_latest_account_balance(user: User):
+def get_latest_account_balance(user: User) -> list[AccountBalance]:
     """
     Get latest balance for all accounts for a given user
     """
