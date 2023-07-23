@@ -146,7 +146,7 @@ class User(AbstractUser):
     last_name = None
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
+    REQUIRED_FIELDS = ["username", "currency"]
 
     def get_absolute_url(self):
         return reverse("users:profile")
