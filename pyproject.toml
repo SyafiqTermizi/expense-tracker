@@ -15,7 +15,7 @@ pillow = "^10.0.0"
 huey = "^2.4.5"
 gevent = "^22.10.2"
 gunicorn = "^21.2.0"
-whitenoise = "^6.5.0"
+whitenoise = {extras = ["brotli"], version = "^6.5.0"}
 
 
 [tool.poetry.group.dev.dependencies]

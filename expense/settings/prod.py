@@ -2,12 +2,15 @@ from .base import *
 
 DEBUG = False
 
-MIDDLEWARE = list(
-    set(
-        [
-            "django.middleware.security.SecurityMiddleware",
-            "whitenoise.middleware.WhiteNoiseMiddleware",
-            *MIDDLEWARE,
-        ]
-    )
+# https://whitenoise.readthedocs.io/en/latest/#quickstart-for-django-apps
+MIDDLEWARE.insert(
+    MIDDLEWARE.index("django.middleware.security.SecurityMiddleware") + 1,
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 )
+
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
