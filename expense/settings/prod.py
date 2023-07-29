@@ -14,3 +14,5 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+WHITENOISE_MAX_AGE = 86400  # 24 hours
