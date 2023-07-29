@@ -1,3 +1,6 @@
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from .base import *
 
 DEBUG = False
@@ -16,3 +19,11 @@ STORAGES = {
 }
 
 WHITENOISE_MAX_AGE = 86400  # 24 hours
+
+
+sentry_sdk.init(
+    dsn=os.environ.get("SENTRY_DSN"),
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True,
+)
