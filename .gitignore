@@ -283,7 +283,4 @@ webpack-stats.json
 .envs/*
 .vscode/
 
-static/*.css
-static/*.js
-static/*.txt
 media/
