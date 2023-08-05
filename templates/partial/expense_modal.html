@@ -1,10 +1,12 @@
+{% load humanize %}
+
 <div class="modal fade" id="expense-modal-{{ uid }}" tabindex="-1" aria-labelledby="expense-modal-label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
                 <h1 class="modal-title fs-5 mb-3" id="expense-modal-label">{{ description }}</h1>
                 <p><b>Account:</b>&nbsp;{{ account }}</p>
-                <p><b>Amount:</b>&nbsp;{{ amount }}</p>
+                <p><b>Amount:</b>&nbsp;{{ request.user.currency }} {{ amount|intcomma }}</p>
                 {% if category %}
                 <p><b>Category:</b>&nbsp;{{ category }}</p>
                 {% endif %}

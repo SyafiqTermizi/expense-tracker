@@ -1,20 +1,20 @@
 export function isoToLocalDate(isoDate: string) {
     const monthNames = [
-        "January",
-        "Feburary",
-        "March",
-        "April",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
         "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
     ]
     const dateArr = new Date(isoDate).toLocaleDateString().split("/");
     const month = monthNames[parseInt(dateArr[0]) - 1];
 
-    return `${dateArr[1]} ${month} ${dateArr[2]}`;
+    return `${dateArr[1]} ${month}`;
 }

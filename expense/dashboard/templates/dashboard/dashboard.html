@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 <div class="row mt-4">
@@ -25,7 +26,7 @@
                         <div class="card-body">
                             <a class="card-link" href="{{ account.url }}"><b>{{ account.name }}</b></a
                             >
-                            <div class="card-text">{{ request.user.currency }}&nbsp;{{ account.balance }}</div>
+                            <div class="card-text">{{ request.user.currency }}&nbsp;{{ account.balance|intcomma }}</div>
                         </div>
                     </div>
                 </div>

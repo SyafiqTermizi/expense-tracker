@@ -3,6 +3,12 @@
     import { isoToLocalDate } from "../../utils";
 
     export let currency: string = "";
+
+    // Create our number formatter.
+    const formatter = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currency,
+    });
 </script>
 
 <div class="card-body">
@@ -10,7 +16,7 @@
         <thead>
             <tr>
                 <th scope="col">Description</th>
-                <th scope="col">Amount ({currency})</th>
+                <th scope="col">Amount</th>
                 <th scope="col">Account</th>
                 <th scope="col">Date</th>
             </tr>
@@ -53,8 +59,9 @@
                     <td
                         class={transaction.action === "DEBIT"
                             ? "text-danger"
-                            : "text-success"}>{transaction.amount}</td
-                    >
+                            : "text-success"}
+                        >{formatter.format(transaction.amount)}
+                    </td>
                     <td>{transaction.account}</td>
                     <td>{isoToLocalDate(transaction.created_at)}</td>
                 </tr>
