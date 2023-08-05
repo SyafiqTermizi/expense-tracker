@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block content %}
 <div class="row mt-4">
@@ -28,7 +29,7 @@
                                 {% if account.slug == form.from_account.value %}selected{% endif %}
                                 value="{{ account.slug }}"
                             >
-                                {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance }} 
+                                {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance|intcomma }} 
                             </option>
                             {% endfor %}
                         </select>
@@ -45,7 +46,7 @@
                                 {% if account.slug == form.to_account.value %}selected{% endif %}
                                 value="{{ account.slug }}"
                             >
-                                {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance }} 
+                                {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance|intcomma }} 
                             </option>
                             {% endfor %}
                         </select>

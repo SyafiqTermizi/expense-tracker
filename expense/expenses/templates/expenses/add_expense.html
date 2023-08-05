@@ -1,6 +1,7 @@
 {% extends "base.html" %}
-
 {% block content %}
+{% load humanize %}
+
 <div class="row mt-4">
     <h3>Add expenses</h3>
     <p class="text-secondary">
@@ -40,7 +41,7 @@
                             {% if account.slug == expense_form.from_account.value %}selected{% endif %}
                             value="{{ account.slug }}"
                         >
-                            {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance }} 
+                            {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance|intcomma }} 
                         </option>
                         {% endfor %}
                     </select>
