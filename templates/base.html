@@ -12,15 +12,18 @@
 </head>
 
 <body style="background-color: #f6f8fb;">
-    <div id="user-currency" class="d-none">{{ request.user.currency }}</div>
     {% if request.user.is_authenticated %}
-    {% include "partial/navbar.html" %}
+    {% include "partial/top_navbar.html" %}
+    {% include "partial/bottom_navbar.html" %}
     {% endif %}
-    <div class="container">
+    <div id="user-currency" class="d-none">{{ request.user.currency }}</div>
+    <br>
+    <div class="mt-5 mb-5 container">
         {% block content %}
         {% endblock content %}
     </div>
     <script src="{% static 'styleJs.js' %}"></script>
+    <br><br><br><br><br><br><br><br><br><br>
 </body>
 
 </html>
