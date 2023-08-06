@@ -16,8 +16,8 @@
     {% include "partial/top_navbar.html" %}
     {% include "partial/bottom_navbar.html" %}
     {% endif %}
-    <div id="user-currency" class="d-none">{{ request.user.currency }}</div>
     <br>
+    <div id="user-currency" class="d-none">{{ request.user.currency }}</div>
     <div class="mt-5 mb-5 container">
         {% block content %}
         {% endblock content %}
