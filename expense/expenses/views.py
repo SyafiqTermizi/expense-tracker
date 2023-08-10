@@ -186,11 +186,12 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
         request.user.expenses.filter(belongs_to=request.user, **filter_kwargs)
         .order_by("-created_at")
         .values(
+            "pk",
             "from_action__account__name",
             "created_at",
             "description",
             "amount",
-            "images__image",
+            "images",
             "category__name",
         )
     )
