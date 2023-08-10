@@ -6,7 +6,7 @@ from expense.types import AccountBalance
 from expense.users.models import User
 
 
-def get_actions_with_expense_data(
+def get_transactions_with_expense_data(
     user: User,
     month: int,
     year: int,
@@ -22,12 +22,14 @@ def get_actions_with_expense_data(
     if account:
         action_filter_kwargs.update({"account": account})
 
+    # 1. Get all user's account actions
     account_actions = (
         user.account_actions.filter(**action_filter_kwargs)
         .order_by("-created_at")
         .select_related("expense", "account", "expense__category")
     )
 
+    # 2. Get all user expense images for current month
     expense_image_mapping = {}
     for image in ExpenseImage.objects.filter(
         expense__created_at__month=month,
@@ -46,6 +48,7 @@ def get_actions_with_expense_data(
             "action": action.action,
         }
 
+        # 3. If that action is an expense, attach the image
         if hasattr(action, "expense"):
             data.update(
                 {

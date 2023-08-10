@@ -7,7 +7,7 @@ from django.template import defaultfilters
 from django.utils import timezone
 
 from expense.accounts.utils import (
-    get_actions_with_expense_data,
+    get_transactions_with_expense_data,
     get_latest_account_balance,
 )
 
@@ -128,7 +128,7 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         "accounts/detail.html",
         context={
             "account": account,
-            "transactions": get_actions_with_expense_data(
+            "transactions": get_transactions_with_expense_data(
                 request.user,
                 timezone.now().month,
                 timezone.now().year,

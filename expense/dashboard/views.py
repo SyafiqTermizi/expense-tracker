@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.utils import timezone
 
 from expense.accounts.utils import (
-    get_actions_with_expense_data,
+    get_transactions_with_expense_data,
     get_latest_account_balance,
 )
 from expense.types import AccountBalance
@@ -41,7 +41,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     # 1. Get data to display on the dashboard
     accounts = get_latest_account_balance(request.user)
 
-    transactions = get_actions_with_expense_data(
+    transactions = get_transactions_with_expense_data(
         request.user,
         timezone.now().month,
         timezone.now().year,
