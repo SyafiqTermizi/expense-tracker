@@ -6,20 +6,18 @@
 
     export let currency = "";
 
-    let expenseData: Transaction = null;
+    let expenseData: Transaction = {
+        id: "",
+        category: "",
+        account: "",
+        created_at: "",
+        description: "",
+        amount: 0,
+        action: "",
+    };
 
     const unsub = transactionModalID.subscribe((modalId) => {
-        expenseData = {
-            action: "",
-            description: "",
-            account: "",
-            amount: 0,
-            category: "",
-            id: "",
-            created_at: "",
-            images: [],
-        };
-
+        Object.keys(expenseData).forEach((key) => (expenseData[key] = null));
         if (modalId) {
             const request = new XMLHttpRequest();
 
@@ -40,7 +38,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                {#if expenseData}
+                {#if expenseData.description}
                     <h1 class="modal-title fs-5 mb-3" id="expense-modal-label">
                         {expenseData.description}
                     </h1>
@@ -53,13 +51,47 @@
                         )}
                     </p>
                     {#each expenseData.images as image}
-                        <img
-                            class="img-thumbnail mb-2"
-                            src={image}
-                            alt="Expenses attachment"
-                        />
+                        <a href={image} target="_blank">
+                            <img
+                                class="img-thumbnail mb-2"
+                                src={image}
+                                alt="Expenses attachment"
+                                style="object-fit: cover; width: 100px; height: 100px"
+                            />
+                        </a>
                     {/each}
+                {:else}
+                    <h1
+                        class="modal-title fs-5 mb-3 placeholder-glow"
+                        id="expense-modal-label"
+                    >
+                        <span class="placeholder col-2" />
+                        <span class="placeholder col-5" />
+                    </h1>
+                    <p class="placeholder-glow">
+                        <span class="placeholder col-2" />
+                        <span class="placeholder col-3" />
+                    </p>
+                    <p class="placeholder-glow">
+                        <span class="placeholder col-2" />
+                        <span class="placeholder col-1" />
+                        <span class="placeholder col-3" />
+                    </p>
+                    <p class="placeholder-glow">
+                        <span class="placeholder col-3" />
+                        <span class="placeholder col-3" />
+                    </p>
+                    <p class="placeholder-glow">
+                        <span class="placeholder col-3" />
+                        <span class="placeholder col-1" />
+                        <span class="placeholder col-4" />
+                    </p>
+                    <div
+                        class="img-thumbnail mb-2"
+                        style="width: 100px; height: 100px"
+                    />
                 {/if}
+                <br />
                 <button
                     type="button"
                     class="text-end btn btn-secondary"
