@@ -7,15 +7,29 @@
     export let currency = "";
 
     let expenseData: Transaction = null;
+
     const unsub = transactionModalID.subscribe((modalId) => {
+        expenseData = {
+            action: "",
+            description: "",
+            account: "",
+            amount: 0,
+            category: "",
+            id: "",
+            created_at: "",
+            images: [],
+        };
+
         if (modalId) {
             const request = new XMLHttpRequest();
-            request.open("GET", `/expenses/detail/${modalId}`);
+
             request.onreadystatechange = function () {
                 if (request.readyState == XMLHttpRequest.DONE) {
                     expenseData = JSON.parse(request.responseText);
                 }
             };
+
+            request.open("GET", `/expenses/detail/${modalId}`);
             request.send();
         }
     });
@@ -23,7 +37,7 @@
 </script>
 
 <div class="modal fade" id="expense-modal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
                 {#if expenseData}
