@@ -34,12 +34,6 @@
 
 {% include "partial/transaction_table.html" with transactions=transactions hide_filter="false" %}
 
-{% for transaction in transactions %}
-    {% if transaction.expense %}
-    {% include "partial/expense_modal.html" with uid=transaction.uid description=transaction.description account=transaction.account amount=transaction.amount category=transaction.category created_at=transaction.created_at image=transaction.image %}
-    {% endif %}
-{% endfor %}
-
 {{ balances|json_script:"balances-data" }}
 <script src="{% static 'accountDetail.js' %}"></script>
 {% endblock content %}

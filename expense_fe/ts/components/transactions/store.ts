@@ -19,3 +19,5 @@ export const transactions = derived([showAll, keyword, initialTransactions], ([$
 
     return tempTransactions
 });
+
+export const transactionModalID = writable(0);

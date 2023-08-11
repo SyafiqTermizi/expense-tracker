@@ -2,6 +2,7 @@
     import TransactionList from "./TransactionList.svelte";
     import TransactionFilter from "./TransactionFilter.svelte";
     import TransactionSearch from "./TransactionSearch.svelte";
+    import Modal from "./Modal.svelte";
 
     export let currency = "MYR";
     export let hideFilter = false;
@@ -16,4 +17,5 @@
     </div>
     <hr />
     <TransactionList {currency} />
+    <Modal {currency} />
 </div>

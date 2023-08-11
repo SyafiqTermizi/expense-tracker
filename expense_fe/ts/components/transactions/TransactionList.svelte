@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { transactions } from "./store";
+    import { transactions, transactionModalID } from "./store";
     import { isoToLocalDate } from "../../utils";
 
     export let currency: string = "";
 
-    // Create our number formatter.
     const formatter = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: currency,
@@ -23,10 +22,18 @@
         </thead>
         <tbody>
             {#each $transactions as transaction}
-                <tr>
+                <tr
+                    on:click={() => {
+                        if (transaction.expense) {
+                            transactionModalID.set(transaction.id);
+                        }
+                    }}
+                >
                     <td
-                        data-bs-toggle="modal"
-                        data-bs-target="#expense-modal-{transaction.uid}"
+                        data-bs-toggle={transaction.expense ? "modal" : ""}
+                        data-bs-target={transaction.expense
+                            ? "#expense-modal"
+                            : ""}
                     >
                         {transaction.description}
                         {#if transaction.expense}

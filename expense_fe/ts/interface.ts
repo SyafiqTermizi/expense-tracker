@@ -8,8 +8,8 @@ interface Expense {
 
 interface Transaction {
     expense?: Expense;
-    image?: string;
-    uid?: string;
+    images?: string[];
+    id: string;
     category: string;
     account: string;
     created_at: string;

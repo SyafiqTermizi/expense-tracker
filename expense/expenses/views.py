@@ -3,7 +3,7 @@ import calendar
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.text import slugify
@@ -145,7 +145,7 @@ def delete_expense_categories(request: HttpRequest, slug: str) -> HttpResponse:
 
 
 @login_required
-def expense_detail_view(request: HttpRequest) -> HttpResponse:
+def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
     filter_kwargs = {
         "created_at__month": timezone.now().month,
         "created_at__year": timezone.now().year,
@@ -191,7 +191,6 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
             "created_at",
             "description",
             "amount",
-            "images",
             "category__name",
         )
     )
@@ -219,3 +218,22 @@ def expense_detail_view(request: HttpRequest) -> HttpResponse:
             "month_name": month_name,
         },
     )
+
+
+@login_required
+def expense_detail_api_view(request: HttpResponse, pk: int) -> JsonResponse:
+    expense = get_object_or_404(request.user.expenses, pk=pk)
+
+    images = []
+    for image in expense.images.all():
+        images.append(image.image.url)
+
+    res = {
+        "account": expense.from_action.account.name,
+        "description": expense.description,
+        "category": expense.category.name,
+        "amount": expense.amount,
+        "created_at": expense.created_at,
+        "images": images,
+    }
+    return JsonResponse(data=res)
