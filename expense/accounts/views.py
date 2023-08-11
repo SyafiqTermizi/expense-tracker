@@ -1,17 +1,17 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Max, Subquery
 from django.db.models.functions import TruncDay
-from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import defaultfilters
 from django.utils import timezone
 
 from expense.accounts.utils import (
-    get_transactions_with_expense_data,
     get_latest_account_balance,
+    get_transactions_with_expense_data,
 )
 
-from .forms import AccountActionForm, AccountTransferForm, AccountForm
+from .forms import AccountActionForm, AccountForm, AccountTransferForm
 from .models import AccountAction, AccountBalance
 
 

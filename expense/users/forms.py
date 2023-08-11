@@ -1,4 +1,5 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
+
 from django.contrib.auth import forms as base_forms
 from django.forms import EmailField
 

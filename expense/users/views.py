@@ -1,19 +1,19 @@
 from typing import Any, Dict
+
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (
     LoginView as BaseSignInView,
-    PasswordResetView as BasePasswordResetView,
+    PasswordResetCompleteView as BasePasswordResetCompleteView,
     PasswordResetConfirmView as BasePasswordResetConfirmView,
     PasswordResetDoneView as BasePasswordResetDoneView,
-    PasswordResetCompleteView as BasePasswordResetCompleteView,
+    PasswordResetView as BasePasswordResetView,
 )
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import FormView, UpdateView
 
-from .forms import UserCreationForm, PasswordResetForm
+from .forms import PasswordResetForm, UserCreationForm
 from .models import CURRENCIES, User
 
 

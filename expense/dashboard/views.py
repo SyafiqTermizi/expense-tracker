@@ -1,13 +1,12 @@
-from django.db.models import Sum
-
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 
 from expense.accounts.utils import (
-    get_transactions_with_expense_data,
     get_latest_account_balance,
+    get_transactions_with_expense_data,
 )
 from expense.types import AccountBalance
 

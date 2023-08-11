@@ -1,11 +1,11 @@
 from django.urls import path
 
 from .views import (
-    transfer_view,
     add_view,
-    detail_view,
     create_account_view,
     delete_account_view,
+    detail_view,
+    transfer_view,
     update_account_view,
 )
 

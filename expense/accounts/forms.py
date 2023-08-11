@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
 from django import forms
 from django.utils.text import slugify
@@ -6,7 +6,7 @@ from django.utils.text import slugify
 from expense.users.models import User
 from expense.utils import BaseFromAccountForm
 
-from .models import AccountAction, AccountBalance, Account
+from .models import Account, AccountAction, AccountBalance
 
 
 class AccountActionForm(forms.ModelForm):

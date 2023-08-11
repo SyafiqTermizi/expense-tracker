@@ -1,7 +1,8 @@
 from django.db import models
 from django.urls import reverse
-from expense.users.models import User
+
 from expense.accounts.models import AccountAction
+from expense.users.models import User
 
 
 class Category(models.Model):

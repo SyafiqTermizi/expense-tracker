@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .forms import AccountActionForm
-from .models import AccountBalance, AccountAction
+from .models import AccountAction, AccountBalance
 
 
 @admin.register(AccountAction)
