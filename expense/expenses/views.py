@@ -186,7 +186,7 @@ def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
         request.user.expenses.filter(belongs_to=request.user, **filter_kwargs)
         .order_by("-created_at")
         .values(
-            "pk",
+            "slug",
             "from_action__account__name",
             "created_at",
             "description",
@@ -221,9 +221,9 @@ def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def expense_detail_api_view(request: HttpResponse, pk: int) -> JsonResponse:
+def expense_detail_api_view(request: HttpResponse, slug: str) -> JsonResponse:
     expense = (
-        request.user.expenses.filter(pk=pk)
+        request.user.expenses.filter(slug=slug)
         .select_related("category", "from_action__account")
         .first()
     )

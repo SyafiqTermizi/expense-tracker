@@ -11,7 +11,7 @@ def get_formatted_user_expense_for_month(user_monthly_expenses: list) -> list:
                 "description": expense["description"],
                 "amount": expense["amount"],
                 "category": expense["category__name"],
-                "id": expense["pk"],
+                "id": expense["slug"],
                 "expense": True,
             },
             user_monthly_expenses,

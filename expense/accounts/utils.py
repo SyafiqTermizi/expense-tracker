@@ -41,7 +41,7 @@ def get_transactions_with_expense_data(
             data.update(
                 {
                     "expense": True,
-                    "id": action.expense.pk,
+                    "id": action.expense.slug,
                     "category": action.expense.category.name,
                 }
             )
