@@ -222,7 +222,11 @@ def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def expense_detail_api_view(request: HttpResponse, pk: int) -> JsonResponse:
-    expense = get_object_or_404(request.user.expenses, pk=pk)
+    expense = (
+        request.user.expenses.filter(pk=pk)
+        .select_related("category", "from_action__account")
+        .first()
+    )
 
     images = []
     for image in expense.images.all():
