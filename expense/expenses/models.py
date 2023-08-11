@@ -1,8 +1,12 @@
+from functools import partial
 from django.db import models
 from django.urls import reverse
+from django.utils.crypto import get_random_string
 
 from expense.accounts.models import AccountAction
 from expense.users.models import User
+
+get_fifteen_random_string = partial(get_random_string, 15)
 
 
 class Category(models.Model):
@@ -61,6 +65,11 @@ class Expense(models.Model):
     This model tracks what the expense is for and its category.
     """
 
+    slug = models.SlugField(
+        max_length=120,
+        default=get_fifteen_random_string,
+        unique=True,
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(
         Category,
