@@ -1,12 +1,9 @@
 {% extends "base.html" %}
-{% load humanize %}
-{% block content %}
 
+{% block content %}
 <div class="row mt-4">
-    <h3>Add expenses</h3>
-    <p class="text-secondary">
-        Add expenses.
-    </p>
+    <h3>Update expense</h3>
+    <p class="text-secondary">Update expense.</p>
 </div>
 <div class="row mt-3">
     <div class="col-12">
@@ -22,41 +19,15 @@
                     </div>
                 </div>
                 {% endif %}
-
-                {% if image_form.non_field_errors %}
-                <div class="mb-3">
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {% for error in image_form.non_field_errors %}
-                        <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
     
                 <div class="mb-3">
                     <label class="form-label" for="id_from_account">From Account:</label>
-                    <select class="form-select {% if expense_form.from_account.errors %}is-invalid{% endif %}" name="from_account" required="" id="id_from_account">
-                        {% for account in accounts %}
-                        <option
-                            {% if account.slug == expense_form.from_account.value %}selected{% endif %}
-                            value="{{ account.slug }}"
-                        >
-                            {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance|intcomma }} 
-                        </option>
-                        {% endfor %}
-                    </select>
-                    {% for error in expense_form.from_account.errors %}
-                    <p class="text-danger">{{ error }}</p>
-                    {% endfor %}
+                    <input class="form-control disabled" type="text" value="{{ expense.from_action.account.name }}" disabled>
                 </div>
     
                 <div class="mb-3">
                     <label class="form-label" for="id_amount">Amount ({{ request.user.currency }}):</label>
-                    <input class="form-control {% if expense_form.amount.errors %}is-invalid{% endif %}" type="number" name="amount"
-                        step="0.01" required id="id_amount" value="{{ expense_form.amount.value }}">
-                    {% for error in expense_form.amount.errors %}
-                    <p class="text-danger">{{ error }}</p>
-                    {% endfor %}
+                    <input class="form-control disabled" type="number" value="{{ expense.amount }}" disabled>
                 </div>
     
                 <div class="mb-3">
@@ -67,14 +38,6 @@
                     <p class="text-danger">{{ error }}</p>
                     {% endfor %}
                 </div>
-    
-                <div class="mb-3">
-                    <label class="form-label" for="id_image">Image:</label>
-                    <input class="form-control" type="file" name="image" accept="image/*" id="id_image">
-                    {% for error in image_form.image.errors %}
-                    <p class="text-danger">{{ error }}</p>
-                    {% endfor %}
-                </div>
 
                 <div class="mb-3">
                     <label class="form-label" for="id_category">category:</label>
@@ -82,7 +45,7 @@
                         <option value="">----</option>
                         {% for category in categories %}
                         <option
-                            {% if category.slug == expense_form.category.value %}selected{% endif %}
+                            {% if category.slug == expense.category.slug %}selected{% endif %}
                             value="{{ category.slug }}"
                         >
                             {{ category.name }}

@@ -63,6 +63,19 @@ class AddExpenseForm(BaseFromAccountForm):
         )
 
 
+class UpdateExpenseForm(forms.ModelForm):
+    def __init__(self, user: User, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["category"] = forms.ModelChoiceField(
+            queryset=user.expense_categories.all(),
+            to_field_name="slug",
+        )
+
+    class Meta:
+        model = Expense
+        fields = ["category", "description"]
+
+
 class AddExpenseImageForm(forms.ModelForm):
     class Meta:
         model = Image

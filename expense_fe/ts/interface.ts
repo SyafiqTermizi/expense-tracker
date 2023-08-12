@@ -16,6 +16,7 @@ interface Transaction {
     description: string;
     amount: number;
     action: string;
+    url?: string;
 }
 
 interface Account {

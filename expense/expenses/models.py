@@ -1,4 +1,5 @@
 from functools import partial
+
 from django.db import models
 from django.urls import reverse
 from django.utils.crypto import get_random_string
@@ -94,6 +95,9 @@ class Expense(models.Model):
 
     class Meta:
         get_latest_by = "created_at"
+
+    def get_absolute_url(self) -> str:
+        return reverse("expenses:update", kwargs={"slug": self.slug})
 
 
 def get_upload_path(instance, filename):

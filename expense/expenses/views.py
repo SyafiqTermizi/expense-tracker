@@ -15,6 +15,7 @@ from .forms import (
     AddExpenseImageForm,
     CategoryForm,
     MonthQueryParamForm,
+    UpdateExpenseForm,
 )
 from .utils import get_formatted_user_expense_for_month
 
@@ -68,6 +69,45 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
         )
 
     return redirect("dashboard:index")
+
+
+def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
+    expense = (
+        request.user.expenses.filter(slug=slug)
+        .select_related("from_action__account", "category")
+        .first()
+    )
+    expense_categories = request.user.expense_categories.values("name", "slug")
+    if request.method == "GET":
+        return render(
+            request=request,
+            template_name="expenses/update_expense.html",
+            context={
+                "expense": expense,
+                "categories": expense_categories,
+                "expense_form": UpdateExpenseForm(
+                    user=request.user,
+                    instance=expense,
+                ),
+            },
+        )
+
+    form = UpdateExpenseForm(user=request.user, instance=expense, data=request.POST)
+    if form.is_valid():
+        expense = form.save()
+        expense.from_action.description = expense.description
+        expense.from_action.save()
+        return redirect("dashboard:index")
+
+    return render(
+        request,
+        template_name="expenses/update_expense.html",
+        context={
+            "expense": expense,
+            "expense_form": form,
+            "categories": expense_categories,
+        },
+    )
 
 
 @login_required
@@ -239,5 +279,6 @@ def expense_detail_api_view(request: HttpResponse, slug: str) -> JsonResponse:
         "amount": expense.amount,
         "created_at": expense.created_at,
         "images": images,
+        "url": expense.get_absolute_url(),
     }
     return JsonResponse(data=res)

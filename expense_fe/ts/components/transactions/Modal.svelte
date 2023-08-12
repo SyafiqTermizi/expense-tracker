@@ -97,6 +97,9 @@
                     class="text-end btn btn-secondary"
                     data-bs-dismiss="modal">Close</button
                 >
+                <a class="text-start btn btn-primary" href={expenseData.url}
+                    >Update</a
+                >
             </div>
         </div>
     </div>
