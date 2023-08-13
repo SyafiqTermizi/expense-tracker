@@ -13,8 +13,6 @@ export function isoToLocalDate(isoDate: string) {
         "Nov",
         "Dec"
     ]
-    const dateArr = new Date(isoDate).toLocaleDateString().split("/");
-    const month = monthNames[parseInt(dateArr[0]) - 1];
-
-    return `${dateArr[1]} ${month}`;
+    const jsDate = new Date(isoDate);
+    return `${jsDate.getDate()} ${monthNames[jsDate.getMonth()]}`;
 }
