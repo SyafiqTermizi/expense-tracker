@@ -39,7 +39,7 @@
                     {% endfor %}
                 </div>
 
-                <div class="mb-3">
+                <div>
                     <label class="form-label" for="id_category">category:</label>
                     <select class="form-select {% if expense_form.category.errors %}is-invalid{% endif %}" name="category" id="id_category">
                         <option value="">----</option>
@@ -71,6 +71,12 @@
                         </div>
                     </div>
                 </div>
+
+                {% if image %}
+                {% include "partial/update_image_form.html" %}
+                {% else %}
+                {% include "partial/upload_image_form.html" %}
+                {% endif %}
 
                 <input class="mt-3 btn btn-primary" type="submit" value="Submit">
             </div>

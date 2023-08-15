@@ -76,7 +76,7 @@ class UpdateExpenseForm(forms.ModelForm):
         fields = ["category", "description"]
 
 
-class AddExpenseImageForm(forms.ModelForm):
+class ExpenseImageForm(forms.ModelForm):
     class Meta:
         model = Image
         fields = ["image"]

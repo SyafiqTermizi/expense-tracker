@@ -51,6 +51,7 @@ module.exports = {
         accountDetail: "./expense_fe/ts/accountDetail.ts",
         expenseDetail: "./expense_fe/ts/expenseDetail.ts",
         AddImageForm: "./expense_fe/ts/AddImageForm.ts",
+        UpdateImageForm: "./expense_fe/ts/UpdateImageForm.ts",
     },
     resolve: {
         alias: {

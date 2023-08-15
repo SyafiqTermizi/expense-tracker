@@ -1,0 +1,24 @@
+{% load static %}
+
+<label class="form-label" for="id_image">Image:</label>
+<div class="input-group mb-2" id="imageContainer">
+    <input class="form-control" type="file" name="image" accept="image/*" id="imageInput">
+    <button class="btn btn-outline-secondary" type="button" id="imageRemoveButton" placeholder="asdf">Clear</button>
+    {% for error in image_form.image.errors %}
+    <p class="text-danger">{{ error }}</p>
+    {% endfor %}
+</div>
+
+<div class="mb-2 form-text">Upload new image to replace current image</div>
+<a href={{ image.image.url }} id="imageLink" target="_blank">
+    <img
+        class="img-thumbnail mb-2"
+        src={{ image.image.url }}
+        alt="Expenses attachment"
+        style="object-fit: cover; width: 100px; height: 100px"
+        id="imagePreview"
+    />
+</a>
+<br>
+
+<script src="{% static 'UpdateImageForm.js' %}"></script>
