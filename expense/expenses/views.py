@@ -24,8 +24,6 @@ from .utils import get_formatted_user_expense_for_month
 def add_expense_view(request: HttpRequest) -> HttpResponse:
     user_accounts = get_latest_account_balance(request.user)
     expense_categories = request.user.expense_categories.values("name", "slug")
-
-    # Return early if rqeuest is GET
     if request.method == "GET":
         return render(
             request,
@@ -36,33 +34,36 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
             },
         )
 
-    form_error = False
-
-    # validate expense form
     expense_form = AddExpenseForm(user=request.user, data=request.POST)
     if expense_form.is_valid():
         expense = expense_form.save()
-    else:
-        form_error = True
 
-    # validate image form
-    if request.FILES:
-        image_form = ExpenseImageForm(request.POST, request.FILES)
-        if image_form.is_valid():
-            image_instance = image_form.save(commit=False)
-            image_instance.expense = expense
-            image_instance.save()
-        else:
-            form_error = True
-
-    # render form with errors
-    if form_error:
+    if expense_form.is_valid() and not request.FILES:
+        return redirect("dashboard:index")
+    elif not expense_form.is_valid() and not request.FILES:
         return render(
             request,
             "expenses/add_expense.html",
             context={
                 "expense_form": expense_form,
-                "image_form": image_form,
+                "accounts": user_accounts,
+                "categories": expense_categories,
+            },
+        )
+
+    image_form = ExpenseImageForm(request.POST, request.FILES)
+    if image_form.is_valid():
+        image_instance = image_form.save(commit=False)
+        image_instance.expense = expense
+        image_instance.save()
+
+    if not expense_form.is_valid() or not image_form.is_valid():
+        return render(
+            request,
+            "expenses/add_expense.html",
+            context={
+                "expense_form": expense_form,
+                "image_form": image_form if request.FILES else None,
                 "accounts": user_accounts,
                 "categories": expense_categories,
             },
@@ -77,9 +78,9 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
         .select_related("from_action__account", "category")
         .first()
     )
+    expense_categories = request.user.expense_categories.values("name", "slug")
 
     if request.method == "GET":
-        expense_categories = request.user.expense_categories.values("name", "slug")
         return render(
             request=request,
             template_name="expenses/update_expense.html",
@@ -105,8 +106,17 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
         expense.from_action.description = expense.description
         expense.from_action.save()
 
-    if not request.FILES:
+    if expense_form.is_valid() and not request.FILES:
         return redirect("dashboard:index")
+    elif not expense_form.is_valid() and not request.FILES:
+        return render(
+            request,
+            "expenses/add_expense.html",
+            context={
+                "expense_form": expense_form,
+                "categories": expense_categories,
+            },
+        )
 
     if expense.images.exists():
         image_form = ExpenseImageForm(

@@ -33,7 +33,7 @@ class BaseFromAccountForm(forms.Form):
         except AccountBalance.DoesNotExist:
             available_balance = 0
 
-        if not available_balance or (available_balance < cleaned_data.get("amount")):
+        if not available_balance or (available_balance < cleaned_data.get("amount", 0)):
             raise forms.ValidationError(
                 f"You don't have enough balance in {str(from_account)} account. Available balance is {available_balance}."
             )
