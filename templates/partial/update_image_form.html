@@ -1,9 +1,9 @@
 {% load static %}
 
 <label class="form-label" for="id_image">Image:</label>
-<div class="input-group mb-2" id="imageContainer">
+<div class="mb-2" id="imageContainer">
     <input class="form-control" type="file" name="image" accept="image/*" id="imageInput">
-    <button class="btn btn-outline-secondary" type="button" id="imageRemoveButton" placeholder="asdf">Clear</button>
+    <button class="d-none btn btn-outline-secondary" type="button" id="imageRemoveButton" placeholder="asdf">Clear</button>
     {% for error in image_form.image.errors %}
     <p class="text-danger">{{ error }}</p>
     {% endfor %}
