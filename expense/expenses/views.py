@@ -35,12 +35,11 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
         )
 
     expense_form = AddExpenseForm(user=request.user, data=request.POST)
-    if expense_form.is_valid():
-        expense = expense_form.save()
 
-    if expense_form.is_valid() and not request.FILES:
-        return redirect("dashboard:index")
-    elif not expense_form.is_valid() and not request.FILES:
+    if not request.FILES:
+        if expense_form.is_valid():
+            expense = expense_form.save()
+            return redirect("dashboard:index")
         return render(
             request,
             "expenses/add_expense.html",
@@ -52,10 +51,6 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
         )
 
     image_form = ExpenseImageForm(request.POST, request.FILES)
-    if image_form.is_valid():
-        image_instance = image_form.save(commit=False)
-        image_instance.expense = expense
-        image_instance.save()
 
     if not expense_form.is_valid() or not image_form.is_valid():
         return render(
@@ -68,6 +63,11 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
                 "categories": expense_categories,
             },
         )
+
+    expense = expense_form.save()
+    image_instance = image_form.save(commit=False)
+    image_instance.expense = expense
+    image_instance.save()
 
     return redirect("dashboard:index")
 
@@ -101,14 +101,12 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
         data=request.POST,
     )
 
-    if expense_form.is_valid():
-        expense = expense_form.save()
-        expense.from_action.description = expense.description
-        expense.from_action.save()
-
-    if expense_form.is_valid() and not request.FILES:
-        return redirect("dashboard:index")
-    elif not expense_form.is_valid() and not request.FILES:
+    if not request.FILES:
+        if expense_form.is_valid():
+            expense = expense_form.save()
+            expense.from_action.description = expense.description
+            expense.from_action.save()
+            return redirect("dashboard:index")
         return render(
             request,
             "expenses/add_expense.html",
@@ -127,23 +125,26 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
     else:
         image_form = ExpenseImageForm(request.POST, request.FILES)
 
-    if image_form.is_valid():
-        image_instance = image_form.save(commit=False)
-        image_instance.expense = expense
-        image_instance.save()
+    if not expense_form.is_valid() or not image_form.is_valid():
+        return render(
+            request,
+            template_name="expenses/update_expense.html",
+            context={
+                "expense": expense,
+                "expense_form": expense_form,
+                "categories": expense_categories,
+            },
+        )
 
-    if expense_form.is_valid() and image_form.is_valid():
-        return redirect("dashboard:index")
+    expense = expense_form.save()
+    expense.from_action.description = expense.description
+    expense.from_action.save()
 
-    return render(
-        request,
-        template_name="expenses/update_expense.html",
-        context={
-            "expense": expense,
-            "expense_form": expense_form,
-            "categories": expense_categories,
-        },
-    )
+    image_instance = image_form.save(commit=False)
+    image_instance.expense = expense
+    image_instance.save()
+
+    return redirect("dashboard:index")
 
 
 @login_required
