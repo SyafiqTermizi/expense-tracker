@@ -1,9 +1,13 @@
 const imageInput = document.getElementById("imageInput") as HTMLInputElement;
 const imagePreview = document.getElementById("imagePreview") as HTMLImageElement;
 const imageLink = document.getElementById("imageLink") as HTMLAnchorElement;
-const imageRemoveButton = document.getElementById("imageRemoveButton");
 const imageContainer = document.getElementById("imageContainer");
-const existingImageSrc = imagePreview.src;
+const imageRemoveButton = document.getElementById("imageRemoveButton");
+
+let existingImageSrc = null;
+if (!imagePreview.classList.contains("d-none")) {
+    existingImageSrc = imagePreview.src;
+}
 
 imageInput.onchange = _ => {
     const [file] = imageInput.files;
@@ -17,8 +21,15 @@ imageInput.onchange = _ => {
 }
 
 imageRemoveButton.onclick = _ => {
-    imagePreview.src = existingImageSrc;
-    imageLink.href = existingImageSrc;
+    if (!existingImageSrc) {
+        imagePreview.classList.add("d-none");
+        imagePreview.src = "";
+        imageLink.href = "#";
+    } else {
+        imagePreview.src = existingImageSrc;
+        imageLink.href = existingImageSrc;
+    }
+
     imageContainer.classList.remove("input-group");
     imageRemoveButton.classList.add("d-none");
     imageInput.files = null;
