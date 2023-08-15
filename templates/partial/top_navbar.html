@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-white border-bottom fixed-top d-none d-sm-block">
+<nav class="navbar navbar-expand-lg bg-white border-bottom fixed-top d-none d-lg-block d-xl-none">
     <div class="container">
         <a class="navbar-brand text-primary" href="{% url 'dashboard:index' %}">
             {% include 'partial/icon_lejar.html' %}
@@ -66,7 +66,7 @@
     </div>
 </nav>
 
-<nav class="navbar navbar-expand-lg fixed-top bg-white border-bottom d-block d-sm-none">
+<nav class="navbar navbar-expand-lg fixed-top bg-white border-bottom d-lg-none d-xl-block">
     <div class="container">
         <a class="navbar-brand text-primary" href="{% url 'dashboard:index' %}">
             {% include 'partial/icon_lejar.html' %}
