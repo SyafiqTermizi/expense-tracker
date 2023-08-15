@@ -1,13 +1,14 @@
 {% load static %}
 
 <label class="form-label" for="id_image">Image:</label>
-<div class="mb-3" id="imageContainer">
+<div class="mb-2" id="imageContainer">
     <input class="form-control" type="file" name="image" accept="image/*" id="imageInput">
     <button class="btn btn-outline-secondary d-none" type="button" id="imageRemoveButton">Clear</button>
     {% for error in image_form.image.errors %}
     <p class="text-danger">{{ error }}</p>
     {% endfor %}
 </div>
+
 <a href="#" id="imageLink" target="_blank">
     <img
         class="img-thumbnail mb-2 d-none"
