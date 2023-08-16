@@ -81,6 +81,12 @@ class ExpenseImageForm(forms.ModelForm):
         model = Image
         fields = ["image"]
 
+    def save(self, expense: Expense) -> Any:
+        instance = super().save(commit=False)
+        instance.expense = expense
+        instance.save()
+        return instance
+
 
 class CategoryForm(forms.ModelForm):
     class Meta:

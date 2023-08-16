@@ -65,9 +65,7 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
         )
 
     expense = expense_form.save()
-    image_instance = image_form.save(commit=False)
-    image_instance.expense = expense
-    image_instance.save()
+    image_form.save(expense=expense)
 
     return redirect("dashboard:index")
 
@@ -116,14 +114,11 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
             },
         )
 
-    if expense.images.exists():
-        image_form = ExpenseImageForm(
-            request.POST,
-            request.FILES,
-            instance=expense.images.first(),
-        )
-    else:
-        image_form = ExpenseImageForm(request.POST, request.FILES)
+    image_form = ExpenseImageForm(
+        request.POST,
+        request.FILES,
+        instance=expense.images.first(),
+    )
 
     if not expense_form.is_valid() or not image_form.is_valid():
         return render(
@@ -140,9 +135,7 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
     expense.from_action.description = expense.description
     expense.from_action.save()
 
-    image_instance = image_form.save(commit=False)
-    image_instance.expense = expense
-    image_instance.save()
+    image_form.save(expense=expense)
 
     return redirect("dashboard:index")
 
