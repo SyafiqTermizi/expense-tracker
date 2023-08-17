@@ -63,7 +63,7 @@
                             <p>
                                 <a
                                     class="card-link"
-                                    href="{% url 'expenses:categories:add' %}?next={% url 'expenses:add' %}"
+                                    href="{% url 'expenses:categories:add' %}?next={% url 'expenses:update' expense.slug %}"
                                 >
                                     Add new category
                                 </a>
