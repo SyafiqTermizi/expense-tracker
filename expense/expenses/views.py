@@ -24,7 +24,14 @@ from .utils import get_formatted_user_expense_for_month
 def add_expense_view(request: HttpRequest) -> HttpResponse:
     user_accounts = get_latest_account_balance(request.user)
     expense_categories = request.user.expense_categories.values("name", "slug")
+
     if request.method == "GET":
+        selected_account = request.GET.get("account", None)
+
+        for account in user_accounts:
+            if account["slug"] == selected_account:
+                account.update({"selected": True})
+
         return render(
             request,
             "expenses/add_expense.html",
