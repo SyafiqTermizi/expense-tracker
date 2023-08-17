@@ -16,7 +16,7 @@
             <tr>
                 <th scope="col">Description</th>
                 <th scope="col">Amount</th>
-                <th scope="col">Account</th>
+                <th class="d-none d-lg-block" scope="col">Account</th>
                 <th scope="col">Date</th>
             </tr>
         </thead>
@@ -69,7 +69,7 @@
                             : "text-success"}
                         >{formatter.format(transaction.amount)}
                     </td>
-                    <td>{transaction.account}</td>
+                    <td class="d-none d-lg-block">{transaction.account}</td>
                     <td>{isoToLocalDate(transaction.created_at)}</td>
                 </tr>
             {/each}
