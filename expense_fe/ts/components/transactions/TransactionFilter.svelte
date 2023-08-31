@@ -7,24 +7,22 @@
     const month = date.toLocaleString("default", { month: "long" });
 </script>
 
-<div class="col-md-8 col-sm-12 mt-2">
-    Show {month}'s:
-    <button
-        class={$showAll ? activeClass : inactiveClass}
-        on:click={() => {
-            showAll.set(true);
-            selectedCategory.set("");
-        }}
-    >
-        Transactions
-    </button>
-    <button
-        class={!$showAll ? activeClass : inactiveClass}
-        on:click={() => {
-            showAll.set(false);
-            selectedCategory.set("");
-        }}
-    >
-        Expenses
-    </button>
-</div>
+Show {month}'s:
+<button
+    class={$showAll ? activeClass : inactiveClass}
+    on:click={() => {
+        showAll.set(true);
+        selectedCategory.set("");
+    }}
+>
+    Transactions
+</button>
+<button
+    class={!$showAll ? activeClass : inactiveClass}
+    on:click={() => {
+        showAll.set(false);
+        selectedCategory.set("");
+    }}
+>
+    Expenses
+</button>

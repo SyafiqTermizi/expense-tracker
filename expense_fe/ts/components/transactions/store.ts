@@ -17,7 +17,7 @@ export const transactions = derived([showAll, initialTransactions, selectedCateg
     if ($selectedCategory) {
         tempTransactions = tempTransactions.filter(transaction => transaction.category == $selectedCategory)
     }
-    return tempTransactions
+    return tempTransactions;
 });
 
 export const expenseCategories = derived([initialTransactions], ([initialTransactions]) => {
