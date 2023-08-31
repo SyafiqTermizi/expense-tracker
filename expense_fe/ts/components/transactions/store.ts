@@ -21,7 +21,7 @@ export const transactions = derived([showAll, initialTransactions, selectedCateg
 });
 
 export const expenseCategories = derived([initialTransactions], ([initialTransactions]) => {
-    return initialTransactions.map(transaction => transaction.category).filter(Boolean)
+    return [...new Set(initialTransactions.map(transaction => transaction.category).filter(Boolean))];
 });
 
 export const transactionModalID = writable(0);
