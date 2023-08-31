@@ -1,7 +1,7 @@
 <script lang="ts">
     import TransactionList from "./TransactionList.svelte";
     import TransactionFilter from "./TransactionFilter.svelte";
-    import TransactionSearch from "./TransactionSearch.svelte";
+    import TransactionCategory from "./TransactionCategory.svelte";
     import Modal from "./Modal.svelte";
 
     export let currency = "MYR";
@@ -10,9 +10,9 @@
 
 <div class="card">
     <div class="row pt-2 px-3">
-        <TransactionSearch />
         {#if !hideFilter}
             <TransactionFilter />
+            <TransactionCategory />
         {/if}
     </div>
     <hr />
