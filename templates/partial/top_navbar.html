@@ -5,7 +5,10 @@
         </a>
         <div class="collapse navbar-collapse">
             <div class="navbar-nav me-auto mb-2 mb-lg-0">
-                <a href="{% url 'accounts:add_view' %}" class="{% if request.resolver_match.view_name == 'accounts:add_view' %}text-primary{% endif %} nav-link">
+                <a
+                    href="{% url 'accounts:add_view' %}{% if account %}?account={{ account.slug }}{% endif %}"
+                    class="{% if request.resolver_match.view_name == 'accounts:add_view' %}text-primary{% endif %} nav-link"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M7 9m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"></path>
@@ -14,7 +17,9 @@
                     </svg>
                     &nbsp;Add
                 </a>
-                <a href="{% url 'accounts:transfer_view' %}" class="{% if request.resolver_match.view_name == 'accounts:transfer_view' %}text-primary{% endif %} nav-link">
+                <a
+                    href="{% url 'accounts:transfer_view' %}"
+                    class="{% if request.resolver_match.view_name == 'accounts:transfer_view' %}text-primary{% endif %} nav-link">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M17 3v6"></path>
@@ -26,7 +31,9 @@
                     </svg>
                     &nbsp;Transfer
                 </a>
-                <a href="{% url 'expenses:add' %}{% if account %}?account={{ account.slug }}{% endif %}" class="{% if request.resolver_match.view_name == 'expenses:add' %}text-primary{% endif %} nav-link">
+                <a
+                    href="{% url 'expenses:add' %}{% if account %}?account={{ account.slug }}{% endif %}"
+                    class="{% if request.resolver_match.view_name == 'expenses:add' %}text-primary{% endif %} nav-link">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>

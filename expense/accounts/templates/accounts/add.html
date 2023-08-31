@@ -25,9 +25,13 @@
     
                 <div class="mb-3">
                     <label class="form-label" for="id_account">Account:</label>
+                    <h1>asdf</h1>
                     <select class="form-select {% if form.account.errors %}is-invalid{% endif %}" name="account" required id="id_account">
                         {% for account in accounts %}
-                        <option {% if account.slug == form.account.value %}selected{% endif %} value="{{ account.slug }}">
+                        <option
+                            {% if account.slug == form.account.value %}selected{% endif %} value="{{ account.slug }}"
+                            {% if account.selected %}selected{% endif %}
+                        >
                             {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance|intcomma }} 
                         </option>
                         {% endfor %}
