@@ -42,8 +42,8 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
 
     transactions = get_transactions_with_expense_data(
         request.user,
-        timezone.now().month,
-        timezone.now().year,
+        timezone.localtime(timezone.now()).month,
+        timezone.localtime(timezone.now()).year,
         account=None,
     )
 
@@ -54,8 +54,8 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
                 "amount": expense["amount"],
             },
             request.user.expenses.filter(
-                created_at__month=timezone.now().month,
-                created_at__year=timezone.now().year,
+                created_at__month=timezone.localtime(timezone.now()).month,
+                created_at__year=timezone.localtime(timezone.now()).year,
             )
             .values("category__name")
             .annotate(amount=Sum("amount")),

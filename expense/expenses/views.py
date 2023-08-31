@@ -224,8 +224,8 @@ def delete_expense_categories(request: HttpRequest, slug: str) -> HttpResponse:
 @login_required
 def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
     filter_kwargs = {
-        "created_at__month": timezone.now().month,
-        "created_at__year": timezone.now().year,
+        "created_at__month": timezone.localtime(timezone.now()).month,
+        "created_at__year": timezone.localtime(timezone.now()).year,
     }
 
     form = MonthQueryParamForm(data=request.GET)
@@ -280,7 +280,11 @@ def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
 
     total_expense = sum(expense["amount"] for expense in expense_this_month)
 
-    month_int = form.cleaned_data["month"] if form.is_valid() else timezone.now().month
+    month_int = (
+        form.cleaned_data["month"]
+        if form.is_valid()
+        else timezone.localtime(timezone.now()).month
+    )
     month_name = calendar.month_name[month_int]
 
     return render(

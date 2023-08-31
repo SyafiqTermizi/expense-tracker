@@ -94,8 +94,8 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
     last_daily_transcation = (
         request.user.account_balances.filter(
             action__account=account,
-            created_at__month=timezone.now().month,
-            created_at__year=timezone.now().year,
+            created_at__month=timezone.localtime(timezone.now()).month,
+            created_at__year=timezone.localtime(timezone.now()).year,
         )
         .annotate(day=TruncDay("created_at"))
         .values("day")
@@ -136,8 +136,8 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
             "account": account,
             "transactions": get_transactions_with_expense_data(
                 request.user,
-                timezone.now().month,
-                timezone.now().year,
+                timezone.localtime(timezone.now()).month,
+                timezone.localtime(timezone.now()).year,
                 account=account,
             ),
             "balances": daily_balance,
