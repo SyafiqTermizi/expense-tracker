@@ -47,7 +47,7 @@ class AccountAction(models.Model):
         DEBIT = "DEBIT", "Debit"
 
     description = models.CharField(max_length=255)
-    amount = models.FloatField()
+    amount = models.DecimalField(decimal_places=2, max_digits=12)
     action = models.TextField(
         choices=Action.choices,
         default=Action.CREDIT,
@@ -77,7 +77,7 @@ class AccountBalance(models.Model):
     Record the current amount of a user's account
     """
 
-    amount = models.FloatField()
+    amount = models.DecimalField(decimal_places=2, max_digits=12)
     action = models.OneToOneField(
         AccountAction,
         on_delete=models.CASCADE,
