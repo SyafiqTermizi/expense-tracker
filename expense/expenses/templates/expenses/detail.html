@@ -32,23 +32,26 @@
 <div class="row mt-3">
     <div class="col-12">
         Breakdown by:
-        <button id="show-by-category" class="ms-1 btn btn-primary btn-sm">
-            category
-        </button>
-        <button id="show-by-account" class="ms-1 btn btn-outline-secondary btn-sm">
-            account
-        </button>
     </div>
 </div>
 <div class="row mt-2 mb-5">
-    <div class="col-12">
+    <div class="col-md-6 col-sm-12">
         <div class="card">
             <div class="card-body">
                 <h4 id="chart-title" class="card-title">
-                    Expenses by category
+                    Category
                 </h4>
                 <div id="category-chart"></div>
-                <div id="account-chart" class="d-none"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 id="chart-title" class="card-title">
+                    Account
+                </h4>
+                <div id="account-chart"></div>
             </div>
         </div>
     </div>

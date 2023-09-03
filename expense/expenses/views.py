@@ -237,27 +237,25 @@ def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
             }
         )
 
-    expense_by_category = list(
-        map(
-            lambda x: {"x": x["category__name"], "y": x["total"]},
-            (
-                request.user.expenses.filter(**filter_kwargs)
-                .values("category__name")
-                .annotate(total=Sum("amount"))
-            ),
+    expense_by_category = {}
+    for category_expense in (
+        request.user.expenses.filter(**filter_kwargs)
+        .values("category__name")
+        .annotate(total=Sum("amount"))
+    ):
+        expense_by_category.update(
+            {category_expense["category__name"]: category_expense["total"]}
         )
-    )
 
-    expense_by_account = list(
-        map(
-            lambda x: {"x": x["from_action__account__name"], "y": x["total"]},
-            (
-                request.user.expenses.filter(**filter_kwargs)
-                .values("from_action__account__name")
-                .annotate(total=Sum("amount"))
-            ),
+    expense_by_account = {}
+    for account_expense in (
+        request.user.expenses.filter(**filter_kwargs)
+        .values("from_action__account__name")
+        .annotate(total=Sum("amount"))
+    ):
+        expense_by_account.update(
+            {account_expense["from_action__account__name"]: account_expense["total"]}
         )
-    )
 
     expense_this_month = get_formatted_user_expense_for_month(
         request.user.expenses.filter(belongs_to=request.user, **filter_kwargs)
