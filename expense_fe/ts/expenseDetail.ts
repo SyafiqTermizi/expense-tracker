@@ -26,8 +26,6 @@ window.addEventListener("load", () => {
     import("apexcharts").then((ApexCharts) => {
         const Chart = ApexCharts.default;
 
-        console.log(Object.values(expenseByCategory))
-
         const categoryChart = new Chart(
             document.getElementById("category-chart"),
             getChartOption(expenseByCategory, "pie"),
