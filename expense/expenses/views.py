@@ -1,5 +1,3 @@
-import calendar
-
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
@@ -9,12 +7,12 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 from expense.accounts.utils import get_latest_account_balance
+from expense.utils import MonthQueryParamForm, get_localtime_kwargs
 
 from .forms import (
     AddExpenseForm,
     ExpenseImageForm,
     CategoryForm,
-    MonthQueryParamForm,
     UpdateExpenseForm,
 )
 from .utils import get_formatted_user_expense_for_month
@@ -223,10 +221,7 @@ def delete_expense_categories(request: HttpRequest, slug: str) -> HttpResponse:
 
 @login_required
 def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
-    filter_kwargs = {
-        "created_at__month": timezone.localtime(timezone.now()).month,
-        "created_at__year": timezone.localtime(timezone.now()).year,
-    }
+    filter_kwargs = get_localtime_kwargs(query_kwargs=True)
 
     form = MonthQueryParamForm(data=request.GET)
     if form.is_valid():
@@ -278,13 +273,6 @@ def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
 
     total_expense = sum(expense["amount"] for expense in expense_this_month)
 
-    month_int = (
-        form.cleaned_data["month"]
-        if form.is_valid()
-        else timezone.localtime(timezone.now()).month
-    )
-    month_name = calendar.month_name[month_int]
-
     return render(
         request,
         "expenses/detail.html",
@@ -294,7 +282,8 @@ def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
             "expenses": expense_this_month,
             "total_expense": total_expense,
             "all_expense_months": all_expense_months,
-            "month_name": month_name,
+            "month_name": form.get_month_name()
+            or timezone.localtime(timezone.now()).strftime("%B"),
         },
     )
 

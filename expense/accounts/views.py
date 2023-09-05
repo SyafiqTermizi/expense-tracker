@@ -10,6 +10,7 @@ from expense.accounts.utils import (
     get_latest_account_balance,
     get_transactions_with_expense_data,
 )
+from expense.utils import MonthQueryParamForm, get_localtime_kwargs
 
 from .forms import AccountActionForm, AccountForm, AccountTransferForm
 from .models import AccountAction, AccountBalance
@@ -91,11 +92,38 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         slug=slug,
     )
 
+    try:
+        available_balance = (
+            request.user.account_balances.filter(
+                action__account=account,
+            )
+            .latest()
+            .amount
+        )
+    except AccountBalance.DoesNotExist:
+        available_balance = 0
+
+    month_year_db_kwargs = get_localtime_kwargs(query_kwargs=True)
+    month_year_kwargs = get_localtime_kwargs()
+    form = MonthQueryParamForm(data=request.GET)
+    if form.is_valid():
+        month_year_kwargs.update(
+            {
+                "month": form.cleaned_data["month"],
+                "year": form.cleaned_data["year"],
+            }
+        )
+        month_year_db_kwargs.update(
+            {
+                "created_at__month": form.cleaned_data["month"],
+                "created_at__year": form.cleaned_data["year"],
+            }
+        )
+
     last_daily_transcation = (
         request.user.account_balances.filter(
             action__account=account,
-            created_at__month=timezone.localtime(timezone.now()).month,
-            created_at__year=timezone.localtime(timezone.now()).year,
+            **month_year_db_kwargs,
         )
         .annotate(day=TruncDay("created_at"))
         .values("day")
@@ -118,30 +146,20 @@ def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
         )
     )
 
-    try:
-        available_balance = (
-            request.user.account_balances.filter(
-                action__account=account,
-            )
-            .latest()
-            .amount
-        )
-    except AccountBalance.DoesNotExist:
-        available_balance = 0
-
     return render(
         request,
         "accounts/detail.html",
         context={
             "account": account,
             "transactions": get_transactions_with_expense_data(
-                request.user,
-                timezone.localtime(timezone.now()).month,
-                timezone.localtime(timezone.now()).year,
+                user=request.user,
                 account=account,
+                **month_year_kwargs,
             ),
             "balances": daily_balance,
             "available_balance": available_balance,
+            "month_name": form.get_month_name()
+            or timezone.localtime(timezone.now()).strftime("%B"),
         },
     )
 

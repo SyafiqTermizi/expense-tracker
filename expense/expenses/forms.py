@@ -92,8 +92,3 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ("name",)
-
-
-class MonthQueryParamForm(forms.Form):
-    month = forms.IntegerField(min_value=1, max_value=12)
-    year = forms.IntegerField(min_value=2022, max_value=2100)

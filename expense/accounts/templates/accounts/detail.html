@@ -5,14 +5,14 @@
 {% block content %}
 <div class="row mt-4">
     <div class="col-6">
-        <h3>{{ account.name|title }}</h3>
+        <h3>{{ month_name }}'s {{ account.name|title }} transactions</h3>
         {% if account.description %}
         <p class="text-secondary">
-            {{ account.description|title }} detail
+            {{ account.description|title }} detail.
         </p>
         {% else %}
         <p class="text-secondary">
-            {{ account.name|title }}
+            Transactions using {{ account.name|title }} account.
         </p>
         {% endif %}
     </div>
