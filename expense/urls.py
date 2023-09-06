@@ -23,6 +23,7 @@ urls = [
     path("accounts/", include("expense.accounts.urls")),
     path("expenses/", include("expense.expenses.urls")),
     path("users/", include("expense.users.urls")),
+    path("events/", include("expense.events.urls")),
     path("admin/", admin.site.urls),
 ]
 

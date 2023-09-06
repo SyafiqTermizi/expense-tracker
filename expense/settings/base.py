@@ -47,6 +47,7 @@ LOCAL_APPS = [
     "expense.accounts",
     "expense.expenses",
     "expense.dashboard",
+    "expense.events",
 ]
 
 THIRD_PARTY_APPS = [
