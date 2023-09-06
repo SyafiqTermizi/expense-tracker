@@ -1,15 +1,18 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Max, Subquery
 from django.db.models.functions import TruncDay
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import defaultfilters
 from django.utils import timezone
+from django.views.generic import DetailView
 
 from expense.accounts.utils import (
     get_latest_account_balance,
     get_transactions_with_expense_data,
 )
+from expense.utils import MonthQueryParamForm, get_localtime_kwargs
 
 from .forms import AccountActionForm, AccountForm, AccountTransferForm
 from .models import AccountAction, AccountBalance
@@ -84,66 +87,93 @@ def add_view(request: HttpRequest) -> HttpResponse:
         )
 
 
-@login_required
-def detail_view(request: HttpRequest, slug: str) -> HttpResponse:
-    account = get_object_or_404(
-        request.user.accounts.all(),
-        slug=slug,
-    )
+class MontlyAccountDetailView(LoginRequiredMixin, DetailView):
+    def get_queryset(self):
+        return self.request.user.accounts.all()
 
-    last_daily_transcation = (
-        request.user.account_balances.filter(
-            action__account=account,
-            created_at__month=timezone.localtime(timezone.now()).month,
-            created_at__year=timezone.localtime(timezone.now()).year,
-        )
-        .annotate(day=TruncDay("created_at"))
-        .values("day")
-        .annotate(the_date=Max("created_at"))
-        .values_list("the_date", flat=True)
-    )
-
-    daily_balance = list(
-        map(
-            lambda bal: {
-                "y": bal.amount,
-                "x": defaultfilters.date(bal.date, "d M"),
-            },
-            request.user.account_balances.filter(
-                action__account=account,
-                created_at__in=Subquery(last_daily_transcation),
+    def get_available_balance_context(self):
+        try:
+            return (
+                self.request.user.account_balances.filter(
+                    action__account=self.object,
+                )
+                .latest()
+                .amount
             )
-            .annotate(date=TruncDay("created_at"))
-            .order_by("created_at"),
-        )
-    )
+        except AccountBalance.DoesNotExist:
+            return 0
 
-    try:
-        available_balance = (
-            request.user.account_balances.filter(
-                action__account=account,
+    def get_daily_balance_context(self):
+        last_daily_balance = (
+            self.request.user.account_balances.filter(
+                action__account=self.object,
+                **self.month_year_db_kwargs,
             )
-            .latest()
-            .amount
+            .annotate(day=TruncDay("created_at"))
+            .values("day")
+            .annotate(the_date=Max("created_at"))
+            .values_list("the_date", flat=True)
         )
-    except AccountBalance.DoesNotExist:
-        available_balance = 0
 
-    return render(
-        request,
-        "accounts/detail.html",
-        context={
-            "account": account,
+        return list(
+            map(
+                lambda bal: {
+                    "y": bal.amount,
+                    "x": defaultfilters.date(bal.date, "d M"),
+                },
+                self.request.user.account_balances.filter(
+                    action__account=self.object,
+                    created_at__in=Subquery(last_daily_balance),
+                )
+                .annotate(date=TruncDay("created_at"))
+                .order_by("created_at"),
+            )
+        )
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        self.set_month_year_kwargs()
+
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        return {
+            "account": self.object,
             "transactions": get_transactions_with_expense_data(
-                request.user,
-                timezone.localtime(timezone.now()).month,
-                timezone.localtime(timezone.now()).year,
-                account=account,
+                user=self.request.user,
+                account=self.object,
+                **self.month_year_kwargs,
             ),
-            "balances": daily_balance,
-            "available_balance": available_balance,
-        },
-    )
+            "balances": self.get_daily_balance_context(),
+            "available_balance": self.get_available_balance_context(),
+            "month_name": self.month_name,
+            "all_account_balance_month": self.request.user.account_balances.dates(
+                "created_at", "month"
+            ),
+        }
+
+    def set_month_year_kwargs(self):
+        self.month_year_db_kwargs = get_localtime_kwargs(query_kwargs=True)
+        self.month_year_kwargs = get_localtime_kwargs()
+
+        form = MonthQueryParamForm(data=self.request.GET)
+
+        if form.is_valid():
+            self.month_year_kwargs.update(
+                {
+                    "month": form.cleaned_data["month"],
+                    "year": form.cleaned_data["year"],
+                }
+            )
+            self.month_year_db_kwargs.update(
+                {
+                    "created_at__month": form.cleaned_data["month"],
+                    "created_at__year": form.cleaned_data["year"],
+                }
+            )
+
+        self.month_name = form.get_month_name() or timezone.localtime(
+            timezone.now()
+        ).strftime("%B")
 
 
 @login_required

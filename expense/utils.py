@@ -1,7 +1,8 @@
+import calendar
 from typing import Any, Dict
 
 from django import forms
-
+from django.utils import timezone
 from expense.accounts.models import AccountBalance
 from expense.users.models import User
 
@@ -39,3 +40,32 @@ class BaseFromAccountForm(forms.Form):
             )
 
         return cleaned_data
+
+
+class MonthQueryParamForm(forms.Form):
+    month = forms.IntegerField(min_value=1, max_value=12)
+    year = forms.IntegerField(min_value=2022, max_value=2100)
+
+    def get_month_name(self):
+        """
+        Returns month name if the given month is valid, else return None
+        """
+        try:
+            month_int = self.cleaned_data["month"]
+        except KeyError:
+            return
+
+        return calendar.month_name[month_int]
+
+
+def get_localtime_kwargs(query_kwargs=False):
+    time_obj = timezone.localtime(timezone.now())
+    if query_kwargs:
+        return {
+            "created_at__month": time_obj.month,
+            "created_at__year": time_obj.year,
+        }
+    return {
+        "month": time_obj.month,
+        "year": time_obj.year,
+    }

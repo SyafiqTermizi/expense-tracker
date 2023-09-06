@@ -9,6 +9,7 @@ from expense.accounts.utils import (
     get_transactions_with_expense_data,
 )
 from expense.types import AccountBalance
+from expense.utils import get_localtime_kwargs
 
 
 def user_is_new(
@@ -41,10 +42,9 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     accounts = get_latest_account_balance(request.user)
 
     transactions = get_transactions_with_expense_data(
-        request.user,
-        timezone.localtime(timezone.now()).month,
-        timezone.localtime(timezone.now()).year,
+        user=request.user,
         account=None,
+        **get_localtime_kwargs(),
     )
 
     expenses = list(
@@ -53,10 +53,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
                 "category": expense["category__name"],
                 "amount": expense["amount"],
             },
-            request.user.expenses.filter(
-                created_at__month=timezone.localtime(timezone.now()).month,
-                created_at__year=timezone.localtime(timezone.now()).year,
-            )
+            request.user.expenses.filter(**get_localtime_kwargs(query_kwargs=True))
             .values("category__name")
             .annotate(amount=Sum("amount")),
         )

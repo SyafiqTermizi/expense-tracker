@@ -5,14 +5,29 @@
 {% block content %}
 <div class="row mt-4">
     <div class="col-6">
-        <h3>{{ account.name|title }}</h3>
+        <h3>
+            <a class="dropdown-toggle" data-bs-toggle="dropdown" style="color: black; text-decoration: none;" role="button">{{ month_name }}'s {{ account.name|title }} transactions</a>
+            <ul style="width: 50%;" class="dropdown-menu">
+                <li><p class="dropdown-header">Show transactions for:</p></li>
+                {% for date in all_account_balance_month %}
+                <li>
+                    <a
+                        class="dropdown-item"
+                        href="{% url 'accounts:detail_view' slug=account.slug %}?month={{ date.month }}&year={{ date.year }}">
+                        {{ date|date:"M Y" }}
+                    </a>
+                </li>
+                {% endfor %}
+                </li>
+            </ul>
+        </h3>
         {% if account.description %}
         <p class="text-secondary">
-            {{ account.description|title }} detail
+            {{ account.description|title }} detail.
         </p>
         {% else %}
         <p class="text-secondary">
-            {{ account.name|title }}
+            Transactions using {{ account.name|title }} account.
         </p>
         {% endif %}
     </div>
