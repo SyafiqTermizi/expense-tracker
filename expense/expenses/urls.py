@@ -1,12 +1,12 @@
 from django.urls import include, path
 
 from .views import (
+    MonthlyExpenseDetailView,
     add_expense_category,
     add_expense_view,
     delete_expense_categories,
     expense_detail_api_view,
     list_expense_categories,
-    MonthlyExpenseDetailView,
     update_expense_categories,
     update_expense_view,
 )

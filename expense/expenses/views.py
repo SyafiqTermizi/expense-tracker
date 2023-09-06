@@ -11,12 +11,7 @@ from django.views.generic import View
 from expense.accounts.utils import get_latest_account_balance
 from expense.utils import MonthQueryParamForm, get_localtime_kwargs
 
-from .forms import (
-    AddExpenseForm,
-    ExpenseImageForm,
-    CategoryForm,
-    UpdateExpenseForm,
-)
+from .forms import AddExpenseForm, CategoryForm, ExpenseImageForm, UpdateExpenseForm
 from .utils import get_formatted_user_expense_for_month
 
 
