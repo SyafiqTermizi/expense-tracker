@@ -6,7 +6,7 @@ from .views import (
     delete_expense_categories,
     expense_detail_api_view,
     list_expense_categories,
-    monthly_expense_detail_view,
+    MonthlyExpenseDetailView,
     update_expense_categories,
     update_expense_view,
 )
@@ -26,7 +26,7 @@ categories = (
 urlpatterns = [
     path("add", add_expense_view, name="add"),
     path("update/<slug:slug>", update_expense_view, name="update"),
-    path("monthly", monthly_expense_detail_view, name="detail"),
+    path("monthly", MonthlyExpenseDetailView.as_view(), name="detail"),
     path("detail/<slug:slug>", expense_detail_api_view),
     path("categories/", include(categories), name="categories"),
 ]

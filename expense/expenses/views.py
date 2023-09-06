@@ -1,10 +1,12 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.text import slugify
+from django.views.generic import View
 
 from expense.accounts.utils import get_latest_account_balance
 from expense.utils import MonthQueryParamForm, get_localtime_kwargs
@@ -219,73 +221,94 @@ def delete_expense_categories(request: HttpRequest, slug: str) -> HttpResponse:
     )
 
 
-@login_required
-def monthly_expense_detail_view(request: HttpRequest) -> HttpResponse:
-    filter_kwargs = get_localtime_kwargs(query_kwargs=True)
+class MonthlyExpenseDetailView(LoginRequiredMixin, View):
+    def get_expense_by_category_context(self):
+        expense_by_category = {}
+        for category_expense in (
+            self.request.user.expenses.filter(**self.month_year_kwargs)
+            .values("category__name")
+            .annotate(total=Sum("amount"))
+        ):
+            expense_by_category.update(
+                {category_expense["category__name"]: category_expense["total"]}
+            )
 
-    form = MonthQueryParamForm(data=request.GET)
-    if form.is_valid():
-        filter_kwargs.update(
-            {
-                "created_at__month": form.cleaned_data["month"],
-                "created_at__year": form.cleaned_data["year"],
-            }
+        return expense_by_category
+
+    def expense_by_account_context(self):
+        expense_by_account = {}
+        for account_expense in (
+            self.request.user.expenses.filter(**self.month_year_kwargs)
+            .values("from_action__account__name")
+            .annotate(total=Sum("amount"))
+        ):
+            expense_by_account.update(
+                {
+                    account_expense["from_action__account__name"]: account_expense[
+                        "total"
+                    ]
+                }
+            )
+        return expense_by_account
+
+    def get_expense_this_month_context(self):
+        return get_formatted_user_expense_for_month(
+            self.request.user.expenses.filter(
+                belongs_to=self.request.user,
+                **self.month_year_kwargs,
+            )
+            .order_by("-created_at")
+            .values(
+                "slug",
+                "from_action__account__name",
+                "created_at",
+                "description",
+                "amount",
+                "category__name",
+            )
         )
 
-    expense_by_category = {}
-    for category_expense in (
-        request.user.expenses.filter(**filter_kwargs)
-        .values("category__name")
-        .annotate(total=Sum("amount"))
-    ):
-        expense_by_category.update(
-            {category_expense["category__name"]: category_expense["total"]}
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        self.set_month_year_kwargs()
+
+        context = self.get_context_data()
+        return render(request, "expenses/detail.html", context=context)
+
+    def get_all_expense_months_context(self):
+        return (
+            self.request.user.expenses.annotate(date=TruncMonth("created_at"))
+            .distinct("date")
+            .values("date")
         )
 
-    expense_by_account = {}
-    for account_expense in (
-        request.user.expenses.filter(**filter_kwargs)
-        .values("from_action__account__name")
-        .annotate(total=Sum("amount"))
-    ):
-        expense_by_account.update(
-            {account_expense["from_action__account__name"]: account_expense["total"]}
-        )
+    def get_context_data(self, **kwargs):
+        expense_this_month = self.get_expense_this_month_context()
+        total_expense = sum(expense["amount"] for expense in expense_this_month)
 
-    expense_this_month = get_formatted_user_expense_for_month(
-        request.user.expenses.filter(belongs_to=request.user, **filter_kwargs)
-        .order_by("-created_at")
-        .values(
-            "slug",
-            "from_action__account__name",
-            "created_at",
-            "description",
-            "amount",
-            "category__name",
-        )
-    )
-
-    all_expense_months = (
-        request.user.expenses.annotate(date=TruncMonth("created_at"))
-        .distinct("date")
-        .values("date")
-    )
-
-    total_expense = sum(expense["amount"] for expense in expense_this_month)
-
-    return render(
-        request,
-        "expenses/detail.html",
-        context={
-            "expense_by_category": expense_by_category,
-            "expense_by_account": expense_by_account,
+        return {
+            "expense_by_category": self.get_expense_by_category_context(),
+            "expense_by_account": self.expense_by_account_context(),
             "expenses": expense_this_month,
             "total_expense": total_expense,
-            "all_expense_months": all_expense_months,
-            "month_name": form.get_month_name()
-            or timezone.localtime(timezone.now()).strftime("%B"),
-        },
-    )
+            "all_expense_months": self.get_all_expense_months_context(),
+            "month_name": self.month_name,
+        }
+
+    def set_month_year_kwargs(self):
+        self.month_year_kwargs = get_localtime_kwargs(query_kwargs=True)
+
+        form = MonthQueryParamForm(data=self.request.GET)
+        if form.is_valid():
+            self.month_year_kwargs.update(
+                {
+                    "created_at__month": form.cleaned_data["month"],
+                    "created_at__year": form.cleaned_data["year"],
+                }
+            )
+
+        self.month_name = form.get_month_name() or timezone.localtime(
+            timezone.now()
+        ).strftime("%B")
 
 
 @login_required
