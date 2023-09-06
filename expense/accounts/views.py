@@ -146,6 +146,9 @@ class MontlyAccountDetailView(LoginRequiredMixin, DetailView):
             "balances": self.get_daily_balance_context(),
             "available_balance": self.get_available_balance_context(),
             "month_name": self.month_name,
+            "all_account_balance_month": self.request.user.account_balances.dates(
+                "created_at", "month"
+            ),
         }
 
     def set_month_year_kwargs(self):
