@@ -28,13 +28,13 @@ window.addEventListener("load", () => {
 
         const categoryChart = new Chart(
             document.getElementById("category-chart"),
-            getChartOption(expenseByCategory, "pie"),
+            getChartOption(expenseByCategory, "donut"),
         );
         categoryChart.render();
 
         const accountChart = new Chart(
             document.getElementById("account-chart"),
-            getChartOption(expenseByAccount, "donut"),
+            getChartOption(expenseByAccount, "pie"),
         );
         accountChart.render();
 
