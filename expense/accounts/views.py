@@ -1,12 +1,22 @@
+from typing import Any, Dict, List
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Max, Subquery
 from django.db.models.functions import TruncDay
+from django.forms.models import BaseModelForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import defaultfilters
+from django.urls import reverse_lazy, reverse
 from django.utils import timezone
-from django.views.generic import DetailView
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    FormView,
+    DeleteView,
+    UpdateView,
+)
 
 from expense.accounts.utils import (
     get_latest_account_balance,
@@ -15,39 +25,32 @@ from expense.accounts.utils import (
 from expense.utils import MonthQueryParamForm, get_localtime_kwargs
 
 from .forms import AccountActionForm, AccountForm, AccountTransferForm
-from .models import AccountAction, AccountBalance
+from .models import Account, AccountAction, AccountBalance
 
 
-@login_required
-def transfer_view(request: HttpRequest) -> HttpResponse:
-    user_accounts = get_latest_account_balance(request.user)
+class TransferView(LoginRequiredMixin, FormView):
+    form_class = AccountTransferForm
+    template_name = "accounts/transfer.html"
+    success_url = reverse_lazy("dashboard:index")
 
-    if request.method == "GET":
-        return render(
-            request,
-            "accounts/transfer.html",
-            context={"accounts": user_accounts},
-        )
+    def get_context_data(self, **kwargs):
+        return {
+            **super().get_context_data(**kwargs),
+            "accounts": get_latest_account_balance(self.request.user),
+        }
 
-    # Handle POST request
-    form = AccountTransferForm(user=request.user, data=request.POST)
+    def get_form_kwargs(self) -> Dict[str, Any]:
+        return {"user": self.request.user, **super().get_form_kwargs()}
 
-    if form.is_valid():
+    def form_valid(self, form: Any) -> HttpResponse:
         form.save()
-        return redirect("dashboard:index")
-    else:
-        return render(
-            request,
-            "accounts/transfer.html",
-            context={
-                "form": form,
-                "accounts": user_accounts,
-            },
-        )
+        return super().form_valid(form)
 
 
 @login_required
 def add_view(request: HttpRequest) -> HttpResponse:
+    """Add money into an account"""
+
     user_accounts = get_latest_account_balance(request.user)
 
     if request.method == "GET":
@@ -176,70 +179,36 @@ class MontlyAccountDetailView(LoginRequiredMixin, DetailView):
         ).strftime("%B")
 
 
-@login_required
-def create_account_view(request: HttpRequest) -> HttpResponse:
-    if request.method == "GET":
-        return render(request, "accounts/create.html")
+class CreateAccountView(LoginRequiredMixin, CreateView):
+    form_class = AccountForm
+    model = Account
+    success_url = reverse_lazy("dashboard:index")
 
-    form = AccountForm(user=request.user, data=request.POST)
-
-    if form.is_valid():
-        form.save()
-        return redirect("dashboard:index")
-    else:
-        return render(
-            request,
-            "accounts/create.html",
-            context={"form": form},
-        )
+    def get_form_kwargs(self) -> Dict[str, Any]:
+        return {"user": self.request.user, **super().get_form_kwargs()}
 
 
-@login_required
-def delete_account_view(request: HttpRequest, slug: str) -> HttpResponse:
-    account = get_object_or_404(
-        request.user.accounts.all(),
-        slug=slug,
-    )
+class DeleteAccountView(LoginRequiredMixin, DeleteView):
+    model = Account
+    success_url = reverse_lazy("dashboard:index")
 
-    if request.method == "POST":
-        account.delete()
-        return redirect("dashboard:index")
-
-    return render(
-        request,
-        "accounts/delete.html",
-        context={"account": account},
-    )
+    def get_queryset(self):
+        return self.request.user.accounts.all()
 
 
-@login_required
-def update_account_view(request: HttpRequest, slug: str) -> HttpResponse:
-    account = get_object_or_404(
-        request.user.accounts.all(),
-        slug=slug,
-    )
+class UpdateAccountView(LoginRequiredMixin, UpdateView):
+    form_class = AccountForm
+    model = Account
 
-    if request.method == "GET":
-        return render(
-            request,
-            "accounts/update.html",
-            context={
-                "account": account,
-                "form": AccountForm(user=request.user, instance=account),
-            },
-        )
+    def get_form_kwargs(self) -> Dict[str, Any]:
+        return {"user": self.request.user, **super().get_form_kwargs()}
 
-    form = AccountForm(user=request.user, data=request.POST, instance=account)
+    def get_queryset(self):
+        return self.request.user.accounts.all()
 
-    if form.is_valid():
-        instance = form.save()
-        return redirect("accounts:detail_view", slug=instance.slug)
-    else:
-        return render(
-            request,
-            "accounts/update.html",
-            context={
-                "account": account,
-                "form": form,
-            },
-        )
+    def get_success_url(self) -> str:
+        return reverse("accounts:detail_view", kwargs={"slug": self.object.slug})
+
+    def get_template_names(self) -> List[str]:
+        print(super().get_template_names())
+        return super().get_template_names()
