@@ -1,10 +1,10 @@
 from django.urls import include, path
 
 from .views.categories import (
-    add_expense_category,
-    delete_expense_categories,
-    list_expense_categories,
-    update_expense_categories,
+    CreateCategoryView,
+    DeleteCategoryView,
+    ListCategoryView,
+    UpdateCategoryView,
 )
 from .views.expense import (
     MonthlyExpenseDetailView,
@@ -17,10 +17,10 @@ app_name = "expenses"
 
 categories = (
     [
-        path("add", add_expense_category, name="add"),
-        path("list", list_expense_categories, name="list"),
-        path("update/<slug:slug>", update_expense_categories, name="update"),
-        path("delete/<slug:slug>", delete_expense_categories, name="delete"),
+        path("add", CreateCategoryView.as_view(), name="add"),
+        path("list", ListCategoryView.as_view(), name="list"),
+        path("update/<slug:slug>", UpdateCategoryView.as_view(), name="update"),
+        path("delete/<slug:slug>", DeleteCategoryView.as_view(), name="delete"),
     ],
     "categories",
 )

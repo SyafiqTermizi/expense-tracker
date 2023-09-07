@@ -1,6 +1,7 @@
 from typing import Any, Dict
 
 from django import forms
+from django.utils.text import slugify
 
 from expense.accounts.forms import AccountActionForm
 from expense.accounts.models import AccountAction
@@ -89,6 +90,18 @@ class ExpenseImageForm(forms.ModelForm):
 
 
 class CategoryForm(forms.ModelForm):
+    def __init__(self, user: User, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.user = user
+
     class Meta:
         model = Category
         fields = ("name",)
+
+    def save(self) -> Any:
+        category = super().save(commit=False)
+        category.belongs_to = self.user
+        category.slug = slugify(category.name)
+        category.save()
+
+        return category
