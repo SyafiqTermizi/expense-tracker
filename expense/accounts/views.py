@@ -209,5 +209,4 @@ class UpdateAccountView(LoginRequiredMixin, UpdateView):
         return reverse("accounts:detail_view", kwargs={"slug": self.object.slug})
 
     def get_template_names(self) -> List[str]:
-        print(super().get_template_names())
         return super().get_template_names()
