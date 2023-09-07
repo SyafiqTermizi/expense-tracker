@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
-from expense.users.models import User
 from expense.expenses.models import Expense as UserExpense
+from expense.users.models import User
 
 
 class Event(models.Model):
@@ -16,6 +16,14 @@ class Event(models.Model):
 
     start_date = models.DateField()
     end_date = models.DateField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["slug", "belongs_to"],
+                name="unique_event_slug",
+            ),
+        ]
 
     def __str__(self) -> str:
         return self.name

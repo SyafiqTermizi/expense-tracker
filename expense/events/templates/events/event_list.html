@@ -30,11 +30,20 @@
                         {% for event in event_list %}
                         <tr>
                             <td>
-                                <a class="card-link" href="#">{{ event.name }}</a>
+                                <a class="card-link" href="{% url 'events:detail' event.slug %}">{{ event.name }}</a>
                             </td>
                             <td>{{ event.start_date }}</td>
                             <td>{{ event.end_date }}</td>
-                            <td>{% if event.active %}Active{% else %}Inactive{% endif %}</td>
+                            <td>
+                                {% if event.active %}
+                                <span class="text-success">
+                                    <b>Active</b>
+                                </span>
+                                {% else %}
+                                <span class="text-danger">
+                                    <b>Inactive</b>
+                                </span>
+                                {% endif %}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -27,7 +27,7 @@ class CreateEventForm(forms.ModelForm):
 
     def save(self) -> Any:
         event: Event = super().save(commit=False)
-        event.slug = slugify(event.name)
+        event.slug = f"{slugify(event.name)}-{event.start_date.strftime('%Y%m%d')}"
         event.belongs_to = self.user
 
         event.save()
