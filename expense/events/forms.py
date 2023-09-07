@@ -1,6 +1,7 @@
 from typing import Any, Dict
 
 from django import forms
+from django.forms import ModelForm
 from django.utils.text import slugify
 
 from expense.users.models import User
@@ -8,7 +9,7 @@ from expense.users.models import User
 from .models import Event
 
 
-class CreateEventForm(forms.ModelForm):
+class CreateEventForm(ModelForm):
     class Meta:
         model = Event
         fields = ["name", "start_date", "end_date"]
