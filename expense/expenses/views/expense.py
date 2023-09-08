@@ -59,7 +59,7 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
             "expenses/add_expense.html",
             context={
                 "expense_form": expense_form,
-                "image_form": image_form if request.FILES else None,
+                "image_form": image_form,
                 "accounts": user_accounts,
                 "categories": expense_categories,
             },
