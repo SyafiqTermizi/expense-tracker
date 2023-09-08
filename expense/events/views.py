@@ -11,13 +11,13 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .forms import CreateEventForm
+from .forms import EventForm
 from .models import Event
 
 
 class CreateEventView(LoginRequiredMixin, CreateView):
     model = Event
-    form_class = CreateEventForm
+    form_class = EventForm
     success_url = reverse_lazy("events:list")
 
     def get_form_kwargs(self) -> Dict[str, Any]:
@@ -46,7 +46,7 @@ class ListEventView(LoginRequiredMixin, ListView):
 
 
 class UpdateEventView(LoginRequiredMixin, UpdateView):
-    form_class = CreateEventForm
+    form_class = EventForm
     models = Event
     success_url = reverse_lazy("events:list")
 

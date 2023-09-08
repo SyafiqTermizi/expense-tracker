@@ -6,10 +6,10 @@ from django.utils.text import slugify
 
 from expense.users.models import User
 
-from .models import Event
+from .models import Event, Expense
 
 
-class CreateEventForm(ModelForm):
+class EventForm(ModelForm):
     class Meta:
         model = Event
         fields = ["name", "start_date", "end_date"]
@@ -34,3 +34,16 @@ class CreateEventForm(ModelForm):
         event.save()
 
         return event
+
+
+class CreateEventExpenseForm(ModelForm):
+    def __init__(self, user: User, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["event"] = forms.ModelChoiceField(
+            queryset=Event.objects.get_user_active_events(user),
+            to_field_name="slug",
+        )
+
+    class Meta:
+        model = Expense
+        fields = ["event", "expense"]

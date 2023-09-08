@@ -5,6 +5,20 @@ from expense.expenses.models import Expense as UserExpense
 from expense.users.models import User
 
 
+class EventManager(models.Manager):
+    def get_user_active_events(self, user: User):
+        now = timezone.now()
+        return self.filter(belongs_to=user, start_date__lte=now, end_date__gte=now)
+
+    def get_user_inactive_events(self, user: User):
+        now = timezone.now()
+        return self.filter(belongs_to=user, start_date__lte=now, end_date__lt=now)
+
+    def get_user_future_events(self, user: User):
+        now = timezone.now()
+        return self.filter(belongs_to=user, start_date__gt=now, end_date__gt=now)
+
+
 class Event(models.Model):
     name = models.CharField(max_length=120)
     slug = models.SlugField(max_length=120)
@@ -16,6 +30,8 @@ class Event(models.Model):
 
     start_date = models.DateField()
     end_date = models.DateField()
+
+    objects = EventManager()
 
     class Meta:
         constraints = [
@@ -30,7 +46,7 @@ class Event(models.Model):
 
     @property
     def active(self):
-        return self.end_date > timezone.localtime(timezone.now()).date()
+        return self.end_date >= timezone.localtime(timezone.now()).date()
 
 
 class Expense(models.Model):
