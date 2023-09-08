@@ -3,40 +3,39 @@
 {% load humanize %}
 
 {% block content %}
-<div class="row mt-4">
-    <div class="col-6">
-        <h3>
-            <a class="dropdown-toggle" data-bs-toggle="dropdown" style="color: black; text-decoration: none;" role="button">{{ month_name }}'s {{ account.name|title }} transactions</a>
-            <ul style="width: 50%;" class="dropdown-menu">
-                <li><p class="dropdown-header">Show transactions for:</p></li>
-                {% for date in all_account_balance_month %}
-                <li>
-                    <a
-                        class="dropdown-item"
-                        href="{% url 'accounts:detail_view' slug=account.slug %}?month={{ date.month }}&year={{ date.year }}">
-                        {{ date|date:"M Y" }}
-                    </a>
-                </li>
-                {% endfor %}
-                </li>
-            </ul>
+<div class="row mt-5">
+    <div class="col-md-8 col-sm-12">
+        <h3 class="dropdown-toggle" data-bs-toggle="dropdown" role="button">
+            {{ account.name|title }} transactions
         </h3>
+        <ul style="width: 50%;" class="dropdown-menu">
+            <li><p class="dropdown-header">Show transactions for:</p></li>
+            {% for date in all_account_balance_month %}
+            <li>
+                <a
+                    class="dropdown-item"
+                    href="{% url 'accounts:detail_view' slug=account.slug %}?month={{ date.month }}&year={{ date.year }}">
+                    {{ date|date:"M Y" }}
+                </a>
+            </li>
+            {% endfor %}
+            </li>
+        </ul>
+        <p class="text-secondary">
         {% if account.description %}
-        <p class="text-secondary">
-            {{ account.description|title }} detail.
-        </p>
+        {{ account.description|title }} detail.
         {% else %}
-        <p class="text-secondary">
-            Transactions using {{ account.name|title }} account.
-        </p>
+        Transactions using {{ account.name|title }} account.
         {% endif %}
+        </p>
     </div>
-    <div class="col-6 text-end">
-        <a href="{% url 'accounts:update_view' account.slug %}" class="mt-3 btn btn-outline-primary">Edit</a>
-        <a class="mt-3 btn btn-danger" href="{% url 'accounts:delete_view' account.slug %}">Delete</a>
+    <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
+        <a style="min-width: 80px;" href="{% url 'accounts:update_view' account.slug %}" class="mt-3 btn btn-outline-primary">Update</a>
+        <a style="min-width: 80px;" class="mt-3 btn btn-danger" href="{% url 'accounts:delete_view' account.slug %}">Delete</a>
     </div>
 </div>
-<div class="row">
+
+<div class="mt-3 row">
     <div class="col-12">
         <div class="card">
             <div class="card-body p-4">

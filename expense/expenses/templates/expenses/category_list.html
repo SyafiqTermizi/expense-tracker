@@ -2,14 +2,14 @@
 
 {% block content %}
 <div class="row mt-4">
-    <div class="col-6">
+    <div class="col-md-8 col-sm-12">
         <h3>Expense categories</h3>
         <p class="text-secondary">
             List of your expense categories
         </p>
     </div>
-    <div class="col-6 text-end">
-        <a href="{% url 'expenses:categories:add' %}?next={% url 'expenses:categories:list' %}" class="btn btn-primary"> Add new category</a>
+    <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
+        <a href="{% url 'expenses:categories:add' %}?next={% url 'expenses:categories:list' %}" class="btn btn-primary">Create new</a>
     </div>
 </div>
 <div class="class mt-3">
