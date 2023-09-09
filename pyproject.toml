@@ -27,6 +27,7 @@ django-debug-toolbar = "^4.1.0"
 ipython = "^8.13.2"
 pre-commit = "^3.4.0"
 pytest-django = "^4.5.2"
+factory-boy = "^3.3.0"
 
 [build-system]
 requires = ["poetry-core"]

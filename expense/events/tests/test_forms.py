@@ -5,12 +5,12 @@ import pytest
 from django.forms import ValidationError
 from django.utils.text import slugify
 
-from expense.events.forms import CreateEventForm
+from expense.events.forms import EventForm
 
 
 def test_create_event_form_clean_method_invalid():
     """
-    CreateEventForm should raise a validation error if
+    EventForm should raise a validation error if
     start_date is older that end_date
     """
     today = datetime.now()
@@ -21,7 +21,7 @@ def test_create_event_form_clean_method_invalid():
         "end_date": today,
     }
 
-    form = CreateEventForm(user=None, data=data)
+    form = EventForm(user=None, data=data)
 
     assert not form.is_valid()
     with pytest.raises(ValidationError):
@@ -30,7 +30,7 @@ def test_create_event_form_clean_method_invalid():
 
 def test_create_event_form_clean_method_valid():
     """
-    CreateEventForm should raise return cleaned data if
+    EventForm should raise return cleaned data if
     the data is valid
     """
     today = datetime.now()
@@ -41,7 +41,7 @@ def test_create_event_form_clean_method_valid():
         "end_date": tomorrow,
     }
 
-    form = CreateEventForm(user=None, data=data)
+    form = EventForm(user=None, data=data)
 
     assert form.is_valid()
 
@@ -65,7 +65,7 @@ class FakeEvent:
 @patch("expense.events.forms.ModelForm.save")
 def test_create_event_form_save_method(mock_save):
     """
-    If the form is valid, CreateEventForm.save should return an
+    If the form is valid, EventForm.save should return an
     event object, with `slug` and `belongs_to` attirbutes set
     """
     mock_save.return_value = FakeEvent()
@@ -78,7 +78,7 @@ def test_create_event_form_save_method(mock_save):
         "end_date": tomorrow,
     }
 
-    form = CreateEventForm(user="test-user", data=data)
+    form = EventForm(user="test-user", data=data)
 
     assert form.is_valid()
 
