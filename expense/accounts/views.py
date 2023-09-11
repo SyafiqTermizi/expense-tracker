@@ -86,6 +86,7 @@ def add_view(request: HttpRequest) -> HttpResponse:
                 "form": form,
                 "accounts": user_accounts,
             },
+            status=400,
         )
 
 

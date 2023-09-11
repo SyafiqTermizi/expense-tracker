@@ -49,6 +49,7 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
                 "accounts": user_accounts,
                 "categories": expense_categories,
             },
+            status=400,
         )
 
     image_form = ExpenseImageForm(request.POST, request.FILES)
@@ -63,6 +64,7 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
                 "accounts": user_accounts,
                 "categories": expense_categories,
             },
+            status=400,
         )
 
     expense = expense_form.save()
@@ -113,6 +115,7 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
                 "expense_form": expense_form,
                 "categories": expense_categories,
             },
+            status=400,
         )
 
     image_form = ExpenseImageForm(
@@ -130,6 +133,7 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
                 "expense_form": expense_form,
                 "categories": expense_categories,
             },
+            status=400,
         )
 
     expense = expense_form.save()
