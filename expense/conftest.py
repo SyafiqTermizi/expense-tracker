@@ -1,5 +1,3 @@
-import base64
-
 import pytest
 
 from expense.accounts.tests.factories import (
@@ -24,7 +22,7 @@ def user_data():
         belongs_to=user,
     )
 
-    AccountBalanceFactory.create(action=action, belongs_to=user)
+    AccountBalanceFactory.create(action=action, belongs_to=user, amount=1000)
 
     return {
         "user": user,
@@ -37,12 +35,3 @@ def user_data():
 def authenticated_client(client, user_data):
     client.login(username=user_data["user"].email, password="abc123")
     return client
-
-
-@pytest.fixture
-def image():
-    return base64.b64decode(
-        "iVBORw0KGgoAAAANSUhEUgAAAAUA"
-        + "AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO"
-        + "9TXL0Y4OHwAAAABJRU5ErkJggg=="
-    )

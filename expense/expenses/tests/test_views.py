@@ -46,59 +46,98 @@ def test_add_expense_view_invalid_expense_form(db, authenticated_client):
         data={"amount": "abc", "description": "Test"},
     )
     assert res.status_code == 400
+    assert (
+        "You don&#x27;t have enough balance in None account. Available balance is 0."
+        in res.content.decode()
+    )
 
 
-# def test_add_expense_view_invalid_expense_and_invalid_image_form(
-#     db,
-#     authenticated_client,
-#     user_data,
-# ):
-#     res = authenticated_client.post(
-#         reverse("expenses:add"),
-#         data={
-#             "amount": "invalid_data",
-#             "description": "Test",
-#             "category": user_data["expense_categories"].slug,
-#             "from_account": user_data["account"].slug,
-#             "image": "invalid_data",
-#         },
-#     )
-#     assert res.status_code == 400
+def test_add_expense_view_invalid_expense_and_invalid_image_form(
+    db,
+    authenticated_client,
+):
+    with open("expense/expenses/tests/testfiles/file.txt", "rb") as text_file:
+        res = authenticated_client.post(
+            reverse("expenses:add"),
+            data={
+                "amount": "abc",
+                "description": "Test",
+                "image": text_file,
+            },
+        )
+    assert res.status_code == 400
+
+    res_content = res.content.decode()
+    assert (
+        "Upload a valid image. The file you uploaded was either not an image or a corrupted image."
+        in res_content
+    )
+    assert (
+        "You don&#x27;t have enough balance in None account. Available balance is 0."
+        in res_content
+    )
 
 
-# def test_add_expense_view_valid_expense_and_invalid_image_form(
-#     db,
-#     authenticated_client,
-#     user_data,
-# ):
-#     assert f"{dir(authenticated_client)}" == "v"
-#     res = authenticated_client.post(
-#         reverse("expenses:add"),
-#         data={
-#             "amount": 10,
-#             "description": "Test",
-#             "category": user_data["expense_categories"].slug,
-#             "from_account": user_data["account"].slug,
-#             "image": 1,
-#         },
-#     )
-#     assert res.status_code == 400
+def test_add_expense_view_valid_expense_and_invalid_image_form(
+    db,
+    authenticated_client,
+    user_data,
+):
+    """
+    The view should return 400 if user post an invalid image file
+    """
+    with open("expense/expenses/tests/testfiles/file.txt", "rb") as text_file:
+        res = authenticated_client.post(
+            reverse("expenses:add"),
+            data={
+                "amount": 10,
+                "description": "Test",
+                "category": user_data["expense_categories"].slug,
+                "from_account": user_data["account"].slug,
+                "image": text_file,
+            },
+        )
+    assert res.status_code == 400
+    assert (
+        "Upload a valid image. The file you uploaded was either not an image or a corrupted image."
+        in res.content.decode()
+    )
+
+
+def test_add_expense_view_invalid_expense_and_valid_image_form(
+    db, authenticated_client, user_data
+):
+    with open("expense/expenses/tests/testfiles/validpng.png", "rb") as image:
+        res = authenticated_client.post(
+            reverse("expenses:add"),
+            data={
+                "amount": 10,
+                "description": "Test",
+                "category": user_data["expense_categories"].slug,
+                "image": image,
+            },
+        )
+    assert res.status_code == 400
+    assert (
+        "You don&#x27;t have enough balance in None account. Available balance is 0."
+        in res.content.decode()
+    )
 
 
 def test_add_expense_view_valid_expense_and_valid_image_form(
     db,
     authenticated_client,
-    image,
     user_data,
 ):
-    res = authenticated_client.post(
-        reverse("expenses:add"),
-        data={
-            "amount": 10,
-            "description": "Test",
-            "category": user_data["expense_categories"].slug,
-            "from_account": user_data["account"].slug,
-            "image": image,
-        },
-    )
+    with open("expense/expenses/tests/testfiles/validpng.png", "rb") as image:
+        res = authenticated_client.post(
+            reverse("expenses:add"),
+            data={
+                "amount": 10,
+                "description": "Test",
+                "category": user_data["expense_categories"].slug,
+                "from_account": user_data["account"].slug,
+                "image": image,
+            },
+        )
     assert res.status_code == 302
