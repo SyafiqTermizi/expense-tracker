@@ -104,6 +104,19 @@
 
                 {% include "partial/upload_image_form.html" %}
 
+                {% if active_events %}
+                <label class="form-label" for="id_event">Event:</label>
+                <select class="form-select" name="event" id="id_event">
+                    <option value="" selected="">---------</option>
+                    {% for event in active_events %}
+                    <option value="{{ event.slug }}">{{ event.name }}</option>
+                    {% endfor %}
+                </select>
+                {% for error in event_form.description.errors %}
+                <p class="text-danger">{{ error }}</p>
+                {% endfor %}
+                {% endif %}
+
                 <input class="mt-3 btn btn-primary" type="submit" value="Create">
             </div>
         </form>

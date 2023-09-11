@@ -87,9 +87,13 @@ class ExpenseImageForm(forms.ModelForm):
         fields = ["image"]
 
     def save(self, expense: Expense) -> Any:
+        if not self.cleaned_data.get("image"):
+            return
+
         instance = super().save(commit=False)
         instance.expense = expense
         instance.save()
+
         return instance
 
 

@@ -8,6 +8,8 @@ from django.utils import timezone
 from django.views.generic import View
 
 from expense.accounts.utils import get_latest_account_balance
+from expense.events.forms import CreateEventExpenseForm
+from expense.events.models import Event
 from expense.utils import MonthQueryParamForm, get_localtime_kwargs
 
 from ..forms import AddExpenseForm, ExpenseImageForm, UpdateExpenseForm
@@ -18,6 +20,10 @@ from ..utils import get_formatted_user_expense_for_month
 def add_expense_view(request: HttpRequest) -> HttpResponse:
     user_accounts = get_latest_account_balance(request.user)
     expense_categories = request.user.expense_categories.values("name", "slug")
+    active_events = Event.objects.get_user_active_events(request.user).values(
+        "name",
+        "slug",
+    )
 
     if request.method == "GET":
         selected_account = request.GET.get("account", None)
@@ -31,20 +37,29 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
             "expenses/add_expense.html",
             context={
                 "accounts": user_accounts,
+                "active_events": active_events,
                 "categories": expense_categories,
             },
         )
 
     expense_form = AddExpenseForm(user=request.user, data=request.POST)
     image_form = ExpenseImageForm(request.POST, request.FILES)
+    event_form = CreateEventExpenseForm(user=request.user, data=request.POST)
 
-    if not expense_form.is_valid() or not image_form.is_valid():
+    forms_are_valid = [
+        expense_form.is_valid(),
+        image_form.is_valid(),
+        event_form.is_valid(),
+    ]
+
+    if not all(forms_are_valid):
         return render(
             request,
             "expenses/add_expense.html",
             context={
                 "expense_form": expense_form,
                 "image_form": image_form,
+                "event_form": event_form,
                 "accounts": user_accounts,
                 "categories": expense_categories,
             },
@@ -53,6 +68,7 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
 
     expense = expense_form.save()
     image_form.save(expense=expense)
+    event_form.save(expense=expense)
 
     return redirect("dashboard:index")
 
