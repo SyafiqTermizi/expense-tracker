@@ -13,20 +13,10 @@
         <form class="card" method="post" enctype="multipart/form-data">
             <div class="card-body p-4">
                 {% csrf_token %}
-                {% if expense_form.non_field_errors %}
+                {% if form.non_field_errors %}
                 <div class="mb-3">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {% for error in expense_form.non_field_errors %}
-                        <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if image_form.non_field_errors %}
-                <div class="mb-3">
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {% for error in image_form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
                         <p>{{ error }}</p>
                         {% endfor %}
                     </div>
@@ -35,10 +25,10 @@
 
                 <div class="mb-3">
                     <label class="form-label" for="id_from_account">From Account:</label>
-                    <select class="form-select {% if expense_form.from_account.errors %}is-invalid{% endif %}" name="from_account" required="" id="id_from_account">
+                    <select class="form-select {% if form.from_account.errors %}is-invalid{% endif %}" name="from_account" required="" id="id_from_account">
                         {% for account in accounts %}
                         <option
-                            {% if account.slug == expense_form.from_account.value %}selected{% endif %}
+                            {% if account.slug == form.from_account.value %}selected{% endif %}
                             {% if account.selected %}selected{% endif %}
                             value="{{ account.slug }}"
                         >
@@ -46,16 +36,16 @@
                         </option>
                         {% endfor %}
                     </select>
-                    {% for error in expense_form.from_account.errors %}
+                    {% for error in form.from_account.errors %}
                     <p class="text-danger">{{ error }}</p>
                     {% endfor %}
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label" for="id_amount">Amount ({{ request.user.currency }}):</label>
-                    <input class="form-control {% if expense_form.amount.errors %}is-invalid{% endif %}" type="number" name="amount"
-                        step="0.01" required id="id_amount" value="{{ expense_form.amount.value }}">
-                    {% for error in expense_form.amount.errors %}
+                    <input class="form-control {% if form.amount.errors %}is-invalid{% endif %}" type="number" name="amount"
+                        step="0.01" required id="id_amount" value="{{ form.amount.value }}">
+                    {% for error in form.amount.errors %}
                     <p class="text-danger">{{ error }}</p>
                     {% endfor %}
                 </div>
@@ -63,19 +53,19 @@
                 <div class="mb-3">
                     <label class="form-label" for="id_description">Description:</label>
                     <input class="form-control" type="text" name="description" maxlength="255" id="id_description"
-                        value="{{ expense_form.description.value|default:'' }}">
-                    {% for error in expense_form.description.errors %}
+                        value="{{ form.description.value|default:'' }}">
+                    {% for error in form.description.errors %}
                     <p class="text-danger">{{ error }}</p>
                     {% endfor %}
                 </div>
 
                 <div>
                     <label class="form-label" for="id_category">category:</label>
-                    <select class="form-select {% if expense_form.category.errors %}is-invalid{% endif %}" name="category" id="id_category">
+                    <select class="form-select {% if form.category.errors %}is-invalid{% endif %}" name="category" id="id_category">
                         <option value="">----</option>
                         {% for category in categories %}
                         <option
-                            {% if category.slug == expense_form.category.value %}selected{% endif %}
+                            {% if category.slug == form.category.value %}selected{% endif %}
                             value="{{ category.slug }}"
                         >
                             {{ category.name }}
@@ -85,7 +75,7 @@
 
                     <div class="row">
                         <div class="col-6">
-                            {% for error in expense_form.category.errors %}
+                            {% for error in form.category.errors %}
                             <p class="text-danger">{{ error }}</p>
                             {% endfor %}
                         </div>
@@ -102,7 +92,7 @@
                     </div>
                 </div>
 
-                {% include "partial/upload_image_form.html" %}
+                {% include "partial/update_image_form.html" with errors=form.image.errors %}
 
                 {% if active_events %}
                 <label class="form-label" for="id_event">Event:</label>
@@ -112,7 +102,8 @@
                     <option value="{{ event.slug }}">{{ event.name }}</option>
                     {% endfor %}
                 </select>
-                {% for error in event_form.description.errors %}
+
+                {% for error in form.description.errors %}
                 <p class="text-danger">{{ error }}</p>
                 {% endfor %}
                 {% endif %}

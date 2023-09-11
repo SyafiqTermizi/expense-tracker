@@ -5,6 +5,7 @@ from django.utils.text import slugify
 
 from expense.accounts.forms import AccountActionForm
 from expense.accounts.models import AccountAction
+from expense.events.models import Event, Expense as EventExpense
 from expense.users.models import User
 from expense.utils import BaseFromAccountForm
 
@@ -19,13 +20,24 @@ class AddExpenseForm(BaseFromAccountForm):
     amount = forms.DecimalField(max_digits=10, decimal_places=2)
     description = forms.CharField(max_length=255, required=False)
 
+    image = forms.ImageField(required=False)
+
     def __init__(self, user: User, *args, **kwargs) -> None:
         super().__init__(user, *args, **kwargs)
 
-        # Fields
-        self.fields["category"] = forms.ModelChoiceField(
-            queryset=user.expense_categories.all(),
-            to_field_name="slug",
+        # fields that requires query that relates to user
+        self.fields.update(
+            {
+                "category": forms.ModelChoiceField(
+                    queryset=user.expense_categories.all(),
+                    to_field_name="slug",
+                ),
+                "event": forms.ModelChoiceField(
+                    queryset=Event.objects.get_user_active_events(user),
+                    required=False,
+                    to_field_name="slug",
+                ),
+            }
         )
 
     def clean(self) -> Dict[str, Any]:
@@ -55,13 +67,21 @@ class AddExpenseForm(BaseFromAccountForm):
             },
         ).save(commit=True)
 
-        return Expense.objects.create(
+        expense = Expense.objects.create(
             amount=amount,
             category=category,
             description=description,
             from_action=account_action,
             belongs_to=self.user,
         )
+
+        if image := self.cleaned_data.get("image"):
+            Image.objects.create(expense=expense, image=image)
+
+        if event := self.cleaned_data.get("event"):
+            EventExpense.objects.create(event=event, expense=expense)
+
+        return expense
 
 
 class UpdateExpenseForm(forms.ModelForm):

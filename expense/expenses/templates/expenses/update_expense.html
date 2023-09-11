@@ -71,12 +71,9 @@
                         </div>
                     </div>
                 </div>
+                <h1>{{ image }}</h1>
 
-                {% if image %}
-                {% include "partial/update_image_form.html" %}
-                {% else %}
-                {% include "partial/upload_image_form.html" %}
-                {% endif %}
+                {% include "partial/update_image_form.html" with errors=image_form.image.errors %}
 
                 <input class="mt-3 btn btn-primary" type="submit" value="Update">
             </div>

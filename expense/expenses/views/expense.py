@@ -8,7 +8,6 @@ from django.utils import timezone
 from django.views.generic import View
 
 from expense.accounts.utils import get_latest_account_balance
-from expense.events.forms import CreateEventExpenseForm
 from expense.events.models import Event
 from expense.utils import MonthQueryParamForm, get_localtime_kwargs
 
@@ -42,33 +41,21 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
             },
         )
 
-    expense_form = AddExpenseForm(user=request.user, data=request.POST)
-    image_form = ExpenseImageForm(request.POST, request.FILES)
-    event_form = CreateEventExpenseForm(user=request.user, data=request.POST)
+    form = AddExpenseForm(user=request.user, data=request.POST, files=request.FILES)
 
-    forms_are_valid = [
-        expense_form.is_valid(),
-        image_form.is_valid(),
-        event_form.is_valid(),
-    ]
-
-    if not all(forms_are_valid):
+    if not form.is_valid():
         return render(
             request,
             "expenses/add_expense.html",
             context={
-                "expense_form": expense_form,
-                "image_form": image_form,
-                "event_form": event_form,
+                "form": form,
                 "accounts": user_accounts,
                 "categories": expense_categories,
             },
             status=400,
         )
 
-    expense = expense_form.save()
-    image_form.save(expense=expense)
-    event_form.save(expense=expense)
+    form.save()
 
     return redirect("dashboard:index")
 

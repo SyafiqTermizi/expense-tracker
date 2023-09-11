@@ -6,7 +6,7 @@ from django.utils.text import slugify
 
 from expense.users.models import User
 
-from .models import Event, Expense
+from .models import Event
 
 
 class EventForm(ModelForm):
@@ -34,27 +34,3 @@ class EventForm(ModelForm):
         event.save()
 
         return event
-
-
-class CreateEventExpenseForm(ModelForm):
-    def __init__(self, user: User, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.fields["event"] = forms.ModelChoiceField(
-            queryset=Event.objects.get_user_active_events(user),
-            to_field_name="slug",
-            required=False,
-        )
-
-    class Meta:
-        model = Expense
-        fields = ["event"]
-
-    def save(self, expense) -> Any:
-        if not self.cleaned_data.get("event"):
-            return
-
-        event_expense: Expense = super().save(commit=False)
-        event_expense.expense = expense
-        event_expense.save()
-
-        return event_expense

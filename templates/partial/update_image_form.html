@@ -4,16 +4,19 @@
 <div class="mb-2" id="imageContainer">
     <input class="form-control" type="file" name="image" accept="image/*" id="imageInput">
     <button class="btn btn-outline-secondary d-none" type="button" id="imageRemoveButton">Clear</button>
-    {% for error in image_form.image.errors %}
+    {% for error in errors %}
     <p class="text-danger">{{ error }}</p>
     {% endfor %}
 </div>
 
+{% if image %}
 <div class="mb-2 form-text">Upload new image to replace current image</div>
-<a href={{ image.image.url }} id="imageLink" target="_blank">
+{% endif %}
+
+<a href={% if image %}{{ image.image.url }}{% else %}#{% endif %} id="imageLink" target="_blank">
     <img
-        class="img-thumbnail mb-2"
-        src={{ image.image.url }}
+        class="img-thumbnail mb-2 {% if not image %}d-none{% endif %}"
+        src={% if image %}{{ image.image.url }}{% else %}""{% endif %}
         alt="Expenses attachment"
         style="object-fit: cover; width: 100px; height: 100px"
         id="imagePreview"
