@@ -22,7 +22,7 @@ def test_add_expense_view_authenticated_user(db, authenticated_client):
 
 def test_add_expense_view_valid_expense_form(db, authenticated_client, user_data):
     """
-    add_expense_view should redirect user to dashboard if expense form is valid
+    add_expense_view should redirect user to dashboard if expense form is valid, with no image uploaded
     """
     res = authenticated_client.post(
         reverse("expenses:add"),
@@ -39,7 +39,7 @@ def test_add_expense_view_valid_expense_form(db, authenticated_client, user_data
 
 def test_add_expense_view_invalid_expense_form(db, authenticated_client):
     """
-    add_expense_view should return 400 if the form data is not valid
+    add_expense_view should return 400 if the form data is not valid, with no image uploaded
     """
     res = authenticated_client.post(
         reverse("expenses:add"),
@@ -56,6 +56,11 @@ def test_add_expense_view_invalid_expense_and_invalid_image_form(
     db,
     authenticated_client,
 ):
+    """
+    add_expense_view should return 400 if the
+    - expense form data is not valid
+    - image form data is not valid
+    """
     with open("expense/expenses/tests/testfiles/file.txt", "rb") as text_file:
         res = authenticated_client.post(
             reverse("expenses:add"),
@@ -84,7 +89,9 @@ def test_add_expense_view_valid_expense_and_invalid_image_form(
     user_data,
 ):
     """
-    The view should return 400 if user post an invalid image file
+    add_expense_view should return 400 if the
+    - expense form data is valid
+    - image form data is not valid
     """
     with open("expense/expenses/tests/testfiles/file.txt", "rb") as text_file:
         res = authenticated_client.post(
@@ -105,8 +112,15 @@ def test_add_expense_view_valid_expense_and_invalid_image_form(
 
 
 def test_add_expense_view_invalid_expense_and_valid_image_form(
-    db, authenticated_client, user_data
+    db,
+    authenticated_client,
+    user_data,
 ):
+    """
+    add_expense_view should return 400 if the
+    - expense form data is valid
+    - image form data is not valid
+    """
     with open("expense/expenses/tests/testfiles/validpng.png", "rb") as image:
         res = authenticated_client.post(
             reverse("expenses:add"),

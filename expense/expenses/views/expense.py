@@ -36,22 +36,6 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
         )
 
     expense_form = AddExpenseForm(user=request.user, data=request.POST)
-
-    if not request.FILES:
-        if expense_form.is_valid():
-            expense = expense_form.save()
-            return redirect("dashboard:index")
-        return render(
-            request,
-            "expenses/add_expense.html",
-            context={
-                "expense_form": expense_form,
-                "accounts": user_accounts,
-                "categories": expense_categories,
-            },
-            status=400,
-        )
-
     image_form = ExpenseImageForm(request.POST, request.FILES)
 
     if not expense_form.is_valid() or not image_form.is_valid():
@@ -101,23 +85,6 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
         instance=expense,
         data=request.POST,
     )
-
-    if not request.FILES:
-        if expense_form.is_valid():
-            expense = expense_form.save()
-            expense.from_action.description = expense.description
-            expense.from_action.save()
-            return redirect("dashboard:index")
-        return render(
-            request,
-            "expenses/add_expense.html",
-            context={
-                "expense_form": expense_form,
-                "categories": expense_categories,
-            },
-            status=400,
-        )
-
     image_form = ExpenseImageForm(
         request.POST,
         request.FILES,

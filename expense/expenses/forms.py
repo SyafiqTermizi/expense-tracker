@@ -78,6 +78,10 @@ class UpdateExpenseForm(forms.ModelForm):
 
 
 class ExpenseImageForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["image"].required = False
+
     class Meta:
         model = Image
         fields = ["image"]
