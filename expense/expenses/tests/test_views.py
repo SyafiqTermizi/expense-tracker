@@ -197,3 +197,60 @@ def test_add_expense_view_valid_expense_and_valid_image_form(
 
     assert Expense.objects.count() > initial_expense_count
     assert Image.objects.count() > initial_image_count
+
+
+def test_update_expense_view_valid_expense_form(
+    db,
+    authenticated_client,
+    create_user_expense,
+):
+    old_expense = create_user_expense()
+    initial_expense_count = Expense.objects.count()
+
+    res = authenticated_client.post(
+        reverse("expenses:update", kwargs={"slug": old_expense.slug}),
+        data={"description": "new description", "category": old_expense.category.slug},
+    )
+
+    assert res.status_code == 302
+
+    updated_expense = Expense.objects.get(slug=old_expense.slug)
+
+    assert updated_expense.slug == old_expense.slug
+
+    # only description should be updated
+    assert updated_expense.description != old_expense.description
+    assert updated_expense.category.pk == old_expense.category.pk
+
+    # no new expense should be created
+    assert Expense.objects.count() == initial_expense_count
+
+
+def test_update_expense_view_invalid_expense_form(
+    db,
+    authenticated_client,
+    create_user_expense,
+):
+    old_expense = create_user_expense()
+    initial_expense_count = Expense.objects.count()
+
+    res = authenticated_client.post(
+        reverse("expenses:update", kwargs={"slug": old_expense.slug}),
+        data={"description": "new description", "category": "invalid category"},
+    )
+
+    assert res.status_code == 400
+    assert (
+        "Select a valid choice. That choice is not one of the available choices."
+        in res.content.decode()
+    )
+
+    updated_expense = Expense.objects.get(slug=old_expense.slug)
+
+    # nothing should change since the form is invalid
+    assert updated_expense.slug == old_expense.slug
+    assert updated_expense.description == old_expense.description
+    assert updated_expense.category.pk == old_expense.category.pk
+
+    # no new expense should be created
+    assert Expense.objects.count() == initial_expense_count
