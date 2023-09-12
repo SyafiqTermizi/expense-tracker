@@ -202,25 +202,24 @@ def test_add_expense_view_valid_expense_and_valid_image_form(
 def test_update_expense_view_valid_expense_form(
     db,
     authenticated_client,
-    create_user_expense,
+    user_expense,
 ):
-    old_expense = create_user_expense()
     initial_expense_count = Expense.objects.count()
 
     res = authenticated_client.post(
-        reverse("expenses:update", kwargs={"slug": old_expense.slug}),
-        data={"description": "new description", "category": old_expense.category.slug},
+        reverse("expenses:update", kwargs={"slug": user_expense.slug}),
+        data={"description": "new description", "category": user_expense.category.slug},
     )
 
     assert res.status_code == 302
 
-    updated_expense = Expense.objects.get(slug=old_expense.slug)
+    updated_expense = Expense.objects.get(slug=user_expense.slug)
 
-    assert updated_expense.slug == old_expense.slug
+    assert updated_expense.slug == user_expense.slug
 
     # only description should be updated
-    assert updated_expense.description != old_expense.description
-    assert updated_expense.category.pk == old_expense.category.pk
+    assert updated_expense.description != user_expense.description
+    assert updated_expense.category.pk == user_expense.category.pk
 
     # no new expense should be created
     assert Expense.objects.count() == initial_expense_count
@@ -229,13 +228,12 @@ def test_update_expense_view_valid_expense_form(
 def test_update_expense_view_invalid_expense_form(
     db,
     authenticated_client,
-    create_user_expense,
+    user_expense,
 ):
-    old_expense = create_user_expense()
     initial_expense_count = Expense.objects.count()
 
     res = authenticated_client.post(
-        reverse("expenses:update", kwargs={"slug": old_expense.slug}),
+        reverse("expenses:update", kwargs={"slug": user_expense.slug}),
         data={"description": "new description", "category": "invalid category"},
     )
 
@@ -245,12 +243,179 @@ def test_update_expense_view_invalid_expense_form(
         in res.content.decode()
     )
 
-    updated_expense = Expense.objects.get(slug=old_expense.slug)
+    updated_expense = Expense.objects.get(slug=user_expense.slug)
 
     # nothing should change since the form is invalid
-    assert updated_expense.slug == old_expense.slug
-    assert updated_expense.description == old_expense.description
-    assert updated_expense.category.pk == old_expense.category.pk
+    assert updated_expense.slug == user_expense.slug
+    assert updated_expense.description == user_expense.description
+    assert updated_expense.category.pk == user_expense.category.pk
 
     # no new expense should be created
     assert Expense.objects.count() == initial_expense_count
+
+
+def test_update_expense_view_valid_expense_form_valid_image_form(
+    db,
+    authenticated_client,
+    user_expense_with_image,
+):
+    initial_expense_count = Expense.objects.count()
+    initial_image_count = Image.objects.count()
+
+    with open("expense/expenses/tests/testfiles/validpng2.png", "rb") as image:
+        res = authenticated_client.post(
+            reverse("expenses:update", kwargs={"slug": user_expense_with_image.slug}),
+            data={
+                "description": "new description",
+                "category": user_expense_with_image.category.slug,
+                "image": image,
+            },
+        )
+
+    assert res.status_code == 302
+
+    updated_expense = Expense.objects.get(slug=user_expense_with_image.slug)
+
+    assert updated_expense.slug == user_expense_with_image.slug
+
+    # only description should be updated
+    assert updated_expense.description != user_expense_with_image.description
+    assert updated_expense.category.pk == user_expense_with_image.category.pk
+
+    # no new expense should be created
+    assert Expense.objects.count() == initial_expense_count
+
+    # no new image should be created
+    assert Image.objects.count() == initial_image_count
+
+
+def test_update_expense_view_invalid_expense_form_invalid_image_form(
+    db,
+    authenticated_client,
+    user_expense_with_image,
+):
+    initial_expense_count = Expense.objects.count()
+    initial_image_count = Image.objects.count()
+
+    with open("expense/expenses/tests/testfiles/file.txt", "rb") as text_file:
+        res = authenticated_client.post(
+            reverse("expenses:update", kwargs={"slug": user_expense_with_image.slug}),
+            data={
+                "description": "new description",
+                "category": "invalid_slug",
+                "image": text_file,
+            },
+        )
+
+    res_content = res.content.decode()
+    assert res.status_code == 400
+    assert (
+        "Select a valid choice. That choice is not one of the available choices."
+        in res_content
+    )
+    assert (
+        "Upload a valid image. The file you uploaded was either not an image or a corrupted image."
+        in res_content
+    )
+
+    updated_expense = Expense.objects.get(slug=user_expense_with_image.slug)
+
+    assert updated_expense.slug == user_expense_with_image.slug
+
+    # expense should not be updated since the forms are invalid
+    assert updated_expense.description == user_expense_with_image.description
+    assert updated_expense.category.pk == user_expense_with_image.category.pk
+
+    # no new expense should be created since the form is invalid
+    assert Expense.objects.count() == initial_expense_count
+
+    # no new image should be created since the form is invalid
+    assert Image.objects.count() == initial_image_count
+
+
+def test_update_expense_view_valid_expense_form_invalid_image_form(
+    db,
+    authenticated_client,
+    user_expense_with_image,
+):
+    initial_expense_count = Expense.objects.count()
+    initial_image_count = Image.objects.count()
+
+    with open("expense/expenses/tests/testfiles/file.txt", "rb") as text_file:
+        res = authenticated_client.post(
+            reverse("expenses:update", kwargs={"slug": user_expense_with_image.slug}),
+            data={
+                "description": "new description",
+                "category": user_expense_with_image.category.slug,
+                "image": text_file,
+            },
+        )
+
+    res_content = res.content.decode()
+    assert res.status_code == 400
+    assert (
+        "Select a valid choice. That choice is not one of the available choices."
+        not in res_content
+    )
+    assert (
+        "Upload a valid image. The file you uploaded was either not an image or a corrupted image."
+        in res_content
+    )
+
+    updated_expense = Expense.objects.get(slug=user_expense_with_image.slug)
+
+    assert updated_expense.slug == user_expense_with_image.slug
+
+    # expense should not be updated since the forms are invalid
+    assert updated_expense.description == user_expense_with_image.description
+    assert updated_expense.category.pk == user_expense_with_image.category.pk
+
+    # no new expense should be created since the form is invalid
+    assert Expense.objects.count() == initial_expense_count
+
+    # no new image should be created since the form is invalid
+    assert Image.objects.count() == initial_image_count
+
+
+def test_update_expense_view_invalid_expense_form_valid_image_form(
+    db,
+    authenticated_client,
+    user_expense_with_image,
+):
+    initial_expense_count = Expense.objects.count()
+    initial_image_count = Image.objects.count()
+
+    with open("expense/expenses/tests/testfiles/validpng.png", "rb") as image:
+        res = authenticated_client.post(
+            reverse("expenses:update", kwargs={"slug": user_expense_with_image.slug}),
+            data={
+                "description": "new description",
+                "category": "invalid_slug",
+                "image": image,
+            },
+        )
+
+    res_content = res.content.decode()
+    assert res.status_code == 400
+    assert (
+        "Select a valid choice. That choice is not one of the available choices."
+        in res_content
+    )
+    assert (
+        "Upload a valid image. The file you uploaded was either not an image or a corrupted image."
+        not in res_content
+    )
+
+    updated_expense = Expense.objects.get(slug=user_expense_with_image.slug)
+
+    assert updated_expense.slug == user_expense_with_image.slug
+
+    # expense should not be updated since the form is invalid
+    assert updated_expense.description == user_expense_with_image.description
+    assert updated_expense.category.pk == user_expense_with_image.category.pk
+
+    # no new expense should be created since the form is invalid
+    assert Expense.objects.count() == initial_expense_count
+
+    # no new image should be created since the form is invalid
+    assert Image.objects.count() == initial_image_count

@@ -1,4 +1,5 @@
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from expense.accounts.tests.factories import (
     AccountActionFactory,
@@ -39,25 +40,39 @@ def authenticated_client(client, user_data):
 
 
 @pytest.fixture
-def create_user_expense(user_data):
-    def inner(with_image=False):
-        data = {
+def user_expense(user_data):
+    form = AddExpenseForm(
+        user=user_data["user"],
+        data={
             "amount": 1,
             "description": "test",
             "category": user_data["expense_categories"].slug,
             "from_account": user_data["account"].slug,
-        }
+        },
+    )
 
-        if with_image:
-            with open("expense/expenses/tests/testfiles/validpng.png", "rb") as image:
-                data.update({"image": image})
+    assert form.is_valid()
+    return form.save()
 
+
+@pytest.fixture
+def user_expense_with_image(user_data):
+    with open("expense/expenses/tests/testfiles/validpng.png", "rb") as file:
         form = AddExpenseForm(
             user=user_data["user"],
-            data=data,
+            data={
+                "amount": 1,
+                "description": "test",
+                "category": user_data["expense_categories"].slug,
+                "from_account": user_data["account"].slug,
+            },
+            files={
+                "image": SimpleUploadedFile(
+                    name=file.name,
+                    content=file.read(),
+                ),
+            },
         )
 
-        assert form.is_valid()
-        return form.save()
-
-    return inner
+    assert form.is_valid()
+    return form.save()
