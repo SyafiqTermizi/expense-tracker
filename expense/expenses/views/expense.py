@@ -101,6 +101,7 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
             context={
                 "expense": expense,
                 "expense_form": expense_form,
+                "image_form": image_form,
                 "categories": expense_categories,
             },
             status=400,
