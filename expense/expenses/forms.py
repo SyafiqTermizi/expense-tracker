@@ -85,6 +85,12 @@ class AddExpenseForm(BaseFromAccountForm):
 
 
 class UpdateExpenseForm(forms.ModelForm):
+    image = forms.ImageField(required=False)
+
+    class Meta:
+        model = Expense
+        fields = ["category", "description"]
+
     def __init__(self, user: User, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fields["category"] = forms.ModelChoiceField(
@@ -92,39 +98,29 @@ class UpdateExpenseForm(forms.ModelForm):
             to_field_name="slug",
         )
 
-    class Meta:
-        model = Expense
-        fields = ["category", "description"]
+    def save(self) -> Any:
+        expense: Expense = super().save(commit=True)
+        expense_image: Image = expense.images.first()
+        uploaded_image = self.cleaned_data.get("image")
 
+        if uploaded_image and expense_image:
+            expense_image.image = uploaded_image
+            expense_image.save()
 
-class ExpenseImageForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.fields["image"].required = False
+        if uploaded_image and not expense_image:
+            Image.objects.create(expense=expense, image=uploaded_image)
 
-    class Meta:
-        model = Image
-        fields = ["image"]
-
-    def save(self, expense: Expense) -> Any:
-        if not self.cleaned_data.get("image"):
-            return
-
-        instance = super().save(commit=False)
-        instance.expense = expense
-        instance.save()
-
-        return instance
+        return expense
 
 
 class CategoryForm(forms.ModelForm):
-    def __init__(self, user: User, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.user = user
-
     class Meta:
         model = Category
         fields = ("name",)
+
+    def __init__(self, user: User, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.user = user
 
     def save(self) -> Any:
         category = super().save(commit=False)

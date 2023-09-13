@@ -11,7 +11,7 @@ from expense.accounts.utils import get_latest_account_balance
 from expense.events.models import Event
 from expense.utils import MonthQueryParamForm, get_localtime_kwargs
 
-from ..forms import AddExpenseForm, ExpenseImageForm, UpdateExpenseForm
+from ..forms import AddExpenseForm, UpdateExpenseForm
 from ..utils import get_formatted_user_expense_for_month
 
 
@@ -83,35 +83,28 @@ def update_expense_view(request: HttpRequest, slug: str) -> HttpResponse:
             },
         )
 
-    expense_form = UpdateExpenseForm(
+    form = UpdateExpenseForm(
         user=request.user,
         instance=expense,
         data=request.POST,
-    )
-    image_form = ExpenseImageForm(
-        request.POST,
-        request.FILES,
-        instance=expense.images.first(),
+        files=request.FILES,
     )
 
-    if not expense_form.is_valid() or not image_form.is_valid():
+    if not form.is_valid():
         return render(
             request,
             template_name="expenses/update_expense.html",
             context={
                 "expense": expense,
-                "expense_form": expense_form,
-                "image_form": image_form,
+                "form": form,
                 "categories": expense_categories,
             },
             status=400,
         )
 
-    expense = expense_form.save()
+    expense = form.save()
     expense.from_action.description = expense.description
     expense.from_action.save()
-
-    image_form.save(expense=expense)
 
     return redirect("dashboard:index")
 
