@@ -90,7 +90,7 @@ def add_view(request: HttpRequest) -> HttpResponse:
         )
 
 
-class MontlyAccountDetailView(LoginRequiredMixin, DetailView):
+class MonthlyAccountDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         return self.request.user.accounts.all()
 
