@@ -2,8 +2,20 @@
 
 {% block content %}
 <div class="row mt-4">
-    <h3>Create new event</h3>
-    <p class="text-secondary">Create a new event.</p>
+    <h3>
+        {% if object.pk %}
+        Update event detail
+        {% else %}
+        Create an event
+        {% endif %}
+    </h3>
+    <p class="text-secondary">
+        {% if object.pk %}
+        Update {{ object.name }} details.
+        {% else %}
+        Create a new event.
+        {% endif %}
+    </p>
 </div>
 <div class="row mt-3">
     <div class="col-12">

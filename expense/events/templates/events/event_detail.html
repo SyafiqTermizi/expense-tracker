@@ -6,16 +6,16 @@
 <div class="row mt-4">
     <div class="col-md-8 col-sm-12">
         <h3>
-            Expenses for event "{{ event.name }}"
+            Expenses for event {{ event.name }}
         </h3>
         <p class="text-secondary">
             {% if event.active %}
-            Started on {{ event.start_date|date:"M Y" }}.
+            Started on {{ event.start_date|date:"d M Y" }} and will end on {{ event.end_date|date:"d M Y" }}.
             <span class="text-success">
                 <b>Active</b>
             </span>
             {% else %}
-            Ended on {{ event.end_date|date:"M Y" }}.
+            Started on {{ event.start_date|date:"d M Y" }} and ended on {{ event.end_date|date:"d M Y" }}.
             <span class="text-danger">
                 <b>Inactive</b>
             </span>
