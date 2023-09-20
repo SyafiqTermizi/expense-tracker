@@ -84,7 +84,7 @@
                         You can assign expenses to event only when the event is active.
                     </span>
                 </div>
-                <input class="mt-3 btn btn-primary" type="submit" value="Create">
+                <input class="mt-3 btn btn-primary" type="submit" value="{% if object.pk %}Update{% else %}Create{% endif %}">
             </div>
         </form>
     </div>
