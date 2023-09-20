@@ -41,14 +41,27 @@ class DetailEventView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         total_expense = (
             self.object.expense_set.values("event")
-            .annotate(total_expense=Sum("expense__amount"))
-            .order_by("total_expense")
-            .values("total_expense")
+            .annotate(total=Sum("expense__amount"))
+            .order_by("total")
+            .values("total")
             .first()
         ) or {"total_expense": 0}
 
+        expenses_by_category = self.object.expense_set.values(
+            "expense__category__name"
+        ).annotate(total=Sum("expense__amount"))
+
+        total_by_category = {}
+        for expense in expenses_by_category:
+            total_by_category.update(
+                {
+                    expense["expense__category__name"]: expense["total"],
+                }
+            )
+
         return {
-            "expense": total_expense,
+            "total_expense": total_expense,
+            "total_by_category": total_by_category,
             "expenses": self.object.expense_set.select_related("expense"),
             **super().get_context_data(**kwargs),
         }
