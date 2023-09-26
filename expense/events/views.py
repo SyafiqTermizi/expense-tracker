@@ -52,13 +52,9 @@ class DetailEventView(LoginRequiredMixin, DetailView):
 
         return expense_by_category
 
-    def get_expense_this_month_context(self):
+    def get_expense_this_month_context(self, expense_ids: list[int]):
         return get_formatted_user_expense_for_month(
-            UserExpense.objects.filter(
-                pk__in=list(
-                    self.object.expense_set.values_list("expense__pk", flat=True)
-                )
-            )
+            UserExpense.objects.filter(pk__in=expense_ids)
             .order_by("-created_at")
             .values(
                 "slug",
@@ -70,7 +66,27 @@ class DetailEventView(LoginRequiredMixin, DetailView):
             )
         )
 
+    def expense_by_account_context(self, expense_ids: list[int]):
+        expense_by_account = {}
+        for account_expense in (
+            UserExpense.objects.filter(pk__in=expense_ids)
+            .values("from_action__account__name")
+            .annotate(total=Sum("amount"))
+        ):
+            expense_by_account.update(
+                {
+                    account_expense["from_action__account__name"]: account_expense[
+                        "total"
+                    ]
+                }
+            )
+        return expense_by_account
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        expense_ids = list(
+            self.object.expense_set.values_list("expense__pk", flat=True)
+        )
+
         total_expense = (
             self.object.expense_set.values("event")
             .annotate(total=Sum("expense__amount"))
@@ -81,8 +97,11 @@ class DetailEventView(LoginRequiredMixin, DetailView):
 
         return {
             "total_expense": total_expense,
+            "expense_by_account": self.expense_by_account_context(
+                expense_ids=expense_ids
+            ),
             "expense_by_category": self.get_expense_by_category_context(),
-            "expenses": self.get_expense_this_month_context(),
+            "expenses": self.get_expense_this_month_context(expense_ids),
             **super().get_context_data(**kwargs),
         }
 
