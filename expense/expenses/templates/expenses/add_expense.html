@@ -99,7 +99,9 @@
                 <select class="form-select" name="event" id="id_event">
                     <option value="" selected="">---------</option>
                     {% for event in active_events %}
-                    <option value="{{ event.slug }}">{{ event.name }}</option>
+                    <option value="{{ event.slug }}" {% if event.slug == form.event.value %}selected{% endif %}>
+                        {{ event.name }}
+                    </option>
                     {% endfor %}
                 </select>
 

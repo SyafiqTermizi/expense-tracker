@@ -50,6 +50,7 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
             context={
                 "form": form,
                 "accounts": user_accounts,
+                "active_events": active_events,
                 "categories": expense_categories,
             },
             status=400,
