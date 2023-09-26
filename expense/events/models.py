@@ -51,9 +51,9 @@ class Event(models.Model):
 
 class Expense(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    expense = models.ForeignKey(
+    expense = models.OneToOneField(
         UserExpense,
-        related_name="expenses",
+        related_name="expense",
         on_delete=models.CASCADE,
     )
 

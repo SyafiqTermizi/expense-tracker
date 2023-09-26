@@ -12,6 +12,9 @@ from django.views.generic import (
     UpdateView,
 )
 
+from expense.expenses.models import Expense as UserExpense
+from expense.expenses.utils import get_formatted_user_expense_for_month
+
 from .forms import EventForm
 from .models import Event
 
@@ -38,6 +41,35 @@ class DetailEventView(LoginRequiredMixin, DetailView):
     def get_queryset(self) -> QuerySet[Any]:
         return self.request.user.events.all()
 
+    def get_expense_by_category_context(self):
+        expense_by_category = {}
+        for category_expense in self.object.expense_set.values(
+            "expense__category__name"
+        ).annotate(total=Sum("expense__amount")):
+            expense_by_category.update(
+                {category_expense["expense__category__name"]: category_expense["total"]}
+            )
+
+        return expense_by_category
+
+    def get_expense_this_month_context(self):
+        return get_formatted_user_expense_for_month(
+            UserExpense.objects.filter(
+                pk__in=list(
+                    self.object.expense_set.values_list("expense__pk", flat=True)
+                )
+            )
+            .order_by("-created_at")
+            .values(
+                "slug",
+                "from_action__account__name",
+                "created_at",
+                "description",
+                "amount",
+                "category__name",
+            )
+        )
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         total_expense = (
             self.object.expense_set.values("event")
@@ -45,24 +77,12 @@ class DetailEventView(LoginRequiredMixin, DetailView):
             .order_by("total")
             .values("total")
             .first()
-        ) or {"total_expense": 0}
-
-        expenses_by_category = self.object.expense_set.values(
-            "expense__category__name"
-        ).annotate(total=Sum("expense__amount"))
-
-        total_by_category = {}
-        for expense in expenses_by_category:
-            total_by_category.update(
-                {
-                    expense["expense__category__name"]: expense["total"],
-                }
-            )
+        ) or {"total": 0}
 
         return {
             "total_expense": total_expense,
-            "total_by_category": total_by_category,
-            "expenses": self.object.expense_set.select_related("expense"),
+            "expense_by_category": self.get_expense_by_category_context(),
+            "expenses": self.get_expense_this_month_context(),
             **super().get_context_data(**kwargs),
         }
 
