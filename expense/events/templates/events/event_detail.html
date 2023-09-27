@@ -64,7 +64,7 @@
     {% include "partial/transaction_table.html" with transactions=expenses hide_filter="true" %}
     {{ expense_by_category|json_script:"expense-by-category" }}
     {{ expense_by_account|json_script:"expense-by-account" }}
-    <script src="{% static 'expenseDetail.js' %}"></script>
+    <script src="{% static 'twoDonuts.js' %}"></script>
 {% else %}
     {% include "events/empty_partial.html" %}
     <div class="row mt-3">

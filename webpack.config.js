@@ -49,7 +49,7 @@ module.exports = {
         transactions: "./expense_fe/ts/components/transactions/index.ts",
         dashboard: "./expense_fe/ts/dashboard.ts",
         accountDetail: "./expense_fe/ts/accountDetail.ts",
-        expenseDetail: "./expense_fe/ts/expenseDetail.ts",
+        twoDonuts: "./expense_fe/ts/twoDonuts.ts",
         imageForm: "./expense_fe/ts/imageForm.ts",
     },
     resolve: {
