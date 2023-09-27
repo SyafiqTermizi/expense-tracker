@@ -87,6 +87,10 @@ class DetailEventView(LoginRequiredMixin, DetailView):
             self.object.expense_set.values_list("expense__pk", flat=True)
         )
 
+        if not expense_ids:
+            # Return early to prevent unecessary DB query
+            return super().get_context_data(**kwargs)
+
         total_expense = (
             self.object.expense_set.values("event")
             .annotate(total=Sum("expense__amount"))
