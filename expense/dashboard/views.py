@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.utils import timezone
 
 from expense.accounts.utils import (
     get_latest_account_balance,
@@ -68,7 +67,10 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         "dashboard/dashboard.html",
         context={
             "accounts": accounts,
-            "transactions": transactions,
             "expenses": expenses,
+            "events": request.user.events.get_user_active_events(request.user).values(
+                "name", "slug"
+            ),
+            "transactions": transactions,
         },
     )
