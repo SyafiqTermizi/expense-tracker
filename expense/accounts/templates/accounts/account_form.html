@@ -2,17 +2,26 @@
 
 {% block content %}
 <div class="row mt-4">
+    <div class="col-md-8 col-sm-12">
+        {% if object.pk %}
+        <h3>Update {{ account.name|title }} account detail</h3>
+        <p class="text-secondary">
+            Update {{ account.name|title }} account detail.
+        </p>
+        {% else %}
+        <div class="row mt-4">
+        <h3>Create new account</h3>
+        <p class="text-secondary">
+            Create a new account to track your expenses.
+        </p>
+        {% endif %}
+    </div>
     {% if object.pk %}
-    <h3>Update {{ account.name|title }} account detail</h3>
-    <p class="text-secondary">
-        Update {{ account.name|title }} account detail.
-    </p>
-    {% else %}
-    <div class="row mt-4">
-    <h3>Create new account</h3>
-    <p class="text-secondary">
-        Create a new account to track your expenses.
-    </p>
+    <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
+        <a style="min-width: 80px;" class="mt-3 btn btn-outline-danger" href="{% url 'accounts:delete_view' account.slug %}">
+            Delete account
+        </a>
+    </div>
     {% endif %}
 </div>
 <div class="row mt-3">
