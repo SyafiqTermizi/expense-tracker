@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load static %}
 {% block content %}
 
 <div class="row mt-4">
@@ -27,11 +28,7 @@
                     <label class="form-label" for="id_from_account">From Account:</label>
                     <select class="form-select {% if form.from_account.errors %}is-invalid{% endif %}" name="from_account" required="" id="id_from_account">
                         {% for account in accounts %}
-                        <option
-                            {% if account.slug == form.from_account.value %}selected{% endif %}
-                            {% if account.selected %}selected{% endif %}
-                            value="{{ account.slug }}"
-                        >
+                        <option {% if account.slug == form.from_account.value %}selected{% endif %} value="{{ account.slug }}">
                             {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance|intcomma }}
                         </option>
                         {% endfor %}
@@ -116,5 +113,5 @@
     </div>
 </div>
 
-
+<script src="{% static 'addExpense.js' %}"></script>
 {% endblock content %}

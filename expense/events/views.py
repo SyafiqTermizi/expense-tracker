@@ -99,7 +99,7 @@ class DetailEventView(LoginRequiredMixin, DetailView):
             .first()
         ) or {"total": 0}
 
-        return {
+        context = {
             "total_expense": total_expense,
             "expense_by_account": self.expense_by_account_context(
                 expense_ids=expense_ids
@@ -108,6 +108,11 @@ class DetailEventView(LoginRequiredMixin, DetailView):
             "expenses": self.get_expense_this_month_context(expense_ids),
             **super().get_context_data(**kwargs),
         }
+
+        if self.object.active:
+            context.update({"event": {"slug": self.object.slug}})
+
+        return context
 
 
 class ListEventView(LoginRequiredMixin, ListView):

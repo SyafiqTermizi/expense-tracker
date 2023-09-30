@@ -25,12 +25,6 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
     )
 
     if request.method == "GET":
-        selected_account = request.GET.get("account", None)
-
-        for account in user_accounts:
-            if account["slug"] == selected_account:
-                account.update({"selected": True})
-
         return render(
             request,
             "expenses/add_expense.html",
