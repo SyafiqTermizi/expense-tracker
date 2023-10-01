@@ -20,7 +20,7 @@
     {% endif %}
     <div class="{% if expenses %}col-md-6{% endif %} col-sm-12 mt-2">
         <div class="row">
-            <h6>Balance</h6>
+            <h6>Account Balance</h6>
             {% for account in accounts %}
                 <div class="mb-3 col-6">
                     <div class="card">
@@ -62,7 +62,7 @@
             <h6>Active events</h6>
             <div class="col-12">
                 {% for event in events %}
-                <div class="card">
+                <div class="card mt-2">
                     <div class="card-body">
                         <h6 class="card-title">
                             <a class="card-link" href="{% url 'events:detail' event.slug %}">
