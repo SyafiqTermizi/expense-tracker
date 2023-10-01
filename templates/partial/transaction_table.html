@@ -1,6 +1,8 @@
 {% load static %}
 
-<div id="transactions" class="row mt-4"></div>
+<div class="row mt-4">
+    <div id="transactions" class="col-12"></div>
+</div>
 
 {{ transactions|json_script:"transaction-data" }}
 <div id="hide-filter" class="d-none">{{ hide_filter }}</div>
