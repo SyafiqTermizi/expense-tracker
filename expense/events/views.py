@@ -110,7 +110,7 @@ class DetailEventView(LoginRequiredMixin, DetailView):
         }
 
         if self.object.active:
-            context.update({"event": {"slug": self.object.slug}})
+            context.update({"active_event": {"slug": self.object.slug}})
 
         return context
 
