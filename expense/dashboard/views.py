@@ -7,6 +7,7 @@ from expense.accounts.utils import (
     get_latest_account_balance,
     get_transactions_with_expense_data,
 )
+from expense.events.models import Event
 from expense.types import AccountBalance
 from expense.utils import get_localtime_kwargs
 
@@ -68,9 +69,10 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         context={
             "accounts": accounts,
             "expenses": expenses,
-            "events": request.user.events.get_user_active_events(request.user).values(
-                "name", "slug"
-            ),
+            "events": Event.objects.get_user_active_events(request.user)
+            .values("pk")
+            .annotate(total=Sum("expense__expense__amount"))
+            .values("slug", "total", "name", "start_date", "end_date"),
             "transactions": transactions,
         },
     )

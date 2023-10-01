@@ -69,6 +69,12 @@
                                 {{ event.name }}
                             </a>
                         </h6>
+                        <p class="card-text">
+                            Total expense: <b>{{ request.user.currency }}&nbsp;{{ event.total|default:0 }}</b>
+                        </p>
+                        <p class="card-text">
+                            Duration: {{ event.start_date|date:"d M Y" }} - {{ event.end_date|date:"d M Y" }}
+                        </p>
                     </div>
                 </div>
                 {% endfor %}
