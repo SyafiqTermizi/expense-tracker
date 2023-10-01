@@ -87,9 +87,13 @@ class DetailEventView(LoginRequiredMixin, DetailView):
             self.object.expense_set.values_list("expense__pk", flat=True)
         )
 
+        base_context = super().get_context_data(**kwargs)
+        if self.object.active:
+            base_context.update({"active_event": {"slug": self.object.slug}})
+
         if not expense_ids:
             # Return early to prevent unecessary DB query
-            return super().get_context_data(**kwargs)
+            return base_context
 
         total_expense = (
             self.object.expense_set.values("event")
@@ -106,11 +110,8 @@ class DetailEventView(LoginRequiredMixin, DetailView):
             ),
             "expense_by_category": self.get_expense_by_category_context(),
             "expenses": self.get_expense_this_month_context(expense_ids),
-            **super().get_context_data(**kwargs),
+            **base_context,
         }
-
-        if self.object.active:
-            context.update({"active_event": {"slug": self.object.slug}})
 
         return context
 
