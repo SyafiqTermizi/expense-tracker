@@ -66,7 +66,7 @@
     <script src="{% static 'twoDonuts.js' %}"></script>
 {% else %}
     {% include "events/empty_partial.html" %}
-    <div class="row mt-3">
+    <div class="row">
         <div class="col-12 text-center mt-5">
             <h5>
                 {% if not event.active %}
@@ -76,7 +76,6 @@
                 {% endif %}
             </h5>
             {% if event.active %}
-            <br>
             <a href="{% url 'expenses:add' %}?event={{ event.slug }}" class="btn btn-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
