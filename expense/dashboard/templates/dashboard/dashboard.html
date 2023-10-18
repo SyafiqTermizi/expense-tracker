@@ -75,6 +75,9 @@
                         <p class="mt-3 card-text">
                             Total expense: <b>{{ request.user.currency }}&nbsp;{{ event.total|default:0 }}</b>
                         </p>
+                        <div class="progress" role="progressbar"  style="height: 5px">
+                            <div class="progress-bar" style="width: {{ event.percent_complete }}%"></div>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}

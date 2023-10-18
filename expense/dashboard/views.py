@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 
 from expense.accounts.utils import (
     get_latest_account_balance,
@@ -9,6 +10,7 @@ from expense.accounts.utils import (
 )
 from expense.events.models import Event
 from expense.types import AccountBalance
+from expense.users.models import User
 from expense.utils import get_localtime_kwargs
 
 
@@ -30,6 +32,23 @@ def user_is_new(
             len(expenses) == 0,
         ]
     )
+
+
+def get_formatted_active_events(user: User) -> list[dict]:
+    """Returns a list of dict of active events"""
+    active_events = (
+        Event.objects.get_user_active_events(user)
+        .values("pk")
+        .annotate(total=Sum("expense__expense__amount"))
+        .values("slug", "total", "name", "start_date", "end_date")
+    )
+    for event in active_events:
+        total_days = (event["end_date"] - event["start_date"]).days
+        current_days = (
+            timezone.localtime(timezone.now()).date() - event["start_date"]
+        ).days
+        event.update({"percent_complete": (current_days / total_days) * 100})
+    return active_events
 
 
 @login_required
@@ -69,10 +88,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         context={
             "accounts": accounts,
             "expenses": expenses,
-            "events": Event.objects.get_user_active_events(request.user)
-            .values("pk")
-            .annotate(total=Sum("expense__expense__amount"))
-            .values("slug", "total", "name", "start_date", "end_date"),
+            "events": get_formatted_active_events(request.user),
             "transactions": transactions,
         },
     )
