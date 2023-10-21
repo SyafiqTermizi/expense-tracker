@@ -18,3 +18,5 @@ INSTALLED_APPS += ["debug_toolbar"]
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "expense_mailbox"
 EMAIL_PORT = 1025
+
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
