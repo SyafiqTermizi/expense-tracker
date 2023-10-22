@@ -4,11 +4,13 @@
     export let expenseCategories: { name: string; slug: string }[] = [];
 
     import AccountSelect from "./AccountSelect.svelte";
+    import ImageInput from "./ImageInput.svelte";
 
     let fromAccount: string = "";
     let amount: number;
     let description: string;
     let category: string;
+    let images;
 </script>
 
 <div class="card-body p-4">
@@ -77,5 +79,10 @@
                 </p>
             </div>
         </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="id_image">Image:</label>
+        <ImageInput bind:images />
     </div>
 </div>
