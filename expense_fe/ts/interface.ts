@@ -23,6 +23,7 @@ interface Account {
     name: string;
     balance: number;
     url: string;
+    slug: string;
 }
 
 interface ChartData {

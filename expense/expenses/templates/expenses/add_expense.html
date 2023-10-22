@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load humanize %}
 {% load static %}
 {% block content %}
 
@@ -11,7 +10,9 @@
 </div>
 <div class="row mt-3">
     <div class="col-12">
+        {{ accounts|json_script:"account-balances" }}
         <form class="card" method="post" enctype="multipart/form-data">
+            <div id="form"></div>
             <div class="card-body p-4">
                 {% csrf_token %}
                 {% if form.non_field_errors %}
@@ -29,7 +30,7 @@
                     <select class="form-select {% if form.from_account.errors %}is-invalid{% endif %}" name="from_account" required="" id="id_from_account">
                         {% for account in accounts %}
                         <option {% if account.slug == form.from_account.value %}selected{% endif %} value="{{ account.slug }}">
-                            {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance|intcomma }}
+                            {{ account.name }} - balance: {{ request.user.currency }} {{ account.balance }}
                         </option>
                         {% endfor %}
                     </select>
@@ -114,4 +115,5 @@
 </div>
 
 <script src="{% static 'selectDefaultFromUrl.js' %}"></script>
+<script src="{% static 'expenseForm.js' %}"></script>
 {% endblock content %}

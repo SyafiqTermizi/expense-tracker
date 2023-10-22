@@ -52,6 +52,7 @@ module.exports = {
         twoDonuts: "./expense_fe/ts/twoDonuts.ts",
         imageForm: "./expense_fe/ts/imageForm.ts",
         selectDefaultFromUrl: "./expense_fe/ts/selectDefaultFromUrl.ts",
+        expenseForm: "./expense_fe/ts/components/expenseForm/index.ts",
     },
     resolve: {
         alias: {

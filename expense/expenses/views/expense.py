@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.generic import View
 
+from expense.accounts.serializers import AccountBalanceSerializer
 from expense.accounts.utils import get_latest_account_balance
 from expense.events.models import Event
 from expense.utils import MonthQueryParamForm, get_localtime_kwargs
@@ -17,7 +18,11 @@ from ..utils import get_formatted_user_expense_for_month
 
 @login_required
 def add_expense_view(request: HttpRequest) -> HttpResponse:
-    user_accounts = get_latest_account_balance(request.user)
+    serializer = AccountBalanceSerializer(
+        data=get_latest_account_balance(request.user), many=True
+    )
+    serializer.is_valid(raise_exception=True)
+    user_accounts = serializer.data
     expense_categories = request.user.expense_categories.values("name", "slug")
     active_events = Event.objects.get_user_active_events(request.user).values(
         "name",
