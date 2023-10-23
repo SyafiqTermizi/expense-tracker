@@ -3,7 +3,7 @@
     export let userCurrency = "";
     export let expenseCategories: { name: string; slug: string }[] = [];
 
-    import AccountSelect from "./AccountSelect.svelte";
+    import Select from "./Select.svelte";
     import ImageInput from "./ImageInput.svelte";
 
     let fromAccount: string = "";
@@ -16,10 +16,16 @@
 <div class="card-body p-4">
     <div class="mb-3">
         <label for="id_from_account" class="form-label">From Account:</label>
-        <AccountSelect
-            {accountBalances}
-            {userCurrency}
-            bind:selectedAccount={fromAccount}
+        <Select
+            options={accountBalances.map((account) => {
+                return {
+                    selectedDisplay: account.name,
+                    optionDisplay: `${account.name} - Balance ${userCurrency} ${account.balance}`,
+                    value: account.slug,
+                };
+            })}
+            placeholder="Select an account"
+            bind:selectedValue={fromAccount}
         />
     </div>
 
@@ -52,20 +58,17 @@
 
     <div>
         <label class="form-label" for="id_category">category:</label>
-        <select
-            class="form-select"
-            name="category"
-            id="id_category"
-            bind:value={category}
-        >
-            <option value="">----</option>
-            {#each expenseCategories as category}
-                <option value={category.slug}>
-                    {category.name}
-                </option>
-            {/each}
-        </select>
-
+        <Select
+            options={expenseCategories.map((category) => {
+                return {
+                    selectedDisplay: category.name,
+                    optionDisplay: category.name,
+                    value: category.slug,
+                };
+            })}
+            placeholder="Select a category"
+            bind:selectedValue={category}
+        />
         <div class="row">
             <div class="col-6" />
             <div class="col-6 text-end">

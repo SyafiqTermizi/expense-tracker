@@ -1,10 +1,16 @@
 <script lang="ts">
-    export let accountBalances: Account[];
-    export let userCurrency = "";
-    export let selectedAccount: string = null;
+    interface Option {
+        selectedDisplay: string;
+        optionDisplay: string;
+        value: string | number;
+    }
 
-    function handleAccountDropdownClick(accountSlug: string): void {
-        selectedAccount = accountSlug;
+    export let placeholder = "Choose an option";
+    export let options: Option[];
+    export let selectedValue: string | number = null;
+
+    function handleDropdownClick(value: string | number): void {
+        selectedValue = value;
     }
 </script>
 
@@ -15,22 +21,21 @@
         type="button"
         data-bs-toggle="dropdown"
     >
-        {#if selectedAccount}
-            {accountBalances.find((account) => account.slug == selectedAccount)
-                .name}
+        {#if selectedValue}
+            {options.find((option) => option.value == selectedValue)
+                .selectedDisplay}
         {:else}
-            Select an account
+            {placeholder}
         {/if}
     </button>
     <ul class="dropdown-menu">
-        {#each accountBalances as { slug, name, balance }}
+        {#each options as { value, optionDisplay }}
             <li>
                 <button
                     class="dropdown-item"
-                    on:click={() => handleAccountDropdownClick(slug)}
+                    on:click={() => handleDropdownClick(value)}
                 >
-                    {name} - balance: {userCurrency}
-                    {balance}
+                    {optionDisplay}
                 </button>
             </li>
         {/each}
