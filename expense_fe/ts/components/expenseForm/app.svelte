@@ -3,6 +3,8 @@
     export let userCurrency = "";
     export let expenseCategories: { name: string; slug: string }[] = [];
 
+    import { getCookie } from "../../utils";
+
     import Select from "./Select.svelte";
     import ImageInput from "./ImageInput.svelte";
 
@@ -10,7 +12,27 @@
     let amount: number;
     let description: string;
     let category: string;
-    let images;
+    let imageInput: HTMLInputElement;
+
+    $: formReady = Boolean(fromAccount && amount && category);
+
+    function submitForm() {
+        const formdata = new FormData();
+
+        formdata.append("amount", amount.toString());
+        formdata.append("description", description);
+        formdata.append("category", category);
+        formdata.append("from_account", fromAccount);
+
+        if (imageInput) {
+            formdata.append("image", imageInput.files[0], imageInput.value);
+        }
+
+        const request = new XMLHttpRequest();
+        request.open("POST", window.location.href);
+        request.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+        request.send(formdata);
+    }
 </script>
 
 <div class="card-body p-4">
@@ -86,6 +108,10 @@
 
     <div class="mb-3">
         <label class="form-label" for="id_image">Image:</label>
-        <ImageInput bind:images />
+        <ImageInput bind:imageInput />
     </div>
+
+    <button class="mt-3 btn btn-primary" on:click={formReady && submitForm}>
+        Create
+    </button>
 </div>

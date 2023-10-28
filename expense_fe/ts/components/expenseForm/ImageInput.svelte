@@ -1,7 +1,7 @@
 <script lang="ts">
-    export let images;
+    export let imageInput;
+    let images;
     let imageURL = "";
-    let imageInput;
 
     function fileObjToUrl() {
         const [file] = images;
