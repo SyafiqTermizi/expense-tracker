@@ -8,13 +8,19 @@
     export let placeholder = "Choose an option";
     export let options: Option[];
     export let selectedValue: string | number = null;
+    export let hasError = false;
 
     function handleDropdownClick(value: string | number): void {
         selectedValue = value;
     }
 </script>
 
-<div class="dropdown d-grid gap-2">
+<div
+    class="dropdown d-grid gap-2"
+    class:border={hasError}
+    class:border-danger={hasError}
+    class:rounded-2={hasError}
+>
     <button
         id="dropdown-button"
         class="text-left btn btn-outline-dark dropdown-toggle"
