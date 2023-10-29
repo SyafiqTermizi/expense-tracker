@@ -22,35 +22,39 @@
         category: "",
     };
 
-    function validate() {
+    function formValid() {
         const schema = Joi.object({
             fromAccount: Joi.string().label("From account").required(),
             amount: Joi.number().label("Amount").required().min(0.01),
             category: Joi.string().label("Category").required(),
-            description: Joi.string().label("Descipription").alphanum().min(2),
+            description: Joi.string().label("Description").alphanum().min(2),
         }).options({ abortEarly: false });
 
+        const inputErrors = schema.validate(
+            {
+                fromAccount,
+                amount,
+                description,
+                category,
+            },
+            { abortEarly: false }
+        ).error?.details;
+
+        if (!inputErrors) return true;
+
         errors = {
-            ...schema
-                .validate(
-                    {
-                        fromAccount,
-                        amount,
-                        description,
-                        category,
-                    },
-                    { abortEarly: false }
-                )
-                .error.details.reduce(
-                    (obj, item) =>
-                        Object.assign(obj, { [item.path[0]]: item.message }),
-                    errors
-                ),
+            ...inputErrors.reduce(
+                (obj, item) =>
+                    Object.assign(obj, { [item.path[0]]: item.message }),
+                errors
+            ),
         };
+
+        return false;
     }
 
     function submitForm() {
-        validate();
+        if (!formValid()) return false;
 
         const formdata = new FormData();
 
@@ -77,7 +81,7 @@
     <div class="mb-3">
         <label for="id_from_account" class="form-label">From Account:</label>
         <Select
-            hasError={Boolean(errors.fromAccount)}
+            errorMessage={errors.fromAccount}
             options={accountBalances.map((account) => {
                 return {
                     selectedDisplay: account.name,
@@ -88,7 +92,6 @@
             placeholder="Select an account"
             bind:selectedValue={fromAccount}
         />
-        <p class="text-danger">{errors.fromAccount}</p>
     </div>
 
     <div class="mb-3">
@@ -101,7 +104,6 @@
             type="number"
             name="amount"
             step="0.01"
-            required
             id="id_amount"
             bind:value={amount}
         />
@@ -122,10 +124,10 @@
         <p class="text-danger">{errors.description}</p>
     </div>
 
-    <div>
-        <label class="form-label" for="id_category">category:</label>
+    <div class="mb-3">
+        <label class="form-label" for="id_category">Category:</label>
         <Select
-            hasError={Boolean(errors.category)}
+            errorMessage={errors.category}
             options={expenseCategories.map((category) => {
                 return {
                     selectedDisplay: category.name,
@@ -136,22 +138,12 @@
             placeholder="Select a category"
             bind:selectedValue={category}
         />
-
-        <div class="row">
-            <div class="col-6">
-                <p class="text-danger">{errors.category} {category}</p>
-            </div>
-            <div class="col-6 text-end">
-                <p>
-                    <a
-                        class="card-link"
-                        href="/expenses/categories/add?next=/expenses/add"
-                    >
-                        Add new category
-                    </a>
-                </p>
-            </div>
-        </div>
+        <a
+            class="mt-0 mb-3 card-link"
+            href="/expenses/categories/add?next=/expenses/add"
+        >
+            Add new category
+        </a>
     </div>
 
     <div class="mb-3">
