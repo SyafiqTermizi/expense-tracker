@@ -3,44 +3,41 @@
     export let userCurrency = "";
     export let expenseCategories: { name: string; slug: string }[] = [];
 
-    import * as yup from "yup";
-
     import { getCookie } from "../../utils";
 
+    import { expenseSchema, extractErrors } from "./schema";
     import Select from "./Select.svelte";
     import ImageInput from "./ImageInput.svelte";
 
-    let fromAccount: string = "";
-    let amount: number;
-    let description: string;
-    let category: string = "";
-    let imageInput: HTMLInputElement;
     let errors = {
-        fromAccount: "",
-        amount: "",
-        description: "",
-        category: "",
+        fromAccount: null,
+        amount: null,
+        description: null,
+        category: null,
     };
 
-    function extractErrors(err) {
-        return err.inner.reduce((acc, err) => {
-            return { ...acc, [err.path]: err.message };
-        }, {});
-    }
+    let data = {
+        ...errors,
+        imageInput: null,
+    };
 
     function submitForm() {
         const formdata = new FormData();
 
-        formdata.append("amount", amount.toString());
-        formdata.append("category", category);
-        formdata.append("from_account", fromAccount);
+        formdata.append("amount", data.amount.toString());
+        formdata.append("category", data.category);
+        formdata.append("from_account", data.fromAccount);
 
-        if (description) {
-            formdata.append("description", description);
+        if (data.description) {
+            formdata.append("description", data.description);
         }
 
-        if (imageInput.files.length) {
-            formdata.append("image", imageInput.files[0], imageInput.value);
+        if (data.imageInput.files.length) {
+            formdata.append(
+                "image",
+                data.imageInput.files[0],
+                data.imageInput.value
+            );
         }
 
         const request = new XMLHttpRequest();
@@ -50,39 +47,9 @@
     }
 
     function validateThenSubmit() {
-        let schema = yup.object().shape({
-            fromAccount: yup.string().label("From Account").required(),
-            amount: yup
-                .number()
-                .label("Amount")
-                .required()
-                .positive()
-                .integer()
-                .min(0.01)
-                .max(9999999999.99),
-            description: yup
-                .string()
-                .label("Description")
-                .min(2)
-                .max(255)
-                .trim(),
-            category: yup.string().required().label("Category"),
-        });
-
-        schema
-            .validate(
-                {
-                    fromAccount,
-                    amount,
-                    description,
-                    category,
-                },
-                { abortEarly: false }
-            )
-            .then((stuff) => {
-                console.log(stuff);
-                submitForm();
-            })
+        expenseSchema
+            .validate(data, { abortEarly: false, stripUnknown: true })
+            .then((_) => submitForm())
             .catch((err) => {
                 errors = { ...errors, ...extractErrors(err) };
             });
@@ -95,7 +62,7 @@
     <div class="mb-3">
         <label for="id_from_account" class="form-label">From Account:</label>
         <Select
-            errorMessage={errors.fromAccount}
+            errorMessage={errors.fromAccount || ""}
             options={accountBalances.map((account) => {
                 return {
                     selectedDisplay: account.name,
@@ -104,7 +71,7 @@
                 };
             })}
             placeholder="Select an account"
-            bind:selectedValue={fromAccount}
+            bind:selectedValue={data.fromAccount}
         />
     </div>
 
@@ -119,9 +86,9 @@
             name="amount"
             step="0.01"
             id="id_amount"
-            bind:value={amount}
+            bind:value={data.amount}
         />
-        <p class="text-danger">{errors.amount}</p>
+        <p class="text-danger">{errors.amount || ""}</p>
     </div>
 
     <div class="mb-3">
@@ -133,15 +100,15 @@
             name="description"
             maxlength="255"
             id="id_description"
-            bind:value={description}
+            bind:value={data.description}
         />
-        <p class="text-danger">{errors.description}</p>
+        <p class="text-danger">{errors.description || ""}</p>
     </div>
 
     <div class="mb-3">
         <label class="form-label" for="id_category">Category:</label>
         <Select
-            errorMessage={errors.category}
+            errorMessage={errors.category || ""}
             options={expenseCategories.map((category) => {
                 return {
                     selectedDisplay: category.name,
@@ -150,7 +117,7 @@
                 };
             })}
             placeholder="Select a category"
-            bind:selectedValue={category}
+            bind:selectedValue={data.category}
         />
         <a
             class="mt-0 mb-3 card-link"
@@ -162,7 +129,7 @@
 
     <div class="mb-3">
         <label class="form-label" for="id_image">Image:</label>
-        <ImageInput bind:imageInput />
+        <ImageInput bind:imageInput={data.imageInput} />
     </div>
 
     <input
