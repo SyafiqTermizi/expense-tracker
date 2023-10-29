@@ -3,7 +3,7 @@
     export let userCurrency = "";
     export let expenseCategories: { name: string; slug: string }[] = [];
 
-    import Joi from "joi";
+    import * as yup from "yup";
 
     import { getCookie } from "../../utils";
 
@@ -22,40 +22,13 @@
         category: "",
     };
 
-    function formValid() {
-        const schema = Joi.object({
-            fromAccount: Joi.string().label("From account").required(),
-            amount: Joi.number().label("Amount").required().min(0.01),
-            category: Joi.string().label("Category").required(),
-            description: Joi.string().label("Description").min(2),
-        }).options({ abortEarly: false });
-
-        const inputErrors = schema.validate(
-            {
-                fromAccount,
-                amount,
-                description,
-                category,
-            },
-            { abortEarly: false }
-        ).error?.details;
-
-        if (!inputErrors) return true;
-
-        errors = {
-            ...inputErrors.reduce(
-                (obj, item) =>
-                    Object.assign(obj, { [item.path[0]]: item.message }),
-                errors
-            ),
-        };
-
-        return false;
+    function extractErrors(err) {
+        return err.inner.reduce((acc, err) => {
+            return { ...acc, [err.path]: err.message };
+        }, {});
     }
 
     function submitForm() {
-        if (!formValid()) return false;
-
         const formdata = new FormData();
 
         formdata.append("amount", amount.toString());
@@ -74,6 +47,47 @@
         request.open("POST", window.location.href);
         request.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
         request.send(formdata);
+    }
+
+    function validateThenSubmit() {
+        let schema = yup.object().shape({
+            fromAccount: yup.string().label("From Account").required(),
+            amount: yup
+                .number()
+                .label("Amount")
+                .required()
+                .positive()
+                .integer()
+                .min(0.01)
+                .max(9999999999.99),
+            description: yup
+                .string()
+                .label("Description")
+                .min(2)
+                .max(255)
+                .trim(),
+            category: yup.string().required().label("Category"),
+        });
+
+        schema
+            .validate(
+                {
+                    fromAccount,
+                    amount,
+                    description,
+                    category,
+                },
+                { abortEarly: false }
+            )
+            .then((stuff) => {
+                console.log(stuff);
+                submitForm();
+            })
+            .catch((err) => {
+                errors = { ...errors, ...extractErrors(err) };
+            });
+
+        return false;
     }
 </script>
 
@@ -155,6 +169,6 @@
         value="Create"
         type="submit"
         class="mt-3 btn btn-primary"
-        on:click={submitForm}
+        on:click={validateThenSubmit}
     />
 </form>
