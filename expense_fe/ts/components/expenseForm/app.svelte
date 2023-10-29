@@ -27,7 +27,7 @@
             fromAccount: Joi.string().label("From account").required(),
             amount: Joi.number().label("Amount").required().min(0.01),
             category: Joi.string().label("Category").required(),
-            description: Joi.string().label("Description").alphanum().min(2),
+            description: Joi.string().label("Description").min(2),
         }).options({ abortEarly: false });
 
         const inputErrors = schema.validate(
@@ -77,7 +77,7 @@
     }
 </script>
 
-<form class="card-body p-4" on:submit|preventDefault={submitForm} method="post">
+<form class="card-body p-4" method="post" on:submit|preventDefault>
     <div class="mb-3">
         <label for="id_from_account" class="form-label">From Account:</label>
         <Select
@@ -151,5 +151,10 @@
         <ImageInput bind:imageInput />
     </div>
 
-    <input value="Create" type="submit" class="mt-3 btn btn-primary" />
+    <input
+        value="Create"
+        type="submit"
+        class="mt-3 btn btn-primary"
+        on:click={submitForm}
+    />
 </form>
