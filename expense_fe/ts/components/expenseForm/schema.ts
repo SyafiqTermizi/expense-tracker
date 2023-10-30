@@ -12,14 +12,13 @@ export const expenseSchema = yup.object().shape({
         .max(9999999999.99),
     description: yup
         .string()
+        .nullable()
         .label("Description")
         .min(2)
         .max(255)
         .trim(),
     category: yup.string().required().label("Category"),
-    event: yup
-        .string()
-        .label("Event")
+    event: yup.string().nullable().label("Event")
 });
 
 export function extractErrors(err) {

@@ -49,6 +49,16 @@
         const request = new XMLHttpRequest();
         request.open("POST", window.location.href);
         request.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+
+        request.onload = () => {
+            switch (request.status) {
+                case 200:
+                    window.location.replace("/");
+                case 400:
+                default:
+            }
+        };
+
         request.send(formdata);
     }
 
