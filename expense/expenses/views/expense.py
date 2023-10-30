@@ -24,9 +24,11 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
     serializer.is_valid(raise_exception=True)
     user_accounts = serializer.data
     expense_categories = list(request.user.expense_categories.values("name", "slug"))
-    active_events = Event.objects.get_user_active_events(request.user).values(
-        "name",
-        "slug",
+    active_events = list(
+        Event.objects.get_user_active_events(request.user).values(
+            "name",
+            "slug",
+        )
     )
 
     if request.method == "GET":

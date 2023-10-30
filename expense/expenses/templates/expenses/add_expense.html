@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+
 {{ accounts|json_script:"account-balances" }}
 {{ categories|json_script:"expense-categories" }}
+{{ active_events|json_script:"expense-events" }}
+
 <div class="row mt-4">
     <h3>Create expenses</h3>
     <p class="text-secondary">

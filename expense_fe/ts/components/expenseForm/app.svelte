@@ -2,6 +2,7 @@
     export let accountBalances: Account[];
     export let userCurrency = "";
     export let expenseCategories: { name: string; slug: string }[] = [];
+    export let activeEvents = [];
 
     import { getCookie } from "../../utils";
 
@@ -14,6 +15,7 @@
         amount: null,
         description: null,
         category: null,
+        event: null,
     };
 
     let data = {
@@ -38,6 +40,10 @@
                 data.imageInput.files[0],
                 data.imageInput.value
             );
+        }
+
+        if (data.event) {
+            formdata.append("event", data.event);
         }
 
         const request = new XMLHttpRequest();
@@ -131,6 +137,24 @@
         <label class="form-label" for="id_image">Image:</label>
         <ImageInput bind:imageInput={data.imageInput} />
     </div>
+
+    {#if activeEvents.length}
+        <div class="mb-3">
+            <label for="id_event" class="form-label">Event:</label>
+            <Select
+                errorMessage={errors.event || ""}
+                options={activeEvents.map((event) => {
+                    return {
+                        selectedDisplay: event.name,
+                        optionDisplay: event.name,
+                        value: event.slug,
+                    };
+                })}
+                placeholder="Select an event"
+                bind:selectedValue={data.event}
+            />
+        </div>
+    {/if}
 
     <input
         value="Create"

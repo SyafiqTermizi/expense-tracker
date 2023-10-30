@@ -17,6 +17,9 @@ export const expenseSchema = yup.object().shape({
         .max(255)
         .trim(),
     category: yup.string().required().label("Category"),
+    event: yup
+        .string()
+        .label("Event")
 });
 
 export function extractErrors(err) {
