@@ -7,7 +7,6 @@ export const expenseSchema = yup.object().shape({
         .label("Amount")
         .required()
         .positive()
-        .integer()
         .min(0.01)
         .max(9999999999.99),
     description: yup

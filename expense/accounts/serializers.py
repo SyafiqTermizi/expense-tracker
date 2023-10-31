@@ -9,6 +9,11 @@ class MoneyField(serializers.DecimalField):
 
 
 class AccountBalanceSerializer(serializers.Serializer):
+    """
+    This serializer is created because normal json.dumps
+    cannot convert decimal to json.
+    """
+
     name = serializers.CharField()
     balance = MoneyField(decimal_places=2, max_digits=12)
     url = serializers.CharField()

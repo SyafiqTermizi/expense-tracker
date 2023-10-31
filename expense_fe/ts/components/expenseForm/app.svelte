@@ -10,7 +10,7 @@
     import Select from "./Select.svelte";
     import ImageInput from "./ImageInput.svelte";
 
-    let errors = {
+    const baseData = {
         fromAccount: null,
         amount: null,
         description: null,
@@ -18,10 +18,9 @@
         event: null,
     };
 
-    let data = {
-        ...errors,
-        imageInput: null,
-    };
+    let errors = { ...baseData, __all__: null };
+
+    let data = { ...baseData, imageInput: null };
 
     function submitForm() {
         const formdata = new FormData();
@@ -47,15 +46,34 @@
         }
 
         const request = new XMLHttpRequest();
-        request.open("POST", window.location.href);
+
+        const url = new URL(window.location.href);
+        url.searchParams.append("response_type", "json");
+
+        request.open("POST", url.href);
         request.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
 
         request.onload = () => {
             switch (request.status) {
                 case 200:
                     window.location.replace("/");
+                    break;
                 case 400:
+                    const serverErrMsg = JSON.parse(
+                        request.responseText
+                    ).errors;
+                    const localErrMsg = {};
+
+                    for (const fieldName of Object.keys(serverErrMsg)) {
+                        localErrMsg[fieldName] =
+                            serverErrMsg[fieldName][0].message;
+                    }
+
+                    // Clear all local error message in favor of server error message
+                    errors = { __all__: null, ...baseData, ...localErrMsg };
+                    break;
                 default:
+                    break;
             }
         };
 
@@ -75,6 +93,17 @@
 </script>
 
 <form class="card-body p-4" method="post" on:submit|preventDefault>
+    {#if errors.__all__}
+        <div class="mb-3">
+            <div
+                class="alert alert-danger alert-dismissible fade show"
+                role="alert"
+            >
+                {errors.__all__}
+            </div>
+        </div>
+    {/if}
+
     <div class="mb-3">
         <label for="id_from_account" class="form-label">From Account:</label>
         <Select

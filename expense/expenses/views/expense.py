@@ -45,6 +45,16 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
     form = AddExpenseForm(user=request.user, data=request.POST, files=request.FILES)
 
     if not form.is_valid():
+        response_json = request.GET.get("response_type", "").upper() == "JSON"
+
+        if response_json:
+            return JsonResponse(
+                data={
+                    "errors": form.errors.get_json_data(),
+                },
+                status=400,
+            )
+
         return render(
             request,
             "expenses/add_expense.html",
