@@ -33,7 +33,7 @@ export function submitFormData(validatedData, fileInputData: FileInputData, erro
 
     for (const key in Object.keys(validatedData)) {
         if (validatedData[key]) {
-            // formdata.append(key, validatedData[key].toString());
+            formdata.append(key, validatedData[key].toString());
         }
     }
 
