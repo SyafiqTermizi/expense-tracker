@@ -8,6 +8,8 @@
     import Select from "./Select.svelte";
     import ImageInput from "./ImageInput.svelte";
 
+    const queryParams = new URLSearchParams(window.location.search);
+
     const baseData = {
         fromAccount: null,
         amount: null,
@@ -18,7 +20,11 @@
 
     let errors = { ...baseData, __all__: null };
 
-    let data = { ...baseData, imageInput: null };
+    let data = {
+        ...baseData,
+        fromAccount: queryParams.get("account"),
+        imageInput: null,
+    };
 
     function updateErrorMessage(errorMessage) {
         errors = { ...errors, ...errorMessage };
