@@ -65,9 +65,8 @@
     {/if}
 
     <div class="mb-3">
-        <label for="id_from_account" class="form-label">From Account:</label>
         <Select
-            errorMessage={errors.fromAccount || ""}
+            label="From Account"
             options={accountBalances.map((account) => {
                 return {
                     selectedDisplay: account.name,
@@ -76,6 +75,7 @@
                 };
             })}
             placeholder="Select an account"
+            errorMessage={errors.fromAccount || ""}
             bind:selectedValue={data.fromAccount}
         />
     </div>
@@ -111,8 +111,8 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label" for="id_category">Category:</label>
         <Select
+            label="Category"
             errorMessage={errors.category || ""}
             options={expenseCategories.map((category) => {
                 return {

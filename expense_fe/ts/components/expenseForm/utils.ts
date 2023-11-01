@@ -62,11 +62,11 @@ export function submitFormData(validatedData, fileInputData: FileInputData, erro
                 const localErrMsg = {};
 
                 for (const fieldName of Object.keys(serverErrMsg)) {
-                    localErrMsg[snakeToCamel(fieldName)] =
+                    const formattedFieldName = snakeToCamel(fieldName)
+                    localErrMsg[formattedFieldName] =
                         serverErrMsg[fieldName][0].message;
                 }
 
-                console.log(localErrMsg)
                 errorCB(localErrMsg);
                 break;
             default:

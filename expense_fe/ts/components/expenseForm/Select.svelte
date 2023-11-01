@@ -5,6 +5,7 @@
         value: string | number;
     }
 
+    export let label = "";
     export let placeholder = "Choose an option";
     export let options: Option[];
     export let selectedValue: string | number = null;
@@ -15,6 +16,7 @@
     }
 </script>
 
+<label for={label} class="form-label">{label}:</label>
 <div
     class="dropdown d-grid gap-2"
     class:border={errorMessage}
