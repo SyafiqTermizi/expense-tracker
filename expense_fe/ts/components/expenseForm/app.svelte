@@ -47,10 +47,7 @@
 
         const request = new XMLHttpRequest();
 
-        const url = new URL(window.location.href);
-        url.searchParams.append("response_type", "json");
-
-        request.open("POST", url.href);
+        request.open("POST", window.location.href);
         request.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
 
         request.onload = () => {

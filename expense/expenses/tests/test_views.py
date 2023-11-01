@@ -59,10 +59,8 @@ def test_add_expense_view_invalid_expense_form(db, authenticated_client):
         data={"amount": "abc", "description": "Test"},
     )
     assert res.status_code == 400
-    assert (
-        "You don&#x27;t have enough balance in None account. Available balance is 0."
-        in res.content.decode()
-    )
+    assert res.json()["errors"]["amount"][0]["code"] == "invalid"
+    assert res.json()["errors"]["amount"][0]["message"] == "Enter a number."
 
     # no new expense should be created
     assert Expense.objects.count() == initial_expense_count
@@ -92,13 +90,14 @@ def test_add_expense_view_invalid_expense_and_invalid_image_form(
     assert res.status_code == 400
 
     res_content = res.content.decode()
+
+    assert res.json()["errors"]["amount"][0]["code"] == "invalid"
+    assert res.json()["errors"]["amount"][0]["message"] == "Enter a number."
+
+    assert res.json()["errors"]["image"][0]["code"] == "invalid_image"
     assert (
-        "Upload a valid image. The file you uploaded was either not an image or a corrupted image."
-        in res_content
-    )
-    assert (
-        "You don&#x27;t have enough balance in None account. Available balance is 0."
-        in res_content
+        res.json()["errors"]["image"][0]["message"]
+        == "Upload a valid image. The file you uploaded was either not an image or a corrupted image."
     )
 
     assert Expense.objects.count() == initial_expense_count
@@ -130,9 +129,10 @@ def test_add_expense_view_valid_expense_and_invalid_image_form(
             },
         )
     assert res.status_code == 400
+    assert res.json()["errors"]["image"][0]["code"] == "invalid_image"
     assert (
-        "Upload a valid image. The file you uploaded was either not an image or a corrupted image."
-        in res.content.decode()
+        res.json()["errors"]["image"][0]["message"]
+        == "Upload a valid image. The file you uploaded was either not an image or a corrupted image."
     )
 
     # no new data should be created if either of the form is not valid
@@ -165,8 +165,8 @@ def test_add_expense_view_invalid_expense_and_valid_image_form(
         )
     assert res.status_code == 400
     assert (
-        "You don&#x27;t have enough balance in None account. Available balance is 0."
-        in res.content.decode()
+        res.json()["errors"]["__all__"][0]["message"]
+        == "You don't have enough balance in None account. Available balance is 0."
     )
 
     # no new data should be created if either of the form is not valid
