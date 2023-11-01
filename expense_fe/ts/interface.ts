@@ -30,3 +30,9 @@ interface ChartData {
     x: string;
     y: number;
 }
+
+interface FileInputData {
+    fieldName: string;
+    file: File;
+    fileName: string;
+}

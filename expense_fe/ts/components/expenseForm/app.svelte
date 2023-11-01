@@ -4,9 +4,7 @@
     export let expenseCategories: { name: string; slug: string }[] = [];
     export let activeEvents = [];
 
-    import { getCookie } from "../../utils";
-
-    import { expenseSchema, extractErrors } from "./schema";
+    import { expenseSchema, extractErrors, submitFormData } from "./utils";
     import Select from "./Select.svelte";
     import ImageInput from "./ImageInput.svelte";
 
@@ -22,65 +20,30 @@
 
     let data = { ...baseData, imageInput: null };
 
-    function submitForm() {
-        const formdata = new FormData();
-
-        formdata.append("amount", data.amount.toString());
-        formdata.append("category", data.category);
-        formdata.append("from_account", data.fromAccount);
-
-        if (data.description) {
-            formdata.append("description", data.description);
-        }
-
-        if (data.imageInput.files.length) {
-            formdata.append(
-                "image",
-                data.imageInput.files[0],
-                data.imageInput.value
-            );
-        }
-
-        if (data.event) {
-            formdata.append("event", data.event);
-        }
-
-        const request = new XMLHttpRequest();
-
-        request.open("POST", window.location.href);
-        request.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-
-        request.onload = () => {
-            switch (request.status) {
-                case 200:
-                    window.location.replace("/");
-                    break;
-                case 400:
-                    const serverErrMsg = JSON.parse(
-                        request.responseText
-                    ).errors;
-                    const localErrMsg = {};
-
-                    for (const fieldName of Object.keys(serverErrMsg)) {
-                        localErrMsg[fieldName] =
-                            serverErrMsg[fieldName][0].message;
-                    }
-
-                    // Clear all local error message in favor of server error message
-                    errors = { __all__: null, ...baseData, ...localErrMsg };
-                    break;
-                default:
-                    break;
-            }
-        };
-
-        request.send(formdata);
+    function updateErrorMessage(errorMessage) {
+        errors = { ...errors, ...errorMessage };
     }
 
     function validateThenSubmit() {
         expenseSchema
             .validate(data, { abortEarly: false, stripUnknown: true })
-            .then((_) => submitForm())
+            .then((validatedData) => {
+                let fileInputData: FileInputData = null;
+
+                if (data.imageInput.files.length) {
+                    fileInputData = {
+                        fieldName: "image",
+                        file: data.imageInput.files[0],
+                        fileName: data.imageInput.value,
+                    };
+                }
+
+                submitFormData(
+                    validatedData,
+                    fileInputData,
+                    updateErrorMessage
+                );
+            })
             .catch((err) => {
                 errors = { ...errors, ...extractErrors(err) };
             });
