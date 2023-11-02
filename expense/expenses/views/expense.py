@@ -18,20 +18,21 @@ from ..utils import get_formatted_user_expense_for_month
 
 @login_required
 def add_expense_view(request: HttpRequest) -> HttpResponse:
-    serializer = AccountBalanceSerializer(
-        data=get_latest_account_balance(request.user), many=True
-    )
-    serializer.is_valid(raise_exception=True)
-    user_accounts = serializer.data
-    expense_categories = list(request.user.expense_categories.values("name", "slug"))
-    active_events = list(
-        Event.objects.get_user_active_events(request.user).values(
-            "name",
-            "slug",
-        )
-    )
-
     if request.method == "GET":
+        serializer = AccountBalanceSerializer(
+            data=get_latest_account_balance(request.user), many=True
+        )
+        serializer.is_valid(raise_exception=True)
+        user_accounts = serializer.data
+        expense_categories = list(
+            request.user.expense_categories.values("name", "slug")
+        )
+        active_events = list(
+            Event.objects.get_user_active_events(request.user).values(
+                "name",
+                "slug",
+            )
+        )
         return render(
             request,
             "expenses/add_expense.html",

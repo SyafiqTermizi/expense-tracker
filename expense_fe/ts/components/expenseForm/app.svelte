@@ -4,8 +4,12 @@
     export let expenseCategories: { name: string; slug: string }[] = [];
     export let activeEvents = [];
 
-    import { expenseSchema, extractErrors, submitFormData } from "./utils";
-    import Select from "./Select.svelte";
+    import { extractErrors, submitFormData } from "../../utils";
+
+    import AlertError from "../AlertError.svelte";
+    import Select from "../Select.svelte";
+
+    import { expenseSchema } from "./schema";
     import ImageInput from "./ImageInput.svelte";
 
     const queryParams = new URLSearchParams(window.location.search);
@@ -59,16 +63,7 @@
 </script>
 
 <form class="card-body p-4" method="post" on:submit|preventDefault>
-    {#if errors.__all__}
-        <div class="mb-3">
-            <div
-                class="alert alert-danger alert-dismissible fade show"
-                role="alert"
-            >
-                {errors.__all__}
-            </div>
-        </div>
-    {/if}
+    {#if errors.__all__}<AlertError message={errors.__all__} />{/if}
 
     <div class="mb-3">
         <Select

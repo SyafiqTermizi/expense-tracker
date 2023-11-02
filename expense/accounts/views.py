@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Max, Subquery
 from django.db.models.functions import TruncDay
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.template import defaultfilters
 from django.urls import reverse, reverse_lazy
@@ -50,14 +50,8 @@ class TransferView(LoginRequiredMixin, FormView):
 def add_view(request: HttpRequest) -> HttpResponse:
     """Add money into an account"""
 
-    user_accounts = get_latest_account_balance(request.user)
-
     if request.method == "GET":
-        selected_account = request.GET.get("account", None)
-
-        for account in user_accounts:
-            if account["slug"] == selected_account:
-                account.update({"selected": True})
+        user_accounts = get_latest_account_balance(request.user)
 
         return render(
             request,
@@ -79,12 +73,9 @@ def add_view(request: HttpRequest) -> HttpResponse:
         form.save(commit=True)
         return redirect("dashboard:index")
     else:
-        return render(
-            request,
-            "accounts/add.html",
-            context={
-                "form": form,
-                "accounts": user_accounts,
+        return JsonResponse(
+            data={
+                "errors": form.errors.get_json_data(),
             },
             status=400,
         )
