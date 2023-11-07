@@ -44,6 +44,9 @@ export const snakeToCamel = str =>
             .replace('_', '')
     );
 
+// Convert 🐪 case ➡️ 🐍 case
+const camelToSnakeCase = str => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
 export function extractErrors(err) {
     return err.inner.reduce((acc, err) => {
         return { ...acc, [err.path]: err.message };
@@ -56,7 +59,7 @@ export function submitFormData(validatedData, fileInputData: FileInputData, erro
     for (const key of Object.keys(validatedData)) {
 
         if (validatedData[key]) {
-            formdata.append(key, validatedData[key].toString());
+            formdata.append(camelToSnakeCase(key), validatedData[key].toString());
         }
     }
 
