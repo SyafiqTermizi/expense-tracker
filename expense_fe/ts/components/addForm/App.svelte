@@ -15,6 +15,11 @@
         description: null,
     };
 
+    let loading = false;
+    function updateLoading() {
+        loading = !loading;
+    }
+
     let errors = { ...baseData, __all__: null };
 
     const queryParams = new URLSearchParams(window.location.search);
@@ -32,7 +37,12 @@
         addFormSchema
             .validate(data, { abortEarly: false, stripUnknown: true })
             .then((validatedData) => {
-                submitFormData(validatedData, null, updateErrorMessage);
+                submitFormData(
+                    validatedData,
+                    null,
+                    updateLoading,
+                    updateErrorMessage
+                );
             })
             .catch((err) => {
                 errors = { ...errors, ...extractErrors(err) };
@@ -96,5 +106,6 @@
         type="submit"
         class="mt-3 btn btn-primary"
         on:click={validateThenSubmit}
+        disabled={loading}
     />
 </form>

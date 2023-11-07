@@ -53,7 +53,14 @@ export function extractErrors(err) {
     }, {});
 }
 
-export function submitFormData(validatedData, fileInputData: FileInputData, errorCB) {
+export function submitFormData(
+    validatedData,
+    fileInputData: FileInputData,
+    updateLoadingStatus,
+    errorCallBack
+) {
+    updateLoadingStatus();
+
     const formdata = new FormData();
 
     for (const key of Object.keys(validatedData)) {
@@ -77,6 +84,8 @@ export function submitFormData(validatedData, fileInputData: FileInputData, erro
     request.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
 
     request.onload = () => {
+        updateLoadingStatus();
+
         switch (request.status) {
             case 200:
                 window.location.replace("/");
@@ -93,7 +102,7 @@ export function submitFormData(validatedData, fileInputData: FileInputData, erro
                         serverErrMsg[fieldName][0].message;
                 }
 
-                errorCB(localErrMsg);
+                errorCallBack(localErrMsg);
                 break;
             default:
                 break;

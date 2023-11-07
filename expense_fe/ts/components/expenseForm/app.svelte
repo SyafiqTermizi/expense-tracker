@@ -22,17 +22,21 @@
         event: null,
     };
 
+    let loading = false;
+    function updateLoading() {
+        loading = !loading;
+    }
+
     let errors = { ...baseData, __all__: null };
+    function updateErrorMessage(errorMessage) {
+        errors = { ...errors, ...errorMessage };
+    }
 
     let data = {
         ...baseData,
         fromAccount: queryParams.get("account"),
         imageInput: null,
     };
-
-    function updateErrorMessage(errorMessage) {
-        errors = { ...errors, ...errorMessage };
-    }
 
     function validateThenSubmit() {
         expenseSchema
@@ -51,6 +55,7 @@
                 submitFormData(
                     validatedData,
                     fileInputData,
+                    updateLoading,
                     updateErrorMessage
                 );
             })
@@ -161,5 +166,6 @@
         type="submit"
         class="mt-3 btn btn-primary"
         on:click={validateThenSubmit}
+        disabled={loading}
     />
 </form>
