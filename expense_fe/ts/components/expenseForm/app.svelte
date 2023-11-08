@@ -35,6 +35,7 @@
     let data = {
         ...baseData,
         fromAccount: queryParams.get("account"),
+        event: queryParams.get("event"),
         imageInput: null,
     };
 

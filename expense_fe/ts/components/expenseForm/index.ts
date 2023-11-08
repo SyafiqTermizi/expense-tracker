@@ -1,4 +1,4 @@
-import App from "./app.svelte";
+import App from "./App.svelte";
 
 const userCurrency: string =
     document.getElementById("user-currency").textContent;
