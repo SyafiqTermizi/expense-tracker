@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { showAll, selectedCategory } from "./store";
+    import { showAll, selectedCategory, keyword } from "./store";
 
     const activeClass = "ms-1 btn btn-primary btn-sm";
     const inactiveClass = "ms-1 btn btn-outline-secondary btn-sm";
@@ -13,6 +13,7 @@ Show {month}'s:
     on:click={() => {
         showAll.set(true);
         selectedCategory.set("");
+        keyword.set("");
     }}
 >
     Transactions
@@ -22,6 +23,7 @@ Show {month}'s:
     on:click={() => {
         showAll.set(false);
         selectedCategory.set("");
+        keyword.set("");
     }}
 >
     Expenses

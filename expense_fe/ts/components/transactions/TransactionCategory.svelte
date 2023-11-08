@@ -1,9 +1,10 @@
 <script lang="ts">
+    import TransactionSearch from "./TransactionSearch.svelte";
     import { expenseCategories, selectedCategory, showAll } from "./store";
 </script>
 
 {#if $showAll}
-    <div />
+    <TransactionSearch />
 {:else}
     <div class="dropdown">
         <button
@@ -25,8 +26,9 @@
                     <button
                         class="dropdown-item"
                         on:click={() => selectedCategory.set(expenseCategory)}
-                        >{expenseCategory}</button
                     >
+                        {expenseCategory}
+                    </button>
                 </li>
             {/each}
             <li><hr class="dropdown-divider" /></li>

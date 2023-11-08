@@ -145,8 +145,8 @@
 
     {#if activeEvents.length}
         <div class="mb-3">
-            <label for="id_event" class="form-label">Event:</label>
             <Select
+                label="Event"
                 errorMessage={errors.event || ""}
                 options={activeEvents.map((event) => {
                     return {

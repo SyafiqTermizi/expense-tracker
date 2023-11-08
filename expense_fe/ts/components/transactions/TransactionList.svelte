@@ -64,9 +64,9 @@
                         {/if}
                     </td>
                     <td
-                        class={transaction.action === "DEBIT"
-                            ? "text-danger"
-                            : "text-success"}
+                        class={transaction.action === "CREDIT"
+                            ? "text-success"
+                            : "text-danger"}
                         >{formatter.format(transaction.amount)}
                     </td>
                     <td class="d-none d-lg-block">{transaction.account}</td>
