@@ -8,7 +8,7 @@
     <div class="dropdown">
         <button
             class="btn btn-outline-secondary btn-sm dropdown-toggle"
-            id="unique123"
+            id="123"
             type="button"
             data-bs-toggle="dropdown"
             style="min-width: 130px;"
@@ -33,8 +33,10 @@
             <li>
                 <button
                     class="dropdown-item"
-                    on:click={() => selectedCategory.set("")}>Clear</button
+                    on:click={() => selectedCategory.set("")}
                 >
+                    All categories
+                </button>
             </li>
         </ul>
     </div>
