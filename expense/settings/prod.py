@@ -14,7 +14,7 @@ MIDDLEWARE.insert(
 # https://whitenoise.readthedocs.io/en/latest/django.html#add-compression-and-caching-support
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "BACKEND": "storages.backends.s3.S3Storage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
