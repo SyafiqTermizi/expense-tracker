@@ -88,7 +88,7 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label" for="id_amount">
+        <label class="form-label" for="amount">
             Amount ({userCurrency}):
         </label>
         <input
@@ -97,21 +97,20 @@
             type="number"
             name="amount"
             step="0.01"
-            id="id_amount"
+            id="amount"
             bind:value={data.amount}
         />
         <p class="text-danger">{errors.amount || ""}</p>
     </div>
 
     <div class="mb-3">
-        <label class="form-label" for="id_description">Description:</label>
+        <label class="form-label" for="descr">Description:</label>
         <input
             class="form-control"
             class:is-invalid={errors.description}
             type="text"
             name="description"
-            maxlength="255"
-            id="id_description"
+            id="descr"
             bind:value={data.description}
         />
         <p class="text-danger">{errors.description || ""}</p>

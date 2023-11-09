@@ -45,6 +45,14 @@ class TransferView(LoginRequiredMixin, FormView):
         form.save()
         return super().form_valid(form)
 
+    def form_invalid(self, form: Any) -> HttpResponse:
+        return JsonResponse(
+            data={
+                "errors": form.errors.get_json_data(),
+            },
+            status=400,
+        )
+
 
 @login_required
 def add_view(request: HttpRequest) -> HttpResponse:

@@ -97,7 +97,8 @@ export function submitFormData(
                 const localErrMsg = {};
 
                 for (const fieldName of Object.keys(serverErrMsg)) {
-                    const formattedFieldName = snakeToCamel(fieldName)
+                    const formattedFieldName = fieldName === "__all__" ?
+                        fieldName : snakeToCamel(fieldName);
                     localErrMsg[formattedFieldName] =
                         serverErrMsg[fieldName][0].message;
                 }

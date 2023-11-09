@@ -7,10 +7,11 @@
     import AlertError from "../AlertError.svelte";
     import Select from "../Select.svelte";
 
-    import { addFormSchema } from "./schema";
+    import { transferSchema } from "./schema";
 
     const baseData = {
-        account: null,
+        fromAccount: null,
+        toAccount: null,
         amount: null,
         description: null,
     };
@@ -21,20 +22,14 @@
     }
 
     let errors = { ...baseData, __all__: null };
-
-    const queryParams = new URLSearchParams(window.location.search);
-
-    let data = {
-        ...baseData,
-        account: queryParams.get("account"),
-    };
-
     function updateErrorMessage(errorMessage) {
         errors = { ...errors, ...errorMessage };
     }
 
+    let data = { ...baseData };
+
     function validateThenSubmit() {
-        addFormSchema
+        transferSchema
             .validate(data, { abortEarly: false, stripUnknown: true })
             .then((validatedData) => {
                 submitFormData(
@@ -56,19 +51,38 @@
     {#if errors.__all__}<AlertError message={errors.__all__} />{/if}
 
     <div class="mb-3">
-        <Select
-            label="Account"
-            options={accountBalances.map((_account) => {
-                return {
-                    selectedDisplay: _account.name,
-                    optionDisplay: `${_account.name} - Balance ${userCurrency} ${_account.balance}`,
-                    value: _account.slug,
-                };
-            })}
-            placeholder="Select an account"
-            errorMessage={errors.account || ""}
-            bind:selectedValue={data.account}
-        />
+        <div class="row">
+            <div class="col">
+                <Select
+                    label="Account"
+                    options={accountBalances.map((_account) => {
+                        return {
+                            selectedDisplay: _account.name,
+                            optionDisplay: `${_account.name} - Balance ${userCurrency} ${_account.balance}`,
+                            value: _account.slug,
+                        };
+                    })}
+                    placeholder="Select an account"
+                    errorMessage={errors.fromAccount || ""}
+                    bind:selectedValue={data.fromAccount}
+                />
+            </div>
+            <div class="col">
+                <Select
+                    label="Account"
+                    options={accountBalances.map((_account) => {
+                        return {
+                            selectedDisplay: _account.name,
+                            optionDisplay: `${_account.name} - Balance ${userCurrency} ${_account.balance}`,
+                            value: _account.slug,
+                        };
+                    })}
+                    placeholder="Select an account"
+                    errorMessage={errors.toAccount || ""}
+                    bind:selectedValue={data.toAccount}
+                />
+            </div>
+        </div>
     </div>
 
     <div class="mb-3">
@@ -101,7 +115,7 @@
     </div>
 
     <input
-        value="Add"
+        value="Submit"
         type="submit"
         class="mt-3 btn btn-primary"
         on:click={validateThenSubmit}
