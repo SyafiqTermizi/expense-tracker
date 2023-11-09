@@ -4,18 +4,26 @@ const expenseByCategory = JSON.parse(document.getElementById("expense-by-categor
 const expenseByAccount = JSON.parse(document.getElementById("expense-by-account")!.textContent);
 
 function getChartOption(data, chartType) {
+    const values = Object.values(data).map((value) => parseFloat(value as string))
+    const sum = values.reduce((partialSum, a) => partialSum + a, 0);
+
     return {
+        dataLabels: {
+            formatter: function (val, opts) {
+                return `${currency} ${((val * sum) / 100).toFixed(2)}`
+            },
+        },
         chart: {
             type: chartType,
         },
-        series: Object.values(data).map((value) => parseFloat(value as string)),
+        series: values,
         labels: Object.keys(data),
         legend: {
             position: 'bottom'
         },
         tooltip: {
             y: {
-                formatter: (value) => `${currency} ${value}`
+                formatter: (value) => `${((value / sum) * 100).toFixed(2)}%`
             }
         },
     }
