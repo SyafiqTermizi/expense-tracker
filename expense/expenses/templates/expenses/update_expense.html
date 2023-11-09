@@ -32,8 +32,14 @@
 
                 <div class="mb-3">
                     <label class="form-label" for="id_description">Description:</label>
-                    <input class="form-control" type="text" name="description" maxlength="255" id="id_description"
-                        value="{{ form.description.value|default:'' }}">
+                    <input
+                        class="form-control"
+                        type="text"
+                        name="description"
+                        maxlength="255"
+                        id="id_description"
+                        value="{% if form.description.value %}{{ form.description.value|default:'' }}{% else %}{{ expense.description }}{% endif %}"
+                    >
                     {% for error in form.description.errors %}
                     <p class="text-danger">{{ error }}</p>
                     {% endfor %}
