@@ -23,7 +23,7 @@
                 <TransactionFilter />
             </div>
         {/if}
-        <div class={`${categoryClass} mt-2 text-sm-start text-md-end`}>
+        <div class={`${categoryClass} ps-3 mt-2 text-sm-start text-md-end`}>
             <TransactionCategory />
         </div>
     </div>

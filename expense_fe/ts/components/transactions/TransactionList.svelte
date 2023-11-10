@@ -11,30 +11,23 @@
 </script>
 
 <div class="card-body">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Description</th>
-                <th scope="col">Amount</th>
-                <th class="d-none d-lg-block" scope="col">Account</th>
-                <th scope="col">Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {#each $transactions as transaction}
-                <tr
-                    on:click={() => {
-                        if (transaction.expense) {
-                            transactionModalID.set(transaction.id);
-                        }
-                    }}
+    <ul class="list-group list-group-flush">
+        {#each $transactions as transaction}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <li
+                class="list-group-item list-group-item-action"
+                on:click={() => {
+                    if (transaction.expense) {
+                        transactionModalID.set(transaction.id);
+                    }
+                }}
+            >
+                <div
+                    class="d-flex w-100 justify-content-between"
+                    data-bs-toggle={transaction.expense ? "modal" : ""}
+                    data-bs-target={transaction.expense ? "#expense-modal" : ""}
                 >
-                    <td
-                        data-bs-toggle={transaction.expense ? "modal" : ""}
-                        data-bs-target={transaction.expense
-                            ? "#expense-modal"
-                            : ""}
-                    >
+                    <h5 class="mb-1">
                         {transaction.description}
                         {#if transaction.expense}
                             <svg
@@ -62,17 +55,21 @@
                                 <path d="M9 13h6" />
                             </svg>
                         {/if}
-                    </td>
-                    <td
+                    </h5>
+                    <small
                         class={transaction.action === "CREDIT"
                             ? "text-success"
                             : "text-danger"}
-                        >{formatter.format(transaction.amount)}
-                    </td>
-                    <td class="d-none d-lg-block">{transaction.account}</td>
-                    <td>{isoToLocalDate(transaction.created_at)}</td>
-                </tr>
-            {/each}
-        </tbody>
-    </table>
+                    >
+                        <b>{formatter.format(transaction.amount)}</b>
+                    </small>
+                </div>
+                <small>
+                    {isoToLocalDate(transaction.created_at)}
+                    &nbsp;.&nbsp;
+                    {transaction.account}
+                </small>
+            </li>
+        {/each}
+    </ul>
 </div>
