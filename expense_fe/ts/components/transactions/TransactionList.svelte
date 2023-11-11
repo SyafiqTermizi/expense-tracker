@@ -27,7 +27,7 @@
                     data-bs-toggle={transaction.expense ? "modal" : ""}
                     data-bs-target={transaction.expense ? "#expense-modal" : ""}
                 >
-                    <h5 class="mb-1">
+                    <h6 class="mb-1">
                         {transaction.description}
                         {#if transaction.expense}
                             <svg
@@ -55,7 +55,7 @@
                                 <path d="M9 13h6" />
                             </svg>
                         {/if}
-                    </h5>
+                    </h6>
                     <small
                         class={transaction.action === "CREDIT"
                             ? "text-success"
