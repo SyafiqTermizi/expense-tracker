@@ -3,7 +3,7 @@ const currency: string = document.getElementById("user-currency").textContent
 
 var options = {
     chart: {
-        type: 'donut'
+        type: 'pie'
     },
     series: expenseData.map(expense => parseFloat(expense["amount"])),
     labels: expenseData.map(expense => expense["category"]),
