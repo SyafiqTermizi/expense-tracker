@@ -114,6 +114,7 @@ class MonthlyExpenseDetailView(LoginRequiredMixin, View):
             self.request.user.expenses.filter(**self.month_year_kwargs)
             .values("category__name")
             .annotate(total=Sum("amount"))
+            .order_by("category__name")
         ):
             expense_by_category.update(
                 {category_expense["category__name"]: category_expense["total"]}
@@ -127,6 +128,7 @@ class MonthlyExpenseDetailView(LoginRequiredMixin, View):
             self.request.user.expenses.filter(**self.month_year_kwargs)
             .values("from_action__account__name")
             .annotate(total=Sum("amount"))
+            .order_by("from_action__account__name")
         ):
             expense_by_account.update(
                 {

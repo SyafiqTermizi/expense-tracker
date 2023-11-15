@@ -89,6 +89,9 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         context={
             "accounts": accounts,
             "expenses": expenses,
+            "total_expense": sum(
+                list(map(lambda expense: expense["amount"], expenses))
+            ),
             "events": get_formatted_active_events(request.user),
             "transactions": transactions,
         },

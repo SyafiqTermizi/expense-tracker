@@ -43,9 +43,11 @@ class DetailEventView(LoginRequiredMixin, DetailView):
 
     def get_expense_by_category_context(self):
         expense_by_category = {}
-        for category_expense in self.object.expense_set.values(
-            "expense__category__name"
-        ).annotate(total=Sum("expense__amount")):
+        for category_expense in (
+            self.object.expense_set.values("expense__category__name")
+            .annotate(total=Sum("expense__amount"))
+            .order_by("expense__category__name")
+        ):
             expense_by_category.update(
                 {category_expense["expense__category__name"]: category_expense["total"]}
             )
@@ -72,6 +74,7 @@ class DetailEventView(LoginRequiredMixin, DetailView):
             UserExpense.objects.filter(pk__in=expense_ids)
             .values("from_action__account__name")
             .annotate(total=Sum("amount"))
+            .order_by("from_action__account__name")
         ):
             expense_by_account.update(
                 {

@@ -1,6 +1,8 @@
 const expenseData: Expense[] = JSON.parse(document.getElementById("expenses-data")!.textContent)
 const currency: string = document.getElementById("user-currency").textContent
 
+import { chartColors } from "./utils";
+
 var options = {
     chart: {
         type: 'pie'
@@ -15,21 +17,7 @@ var options = {
             formatter: (value) => `${currency} ${value}`
         }
     },
-    colors: [
-        "#008FFB",
-        "#00E396",
-        "#FEB019",
-        "#FF4560",
-        "#775DD0",
-        "#4caf50",
-        "#546E7A",
-        "#f9a3a4",
-        "#F86624",
-        "#662E9B",
-        "#2E294E",
-        "#5A2A27",
-        "#D7263D"
-    ]
+    colors: chartColors
 }
 
 window.addEventListener("load", () => {
