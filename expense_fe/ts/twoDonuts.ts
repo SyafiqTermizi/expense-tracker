@@ -60,10 +60,10 @@ function getLegend(keyValuePair) {
         const textContent = `${formatter.format(keyValuePair[key])}
         <span class="text-secondary">${percent}%</span>`;
 
-        theLegend += `<span>
-            <span class=${classNames} style="${style}">${key}</span>&nbsp;
-            ${textContent}
-        </span>&nbsp;`
+        theLegend += `<div class="text-nowrap">
+            <span class=${classNames} style="${style}">${key}</span>
+            &nbsp;${textContent}
+        </div>`
 
         if (colorIndex >= chartColors.length - 1) {
             colorIndex = 0
