@@ -25,6 +25,19 @@ window.addEventListener("load", () => {
         const accountLegend = document.getElementById("account-chart-legend");
         accountLegend.innerHTML = getChartLegend(expenseByAccount);
 
+        const categoryChartContainer = document.getElementById("category-chart-container");
+        const categoryChartContainerHeight = categoryChartContainer.offsetHeight;
+
+        const accountChartContainer = document.getElementById("account-chart-container");
+        const accountChartContainerHeight = accountChartContainer.offsetHeight;
+
+        if (categoryChartContainerHeight >= accountChartContainerHeight) {
+
+            accountChartContainer.style.height = `${categoryChartContainerHeight}px`;
+        } else {
+
+            categoryChartContainer.style.height = `${accountChartContainerHeight}px`;
+        }
     })
 });
 
