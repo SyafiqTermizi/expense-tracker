@@ -39,6 +39,10 @@ function getChartOption(data, chartType) {
 }
 
 
+const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency,
+});
 
 function getLegend(keyValuePair) {
     const classNames = "badge rounded-pill"
@@ -53,7 +57,7 @@ function getLegend(keyValuePair) {
 
         const style = `color: white; background-color: ${chartColors[colorIndex]}`
         const percent = ((keyValuePair[key] / sum) * 100).toFixed(0)
-        const textContent = `<b>${currency} ${keyValuePair[key]}</b>
+        const textContent = `<b>${currency} ${formatter.format(keyValuePair[key])}</b>
         <span class="text-secondary">${percent}%</span>`;
 
         theLegend += `<span class="mt-5">
