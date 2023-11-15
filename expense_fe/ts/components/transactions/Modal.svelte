@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
 
-    import { isoToLocalDate } from "../../utils";
+    import { isoToLocalDate } from "../../utils/index";
     import { transactionModalID } from "./store";
 
     export let currency = "";

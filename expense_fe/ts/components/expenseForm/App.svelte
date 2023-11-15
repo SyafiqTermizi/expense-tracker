@@ -4,7 +4,7 @@
     export let expenseCategories: { name: string; slug: string }[] = [];
     export let activeEvents = [];
 
-    import { extractErrors, submitFormData } from "../../utils";
+    import { extractErrors, submitFormData } from "../../utils/index";
 
     import AlertError from "../AlertError.svelte";
     import Select from "../Select.svelte";

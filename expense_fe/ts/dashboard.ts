@@ -1,31 +1,26 @@
+
+import { getChartOption, getChartLegend } from "./utils/chart";
+
+
 const expenseData: Expense[] = JSON.parse(document.getElementById("expenses-data")!.textContent)
-const currency: string = document.getElementById("user-currency").textContent
 
-import { chartColors } from "./utils";
-
-var options = {
-    chart: {
-        type: 'pie'
-    },
-    series: expenseData.map(expense => parseFloat(expense["amount"])),
-    labels: expenseData.map(expense => expense["category"]),
-    legend: {
-        position: 'bottom'
-    },
-    tooltip: {
-        y: {
-            formatter: (value) => `${currency} ${value}`
-        }
-    },
-    colors: chartColors
+const formattedExpenseData = {};
+for (const data of expenseData) {
+    formattedExpenseData[data.category] = data.amount
 }
 
 window.addEventListener("load", () => {
     import("apexcharts").then((ApexCharts) => {
         const Chart = ApexCharts.default;
 
-        const chart = new Chart(document.getElementById("chart"), options);
+        const chart = new Chart(
+            document.getElementById("chart"),
+            getChartOption(formattedExpenseData, "donut"),
+        );
         chart.render();
+
+        const accountLegend = document.getElementById("chart-legend");
+        accountLegend.innerHTML = getChartLegend(formattedExpenseData);
     })
 });
 

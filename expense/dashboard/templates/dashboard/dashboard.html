@@ -12,6 +12,7 @@
                     You've spent {{ request.user.currency }} {{ total_expense }} this month
                 </h6>
                 <div id="chart"></div>
+                <div class="mt-3 d-flex flex-wrap justify-content-evenly" id="chart-legend"></div>
                 <br>
                 <a class="card-link ms-3" href="{% url 'expenses:detail' %}">See detail &gt;&gt;</a>
             </div>

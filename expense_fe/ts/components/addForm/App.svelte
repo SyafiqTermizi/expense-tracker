@@ -2,7 +2,7 @@
     export let accountBalances: Account[];
     export let userCurrency = "";
 
-    import { extractErrors, submitFormData } from "../../utils";
+    import { extractErrors, submitFormData } from "../../utils/index";
 
     import AlertError from "../AlertError.svelte";
     import Select from "../Select.svelte";

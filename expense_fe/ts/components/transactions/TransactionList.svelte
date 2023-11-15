@@ -1,6 +1,6 @@
 <script lang="ts">
     import { transactions, transactionModalID } from "./store";
-    import { isoToLocalDate } from "../../utils";
+    import { isoToLocalDate } from "../../utils/index";
 
     export let currency: string = "";
 
