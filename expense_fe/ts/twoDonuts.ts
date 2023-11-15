@@ -60,7 +60,7 @@ function getLegend(keyValuePair) {
         const textContent = `${formatter.format(keyValuePair[key])}
         <span class="text-secondary">${percent}%</span>`;
 
-        theLegend += `<span class="col-md-4 col-sm-6">
+        theLegend += `<span>
             <span class=${classNames} style="${style}">${key}</span>&nbsp;
             ${textContent}
         </span>&nbsp;`
