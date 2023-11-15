@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 <div class="row mt-4">
@@ -23,7 +24,7 @@
     </h3>
     <p class="text-secondary">
         {% if total_expense %}
-        You've spent <b>{{ request.user.currency }}  {{ total_expense }}</b> this month.
+        You've spent <b>{{ request.user.currency }}  {{ total_expense|intcomma }}</b> this month.
         {% else %}
         A breakdown of your expenses for the month of {{ month_name }}.
         {% endif %}
