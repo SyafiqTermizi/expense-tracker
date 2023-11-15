@@ -14,7 +14,22 @@ var options = {
         y: {
             formatter: (value) => `${currency} ${value}`
         }
-    }
+    },
+    colors: [
+        "#008FFB",
+        "#00E396",
+        "#FEB019",
+        "#FF4560",
+        "#775DD0",
+        "#4caf50",
+        "#546E7A",
+        "#f9a3a4",
+        "#F86624",
+        "#662E9B",
+        "#2E294E",
+        "#5A2A27",
+        "#D7263D"
+    ]
 }
 
 window.addEventListener("load", () => {

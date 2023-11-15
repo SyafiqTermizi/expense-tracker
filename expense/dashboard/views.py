@@ -74,7 +74,8 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
             },
             request.user.expenses.filter(**get_localtime_kwargs(query_kwargs=True))
             .values("category__name")
-            .annotate(amount=Sum("amount")),
+            .annotate(amount=Sum("amount"))
+            .order_by("category__name"),
         )
     )
 
