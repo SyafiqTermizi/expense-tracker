@@ -16,6 +16,11 @@ export const chartColors = [
     "#D7263D"
 ]
 
+const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency,
+});
+
 export function getChartOption(data, chartType) {
     const values = Object.values(data).map((value) => parseFloat(value as string))
     const sum = values.reduce((partialSum, a) => partialSum + a, 0);
@@ -23,7 +28,8 @@ export function getChartOption(data, chartType) {
     return {
         dataLabels: {
             formatter: function (val, opts) {
-                return `${currency} ${((val * sum) / 100).toFixed(2)}`
+                const amount = parseFloat(((val * sum) / 100).toFixed(2))
+                return `${formatter.format(amount)}`
             },
         },
         chart: {
@@ -43,11 +49,6 @@ export function getChartOption(data, chartType) {
     }
 }
 
-const formatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currency,
-});
-
 export function getChartLegend(keyValuePair) {
     const classNames = "badge rounded-pill"
 
@@ -64,10 +65,10 @@ export function getChartLegend(keyValuePair) {
         const textContent = `${formatter.format(keyValuePair[key])}
         <span class="text-secondary">${percent}%</span>`;
 
-        theLegend += `<div class="text-nowrap p-1">
+        theLegend += `<small class="text-nowrap p-1 text-small">
             <span class=${classNames} style="${style}">${key}</span>
             &nbsp;${textContent}
-        </div>`
+        </small>`
 
         if (colorIndex >= chartColors.length - 1) {
             colorIndex = 0
