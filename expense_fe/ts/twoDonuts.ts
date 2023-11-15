@@ -57,7 +57,7 @@ function getLegend(keyValuePair) {
 
         const style = `color: white; background-color: ${chartColors[colorIndex]}`
         const percent = ((keyValuePair[key] / sum) * 100).toFixed(0)
-        const textContent = `<b>${currency} ${formatter.format(keyValuePair[key])}</b>
+        const textContent = `${formatter.format(keyValuePair[key])}
         <span class="text-secondary">${percent}%</span>`;
 
         theLegend += `<span class="mt-5">
