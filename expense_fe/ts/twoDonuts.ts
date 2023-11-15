@@ -60,7 +60,7 @@ function getLegend(keyValuePair) {
         const textContent = `${formatter.format(keyValuePair[key])}
         <span class="text-secondary">${percent}%</span>`;
 
-        theLegend += `<div class="text-nowrap">
+        theLegend += `<div class="text-nowrap p-1">
             <span class=${classNames} style="${style}">${key}</span>
             &nbsp;${textContent}
         </div>`
