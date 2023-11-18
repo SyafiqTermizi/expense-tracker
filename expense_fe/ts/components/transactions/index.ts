@@ -8,11 +8,11 @@ initialTransactions.set(transactionData);
 const currency: string =
     document.getElementById("user-currency").textContent;
 
-const hideFilter: boolean =
-    document.getElementById("hide-filter") &&
-    document.getElementById("hide-filter").textContent === "true";
+const showOnlyFilter: FilterType =
+    document.getElementById("show-only-filter") &&
+    (document.getElementById("show-only-filter").textContent as FilterType);
 
 new App({
     target: document.getElementById("transactions"),
-    props: { currency, hideFilter }
+    props: { currency, showOnlyFilter }
 });

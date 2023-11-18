@@ -5,6 +5,6 @@
 </div>
 
 {{ transactions|json_script:"transaction-data" }}
-<div id="hide-filter" class="d-none">{{ hide_filter }}</div>
+<div id="show-only-filter" class="d-none">{{ show_only_filter }}</div>
 
 <script src="{% static 'transactions.js' %}"></script>

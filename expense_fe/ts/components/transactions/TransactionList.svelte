@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { transactions, transactionModalID } from "./store";
+    import { displayData, transactionModalID } from "./store";
     import { isoToLocalDate } from "../../utils/index";
 
     export let currency: string = "";
@@ -12,7 +12,7 @@
 
 <div class="card-body">
     <ul class="list-group list-group-flush">
-        {#each $transactions as transaction}
+        {#each $displayData as transaction}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <li
                 class="list-group-item list-group-item-action"

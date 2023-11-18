@@ -60,7 +60,7 @@
     </div>
 </div>
 
-{% include "partial/transaction_table.html" with transactions=expenses hide_filter="true" %}
+{% include "partial/transaction_table.html" with transactions=expenses show_only_filter="expenses" %}
 
 {{ expense_by_category|json_script:"expense-by-category" }}
 {{ expense_by_account|json_script:"expense-by-account" }}

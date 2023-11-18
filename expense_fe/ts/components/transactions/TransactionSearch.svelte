@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { keyword } from "./store";
+    import { searchKeyword } from "./store";
 </script>
 
 <input
@@ -8,5 +8,5 @@
     type="search"
     name="search"
     id="search"
-    bind:value={$keyword}
+    bind:value={$searchKeyword}
 />

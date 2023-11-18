@@ -45,7 +45,7 @@
     </div>
 </div>
 
-{% include "partial/transaction_table.html" with transactions=transactions hide_filter="false" %}
+{% include "partial/transaction_table.html" with transactions=transactions %}
 
 {{ balances|json_script:"balances-data" }}
 <script src="{% static 'accountDetail.js' %}"></script>

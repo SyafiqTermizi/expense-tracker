@@ -1,30 +1,35 @@
 <script lang="ts">
+    import TransactionSearch from "./TransactionSearch.svelte";
+    import ExpenseCategory from "./ExpenseCategory.svelte";
     import TransactionList from "./TransactionList.svelte";
-    import TransactionFilter from "./TransactionFilter.svelte";
-    import TransactionCategory from "./TransactionCategory.svelte";
+    import Filter from "./Filter.svelte";
     import Modal from "./Modal.svelte";
 
-    import { showAll } from "./store";
+    import { activeFilter } from "./store";
 
-    export let currency = "MYR";
-    export let hideFilter = false;
+    export let currency;
+    export let showOnlyFilter: FilterType = null;
 
     let categoryClass = "col-md-4 col-sm-12";
-    if (hideFilter) {
-        showAll.set(false);
+    if (showOnlyFilter) {
+        activeFilter.set(showOnlyFilter);
         categoryClass = "col-12";
     }
 </script>
 
 <div class="card">
     <div class="row pt-2 px-3">
-        {#if !hideFilter}
+        {#if !showOnlyFilter}
             <div class="col-md-8 col-sm-12 mt-2">
-                <TransactionFilter />
+                <Filter />
             </div>
         {/if}
         <div class={`${categoryClass} ps-3 mt-2 text-sm-start text-md-end`}>
-            <TransactionCategory />
+            {#if $activeFilter === "transactions"}
+                <TransactionSearch />
+            {:else}
+                <ExpenseCategory />
+            {/if}
         </div>
     </div>
     <hr />

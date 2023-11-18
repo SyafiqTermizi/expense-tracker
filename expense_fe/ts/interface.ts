@@ -36,3 +36,6 @@ interface FileInputData {
     file: File;
     fileName: string;
 }
+
+
+type FilterType = "transactions" | "expenses" | "summary" | "";

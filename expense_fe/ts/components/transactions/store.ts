@@ -1,31 +1,30 @@
 import { writable, derived } from 'svelte/store';
 
 export const initialTransactions = writable([]);
-export const showAll = writable(true);
-export const keyword = writable("");
+export const activeFilter = writable<FilterType>("transactions");
+export const searchKeyword = writable("");
 export const selectedCategory = writable("");
 
-export const transactions = derived(
-    [showAll, initialTransactions, selectedCategory, keyword],
-    ([$showAll, $initialTransactions, $selectedCategory, $keyword]) => {
-        let tempTransactions = [];
+export const displayData = derived(
+    [activeFilter, initialTransactions, selectedCategory, searchKeyword],
+    ([$activeFilter, $initialTransactions, $selectedCategory, $searchKeyword]) => {
+        let filteredDisplayData = [];
 
-        if ($showAll && $keyword) {
-            tempTransactions = $initialTransactions.filter(
-                transaction => transaction.description.toLowerCase().includes($keyword.toLowerCase())
+        if ($activeFilter === "transactions" && $searchKeyword) {
+            filteredDisplayData = $initialTransactions.filter(
+                transaction => transaction.description.toLowerCase().includes($searchKeyword.toLowerCase())
             );
-        } else if ($showAll && !$keyword) {
-            tempTransactions = $initialTransactions;
-        } else {
-            tempTransactions = $initialTransactions.filter(transaction => transaction.expense);
-        }
-
-        if ($selectedCategory) {
-            tempTransactions = tempTransactions.filter(
+        } else if ($activeFilter === "transactions" && !$searchKeyword) {
+            filteredDisplayData = $initialTransactions;
+        } else if ($activeFilter === "expenses" && !$selectedCategory) {
+            filteredDisplayData = $initialTransactions.filter(transaction => transaction.expense);
+        } else if ($activeFilter === "expenses" && selectedCategory) {
+            filteredDisplayData = $initialTransactions.filter(
                 transaction => transaction.category == $selectedCategory
             );
         }
-        return tempTransactions;
+
+        return filteredDisplayData;
     });
 
 export const expenseCategories = derived([initialTransactions], ([initialTransactions]) => {
