@@ -1,6 +1,6 @@
 import { writable, derived } from 'svelte/store';
 
-export const initialTransactions = writable([]);
+export const initialTransactions = writable<Transaction[]>([]);
 export const activeFilter = writable<FilterType>("transactions");
 export const searchKeyword = writable("");
 export const selectedCategory = writable("");
@@ -26,6 +26,32 @@ export const displayData = derived(
 
         return filteredDisplayData;
     });
+
+export const summaryData = derived(
+    [initialTransactions],
+    ([$initialTransactions]) => {
+        const categoriesSum = {}
+
+        for (const transaction of $initialTransactions) {
+            const currentValue = parseFloat(categoriesSum[transaction.category] || "0.00");
+            const trxAmount = parseFloat(transaction.amount.toString());
+            const total = (currentValue + trxAmount).toFixed(2);
+
+            if (transaction.expense) {
+                categoriesSum[transaction.category] = total;
+            }
+        }
+
+        const orderedCategoriesSum = Object.keys(categoriesSum).sort().reduce(
+            (obj, key) => {
+                obj[key] = categoriesSum[key];
+                return obj;
+            },
+            {}
+        );
+
+        return orderedCategoriesSum;
+    })
 
 export const expenseCategories = derived([initialTransactions], ([initialTransactions]) => {
     return [...new Set(initialTransactions.map(transaction => transaction.category).filter(Boolean))];

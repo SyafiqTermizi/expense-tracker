@@ -6,6 +6,7 @@
     import Modal from "./Modal.svelte";
 
     import { activeFilter } from "./store";
+    import Summary from "./Summary.svelte";
 
     export let currency;
     export let showOnlyFilter: FilterType = null;
@@ -27,12 +28,18 @@
         <div class={`${categoryClass} ps-3 mt-2 text-sm-start text-md-end`}>
             {#if $activeFilter === "transactions"}
                 <TransactionSearch />
-            {:else}
+            {:else if $activeFilter === "expenses"}
                 <ExpenseCategory />
+            {:else}
+                <div />
             {/if}
         </div>
     </div>
     <hr />
-    <TransactionList {currency} />
-    <Modal {currency} />
+    {#if $activeFilter === "summary"}
+        <Summary {currency} />
+    {:else}
+        <TransactionList {currency} />
+        <Modal {currency} />
+    {/if}
 </div>

@@ -15,6 +15,7 @@
 >
     Transactions
 </button>
+
 <button
     class={$activeFilter === "expenses" ? activeClass : inactiveClass}
     on:click={() => {
@@ -24,4 +25,15 @@
     }}
 >
     Expenses
+</button>
+
+<button
+    class={$activeFilter === "summary" ? activeClass : inactiveClass}
+    on:click={() => {
+        activeFilter.set("summary");
+        selectedCategory.set("");
+        searchKeyword.set("");
+    }}
+>
+    Summary
 </button>
