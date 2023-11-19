@@ -30,27 +30,44 @@ export const displayData = derived(
 export const summaryData = derived(
     [initialTransactions],
     ([$initialTransactions]) => {
-        const categoriesSum = {}
+        const expenses = $initialTransactions.filter(trx => trx.expense)
 
-        for (const transaction of $initialTransactions) {
-            const currentValue = parseFloat(categoriesSum[transaction.category] || "0.00");
-            const trxAmount = parseFloat(transaction.amount.toString());
-            const total = (currentValue + trxAmount).toFixed(2);
+        const totalExpense = expenses.reduce(
+            (accumulator, { amount }) => parseFloat(accumulator.toString()) + parseFloat(amount.toString()),
+            0
+        );
 
-            if (transaction.expense) {
-                categoriesSum[transaction.category] = total;
-            }
+        const totalExpenseByCategory = {}
+
+        for (const expense of expenses) {
+            const currentValue = parseFloat(
+                totalExpenseByCategory[expense.category] ?
+                    totalExpenseByCategory[expense.category].total :
+                    "0.00"
+            );
+            const expenseAmount = parseFloat(expense.amount.toString());
+
+            const currentTotal = (currentValue + expenseAmount);
+            const currentPercent = (currentTotal / totalExpense) * 100;
+
+            totalExpenseByCategory[expense.category] = {
+                total: currentTotal,
+                percent: currentPercent.toFixed(1)
+            };
+
+
         }
 
-        const orderedCategoriesSum = Object.keys(categoriesSum).sort().reduce(
+        // sort the category summary alphabetically
+        const orderedtotalExpenseByCategory = Object.keys(totalExpenseByCategory).sort().reduce(
             (obj, key) => {
-                obj[key] = categoriesSum[key];
+                obj[key] = totalExpenseByCategory[key];
                 return obj;
             },
             {}
         );
 
-        return orderedCategoriesSum;
+        return orderedtotalExpenseByCategory;
     })
 
 export const expenseCategories = derived([initialTransactions], ([initialTransactions]) => {

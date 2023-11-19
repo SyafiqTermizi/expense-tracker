@@ -18,14 +18,26 @@
                     <h6 class="mb-1">
                         <span
                             class="badge"
-                            style={`color: white; background-color: ${chartColors[index]}`}
+                            style={`color: white; background-color: ${
+                                chartColors[
+                                    index >= chartColors.length
+                                        ? index - chartColors.length
+                                        : index
+                                ]
+                            }`}
                         >
                             {category}
                         </span>
                     </h6>
-                    <small class="text-danger">
-                        <b>{formatter.format($summaryData[category])}</b>
-                    </small>
+                    <p>
+                        <b class="text-danger">
+                            {formatter.format($summaryData[category].total)}
+                        </b>
+                        .
+                        <small class="text-muted">
+                            {$summaryData[category].percent} %
+                        </small>
+                    </p>
                 </div>
             </li>
         {/each}
